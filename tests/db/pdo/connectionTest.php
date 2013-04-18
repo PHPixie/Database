@@ -27,12 +27,7 @@ class PDO_Connection_DriverTest extends PHPUnit_Framework_TestCase
 		$pixie->expects($this->any())
                  ->method('find_file')
                  ->will($this->returnValue($this->conf_file));
-		$pixie->db = $this->getMockBuilder('\PHPixie\DB')
-				->disableOriginalConstructor()
-				->getMock();
-		$pixie->db->expects($this->any())
-                 ->method('query_driver')
-                 ->will($this->returnValue(null));
+		$pixie-> db = new \PHPixie\DB($pixie);
 		$pixie->config->set('db.default.connection', 'sqlite:'.$this->db_file);
 		$pixie->config->set('db.default.driver', 'pdo');
 		$this->object = new \PHPixie\DB\PDO\Connection($pixie, 'default');
