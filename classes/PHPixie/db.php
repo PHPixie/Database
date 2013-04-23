@@ -2,6 +2,16 @@
 
 namespace PHPixie;
 
+/**
+ * Database Module for PHPixie
+ *
+ * This module allows you to access the database. Currently
+ * PDO and Mysqli drivers are supported. PDO drivers can access Mysql, 
+ * SQLite and PostgreSQL databases.
+ *
+ * @see \PHPixie\DB\Query
+ * @package    DB
+ */
 class DB {
 	
 	/**
