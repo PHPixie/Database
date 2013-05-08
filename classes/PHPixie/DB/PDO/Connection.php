@@ -56,7 +56,7 @@ class Connection extends \PHPixie\DB\Connection
 	 */
 	public function query($type)
 	{
-		return $this->pixie->db->query_driver('pdo', $this, $type);
+		return $this->pixie->db->query_driver('PDO', $this, $type);
 	}
 
 	/**
@@ -126,7 +126,7 @@ class Connection extends \PHPixie\DB\Connection
 			$error = $cursor->errorInfo();
 			throw new Exception("Database error:\n".$error[2]." \n in query:\n{$query}");
 		}
-		return $this->pixie->db->result_driver('pdo', $cursor);
+		return $this->pixie->db->result_driver('PDO', $cursor);
 	}
 
 }
