@@ -73,7 +73,7 @@ class Connection extends \PHPixie\DB\Connection
 	 */
 	public function query($type)
 	{
-		return $this->query_driver('Mysql', $this, $type);
+		return $this->pixie->query_driver('Mysql', $this, $type);
 	}
 
 	/**
