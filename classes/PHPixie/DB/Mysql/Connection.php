@@ -117,7 +117,7 @@ class Connection extends \PHPixie\DB\Connection
 		}
 		$cursor->execute();
 		$res = $cursor->get_result();
-		return $this->result_driver('Mysql', $res);
+		return $this->pixie->db->result_driver('Mysql', $res);
 	}
 
 }
