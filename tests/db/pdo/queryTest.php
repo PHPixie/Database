@@ -260,5 +260,15 @@ class PDO_Query_Test extends PHPUnit_Framework_TestCase
 		$this->object->table('fairies')->where(new \PHPixie\DB\Expression('fairies.id'), 5);
 		$this->assertEquals('SELECT * FROM `fairies` WHERE fairies.id = ?  ', current($this->object->query()));
 	}
+	
+	public function testQueryUpdateWithJoins()
+	{
+		$this->object->type('update')
+			->data(array('p.name' => 'Tinkerbell'))
+			->table('pixies', 'p')
+			->join(array('forest', 'f'), array('p.forest_id', 'f.id'))
+			->where('f.name', 'Dreamwood');
+		$this->assertEquals('UPDATE `pixies` AS p LEFT JOIN `forest` AS f ON `p`.`forest_id` = `f`.`id` SET `p.name` = ? WHERE `f`.`name` = ?  ', current($this->object->query()));
+	}
 
 }
