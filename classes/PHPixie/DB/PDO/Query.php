@@ -161,7 +161,7 @@ class Query extends \PHPixie\DB\Query
 
 		if ($this->_type == 'insert')
 		{
-			$query .= "INSERT INTO {$this->quote($this->_table)} ";
+			$query .= "INSERT INTO {$this->escape_table($this->_table, $params)} ";
 			if (empty($this->_data) && $this->_db_type == 'pgsql')
 			{
 				$query.= "DEFAULT VALUES ";
@@ -232,7 +232,7 @@ class Query extends \PHPixie\DB\Query
 			{
 				if ($this->_db_type != 'sqlite')
 				{
-					$query .= "DELETE {$this->last_alias()}.* FROM {$this->quote($this->_table)} ";
+					$query .= "DELETE {$this->last_alias()}.* FROM {$this->escape_table($this->_table, $params)} ";
 				}
 				else
 				{
@@ -240,37 +240,39 @@ class Query extends \PHPixie\DB\Query
 					{
 						throw new \Exception("SQLite doesn't support deleting a table with JOIN in the query");
 					}
-					$query .= "DELETE FROM {$this->quote($this->_table)} ";
+					$query .= "DELETE FROM {$this->escape_table($this->_table, $params)} ";
 				}
 			}
-			if ($this->_type == 'update')
-			{
-				$query .= "UPDATE {$this->quote($this->_table)} SET ";
-				$first = true;
-				foreach ($this->_data as $key => $val)
-				{
-					if (!$first)
-					{
-						$query.=", ";
-					}
-					else
-					{
-						$first = false;
-					}
-					$query .= "{$this->quote($key)} = {$this->escape_value($val, $params)}";
-				}
-				$query .= " ";
+			if ($this->_type == 'update') {
+				$query .= "UPDATE {$this->escape_table($this->_table, $params)} ";
 			}
 
-			foreach ($this->_joins as $join)
-			{
+			foreach ($this->_joins as $join) {
 				$table = $join[0];
 				$table = $this->escape_table($table, $params);
 				$query .= strtoupper($join[1])." JOIN {$table} ";
 				if(!empty($join[2]))
 					$query.="ON {$this->get_condition_query($join[2], $params, true, true)} ";
 			}
+			
+			if ($this->_type == 'update') {
+			
+				$query.= "SET ";
 
+				$first = true;
+				foreach ($this->_data as $key => $val) {
+				
+					if (!$first){
+						$query.=", ";
+					}else{
+						$first = false;
+					}
+					
+					$query .= "{$this->quote($key)} = {$this->escape_value($val, $params)}";
+				}
+				$query .= " ";
+			}
+			
 			if (!empty($this->_conditions))
 			{
 				$query .= "WHERE {$this->get_condition_query($this->_conditions, $params, true)} ";
