@@ -37,7 +37,10 @@ class Connection extends \PHPixie\DB\Connection
 		$this->conn = new \PDO(
 			$pixie->config->get("db.{$config}.connection"),
 			$pixie->config->get("db.{$config}.user", ''),
-			$pixie->config->get("db.{$config}.password", '')
+			$pixie->config->get("db.{$config}.password", ''),
+			array(
+				\PDO::ATTR_PERSISTENT => $pixie->config->get("db.{$config}.persistent", true)
+			)
 		);
 		$this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		$this->db_type = strtolower(str_replace('PDO_', '', $this->conn->getAttribute(\PDO::ATTR_DRIVER_NAME)));
