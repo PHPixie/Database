@@ -115,7 +115,9 @@ class Connection extends \PHPixie\DB\Connection
 
 			call_user_func_array(array($cursor, 'bind_param'), $bind);
 		}
-		$cursor->execute();
+		if ($cursor->execute() === false) {
+			throw new \Exception("Database error: {$this->conn->error} \n in query:\n{$query}");
+		}
 		$res = $cursor->get_result();
 		return $this->pixie->db->result_driver('Mysql', $res);
 	}
