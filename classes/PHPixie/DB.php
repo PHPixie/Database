@@ -2,128 +2,59 @@
 
 namespace PHPixie;
 
-/**
- * Database Module for PHPixie
- *
- * This module allows you to access the database. Currently
- * PDO and Mysqli drivers are supported. PDO drivers can access Mysql, 
- * SQLite and PostgreSQL databases.
- *
- * @see \PHPixie\DB\Query
- * @package    DB
- */
 class DB {
 	
-	/**
-	 * Pixie Dependancy Container
-	 * @var \PHPixie\Pixie
-	 */
-	public $pixie;
+	protected $pixie;
+	protected $drivers = array();
+	protected $connections =  array();
 	
-	/**
-	 * Database connection instances
-	 * @var \PHPixie\DB\Connection
-	 */
-	protected $db_instances = array();
-	
-	/**
-	 * Initializes the database module
-	 * 
-	 * @param \PHPixie\Pixie $pixie Pixie dependency container
-	 */
 	public function __construct($pixie) {
 		$this->pixie = $pixie;
 	}
 	
-	/**
-	 * Gets an instance of a connection to the database
-	 *
-	 * @param string  $config Configuration name of the connection.
-	 *                        Defaults to  'default'.
-	 * @return \PHPixie\DB\Connection  Driver implementation of the Connection class.
-	 */
-	public function get($config = 'default'){
-		if (!isset($this->db_instances[$config])) {
-			$driver = $this->pixie->config->get("db.{$config}.driver");
-			$driver = "\\PHPixie\\DB\\".$driver."\\Connection";
-			$this->db_instances[$config] = new $driver($this->pixie, $config);
+	public function get($connection_name = 'default') {
+		if (!isset($this->connections[$connection_name])) {
+			$config = $this->get_config($connection_name);
+			$driver = $this->driver($config->get('driver'));
+			$this->connections[$connection_name] = $driver->build_connection($connection_name, $config);
 		}
-		return $this->db_instances[$config];
+		return $this->connections[$connection_name];
 	}
 	
-	/**
-	 * Builds a query for specified connection.
-	 *
-	 * @param string $type   Query type. Available types: select,update,insert,delete,count
-	 * @param string  $config Configuration name of the connection.
-	 *                        Defaults to  'default'.
-	 * @return \PHPixie\DB\Query  Driver implementation of the Query class.
-	 */
-	public function query($type, $config = 'default')
-	{
-		return $this->get($config)->query($type);
+	public function driver($name) {
+		if (!isset($this->drivers[$name]))
+			$this->drivers[$name] = $this->build_driver($name);
+			
+		return $this->drivers[$name];
+	}
+	
+	public function build_driver($name) {
+		$class = '\PHPixie\DB\Driver\\'.$name;
+		return new $class($this);
+	}
+	
+	public function query($type = 'select', $connection_name = 'default') {
+		return $this->get($connection_name)->query($type);
+	}
+	
+	public function condition_builder($default_operator = '=') {
+		return new \PHPixie\DB\Conditions\Builder($this, $default_operator);
 	}
 
-	/**
-	 * Gets the id of the last inserted row
-	 *
-	 * @param string  $config Configuration name of the connection.
-	 *                        Defaults to  'default'.
-	 * @return mixed Id of the last inserted row
-	 */
-	public function insert_id($config = 'default')
-	{
-		return $this->get($config)->insert_id();
+	public function condition_group() {
+		return new \PHPixie\DB\Conditions\Condition\Group();
 	}
 	
-	/**
-	 * Gets column names for the specified table
-	 *
-	 * @param string $table Name of the table to get columns from
-	 * @param string  $config Configuration name of the connection.
-	 *                        Defaults to  'default'.
-	 * @return array Array of column names
-	 */
-	public function list_columns($table, $config = 'default') {
-		return $this->get($config)->list_columns($table);
+	public function operator($field, $operator, $value) {
+		return new \PHPixie\DB\Conditions\Condition\Operator($field, $operator, $value);
 	}
 	
-	/**
-	 * Returns an Expression representation of the value.
-	 * Values wrapped inside Expression are not escaped in queries
-	 *
-	 * @param mixed $value Value to be wrapped
-	 * @return \PHPixie\Db\Expression  Raw value that will not be escaped during query building
-	 */
-	public function expr($value) {
-		return new \PHPixie\DB\Expression($value);
+	public function expr($sql = '', $params = array()) {
+		return new \PHPixie\DB\SQL\Expression($sql, $params);
 	}
 	
-	/*
-	 * Creates a new query
-	 *
-	 * @param string $driver Database driver name
-	 * @param \PHPixie\DB\Connection $db   Database connection
-	 * @param string $type Query type. Available types: select, update, insert, delete, count
-	 * @return \PHPixie\DB\Query
-	 */
-	public function query_driver($driver, $db, $type) {
-		$driver = "\\PHPixie\\DB\\".$driver."\\Query";
-		return new $driver($db, $type);
+	protected function get_config($connection_name) {
+		return $this->pixie->config->slice('db.'.$connection_name);
 	}
 	
-	/*
-	 * Creates a new result
-	 *
-	 * @param string $driver Database driver name
-	 * @param object $cursor Datbase result cursor
-	 * @return \PHPixie\DB\Result
-	 */
-	public function result_driver($driver, $cursor) {
-		$driver = "\\PHPixie\\DB\\".$driver."\\Result";
-		return new $driver($cursor);
-	}
-	
-	
-		
 }
