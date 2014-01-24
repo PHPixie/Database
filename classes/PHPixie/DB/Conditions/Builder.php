@@ -17,9 +17,13 @@ class Builder {
 		
 	}
 	
-	
 	public function start_group($logic = 'and') {
-		$group = $this->db->condition_group();
+		$group = $this->condition_group();
+		$this->push_group($logic, $group);
+		return $this;
+	}
+	
+	protected function push_group($logic, $group) {
 		switch($logic) {
 			case 'and':
 			case 'or':
@@ -38,7 +42,6 @@ class Builder {
 		}
 		$this->group_stack[]=$group;
 		$this->current_group = $group;
-		return $this;
 	}
 	
 	public function end_group() {
@@ -53,18 +56,17 @@ class Builder {
 	public function add_condition($logic, $negate, $args) {
 		$count = count($args);
 		if ($count >= 2) {
-		
+			$field = $args[0];
+			
 			if ($count === 2) {
-				
-				$condition = $this->db->operator($args[0], $this->default_operator, array($args[1]));
+				$operator = $this->default_operator;
+				$values = array($args[1]);
 			}else {
-				$condition = $this->db->operator($args[0], $args[1],  array_slice($args, 2));
+				$operator = $args[1];
+				$values = array_slice($args, 2);
 			}
 			
-			if ($negate)
-				$condition->negate();
-				
-			$this->current_group->add($condition, $logic);
+			$this->add_operator_condition($logic, $negate, $field, $operator, $values);
 			return $this;
 		}
 		
@@ -80,6 +82,28 @@ class Builder {
 				throw new \PHPixie\DB\Exception("If only one argument is provided it must be a callable");
 		
 		throw new \PHPixie\DB\Exception("Not enough arguments provided");
+	}
+	
+	protected function build_operator_condition($negate, $field, $operator, $values) {
+		$condition = $this->operator($field, $operator, $values);
+		if ($negate)
+			$condition->negate();
+			
+		return $condition;
+	}
+	
+	public function add_operator_condition($logic, $negate, $field, $operator, $values) {
+		$condition = $this->build_operator_condition($negate, $field, $operator, $values);
+		$this->current_group->add($condition, $logic);
+		return $condition;
+	}
+	
+	protected function operator($field, $operator, $values) {
+		return $this->db->operator($field, $operator, $values);
+	}
+	
+	protected function condition_group() {
+		return $this->db->condition_group();
 	}
 	
 	public function get_conditions() {

@@ -27,6 +27,9 @@ class GroupTest extends ConditionTest {
 		
 	}
 	
+	public function testSetConditions() {
+		throw new \Exception("Not implemented");
+	}
 	
 	public function testException() {
 		$except = false;

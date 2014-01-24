@@ -78,6 +78,10 @@ class BuilderTest extends PHPUnit_Framework_TestCase {
 		));
 	}
 	
+	public function testAddOperatorCondition() {
+		throw new \Exception('todo');
+	}
+	
 	public function testNested() {
 		$this->builder
 					->_and('a', 1)

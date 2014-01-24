@@ -2,59 +2,19 @@
 
 namespace PHPixie\DB\Driver\Mongo\Parser;
 
-class Group {
+class Group extends \PHPixie\DB\Conditions\Logic\Parser{
 	
 	protected $driver;
 	protected $operator_parser;
 
-	protected $logic_precedance = array(
-		'and' => 2,
-		'xor' => 1,
-		'or'  => 0
-	);
 	
 	public function __construct($driver, $operator_parser) {
 		$this->driver = $driver;
 		$this->operator_parser = $operator_parser;
 	}
 	
-	protected function expand_group( &$group, $level = 0) {
-		$left = $current = current($group);
-		
-		while (true) {
-			if (($next = next($group)) === false)
-				break;
-				
-			if ($this->logic_precedance[$next->logic] < $level) {
-				prev($group);
-				break;
-			}
-			
-			$right = $this->expand_group($group, $this->logic_precedance[$next->logic] + 1);
-			if ($right)
-				$left = $this->merge($left, $right);
-				
-			$current = $next;
-		}
-		
-		return $left;
-	}
+	protected function normalize($condition, $convert_operator = true) {
 	
-	protected function normalize_condition($condition, $convert_operator = false) {
-		if ($condition instanceof \PHPixie\DB\Driver\Mongo\Condition\Expanded)
-			return $condition;
-		
-		if ($condition instanceof \PHPixie\DB\Conditions\Condition\Operator) {
-			if (!$convert_operator){
-				return $condition;
-			}else {
-				$expanded = $this->driver->expanded_condition();
-				$expanded->add($condition);
-				$expanded->logic = $condition->logic;
-				return $expanded;
-			}
-		}
-		
 		if ($condition instanceof \PHPixie\DB\Conditions\Condition\Group) {
 			$group = $condition->conditions();
 			$group = $this->expand_group($group);
@@ -65,12 +25,18 @@ class Group {
 			return $group;
 		}
 		
+		if ($condition instanceof \PHPixie\DB\Conditions\Condition\Operator && $convert_operator) {
+			$expanded = $this->driver->expanded_condition();
+			$expanded->add($condition);
+			$expanded->logic = $condition->logic;
+			return $expanded;
+		}
+		
+		return $condition;
 		
 	}
 	
 	protected function merge($left, $right) {
-		$left = $this->normalize_condition($left, true);
-		$right = $this->normalize_condition($right);
 		if ($left instanceof \PHPixie\DB\Conditions\Condition\Operator){
 			$expanded = $this->driver->expanded_condition();
 			$expanded->add($left);
@@ -111,7 +77,7 @@ class Group {
 			return array();
 			
 		$expanded = $this->expand_group($group);
-		$expanded = $this->normalize_condition($expanded, true);
+		$expanded = $this->normalize($expanded);
 		
 		foreach($expanded->groups() as $group) {
 			$and_group = array();

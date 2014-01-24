@@ -92,18 +92,17 @@ abstract class Query {
 		return $this->order_by;
 	}
 	
-	protected function condition_builder($name) {
+	protected function condition_builder($name = null) {
+		if ($name === null) {
+			if ($this->last_used_builder === null)
+				throw new \PHPixie\DB\Exception\Builder("No builder ");
+			return $this->last_used_builder;
+		}
+	
 		if (!isset($this->condition_builders[$name]))
 			$this->condition_builders[$name] = $this->db->condition_builder();
 		 
 		$this->last_used_builder = $this->condition_builders[$name];
-		return $this->last_used_builder;
-	}
-	
-	protected function last_used_builder() {
-		if ($this->last_used_builder === null)
-			throw new \PHPixie\DB\Exception\Builder("No builder ");
-			
 		return $this->last_used_builder;
 	}
 	
@@ -114,64 +113,83 @@ abstract class Query {
 		return $this->condition_builders[$name]->get_conditions();
 	}
 	
-	public function where() {
-		$this->condition_builder('where')->add_condition('and', false, func_get_args());
+	public function add_condition($args, $logic = 'and', $negate = false, $builder_name = null) {
+		$this->condition_builder($builder_name)->add_condition($logic, $negate, $args);
 		return $this;
+	}
+	
+	public function start_condition_group($logic = 'and', $builder_name = null) {
+		$this->condition_builder($builder_name)->start_group($logic);
+		return $this;
+	}
+	
+	public function end_condition_group($builder_name = null) {
+		$this->condition_builder($builder_name)->end_group();
+		return $this;
+	}
+	
+	public function where() {
+		return $this->add_condition(func_get_args(), 'and', false, 'where');
 	}
 	
 	public function or_where() {
-		$this->condition_builder('where')->add_condition('or', false, func_get_args());
-		return $this;
+		return $this->add_condition(func_get_args(), 'or', false, 'where');
 	}
 	
 	public function xor_where() {
-		$this->condition_builder('where')->add_condition('xor', false, func_get_args());
-		return $this;
+		return $this->add_condition(func_get_args(), 'xor', false, 'where');
 	}
 	
 	public function where_not() {
-		$this->condition_builder('where')->add_condition('and', true, func_get_args());
-		return $this;
+		return $this->add_condition(func_get_args(), 'and', true, 'where');
 	}
 	
 	public function or_where_not() {
-		$this->condition_builder('where')->add_condition('or', true, func_get_args());
-		return $this;
+		return $this->add_condition(func_get_args(), 'or', true, 'where');
 	}
 	
 	public function xor_where_not() {
-		$this->condition_builder('where')->add_condition('xor', true, func_get_args());
-		return $this;
+		return $this->add_condition(func_get_args(), 'xor', true, 'where');
+	}
+	
+	public function start_where_group($logic = 'and') {
+		return $this->start_condition_group($logic, 'where');
+	}
+	
+	public function end_where_group() {
+		return $this->end_condition_group('where');
 	}
 	
 	public function _and() {
-		$this->last_used_builder()->add_condition('and', false, func_get_args());
-		return $this;
+		return $this->add_condition(func_get_args(), 'and', false);
 	}
 	
 	public function _or() {
-		$this->last_used_builder()->add_condition('or', false, func_get_args());
-		return $this;
+		return $this->add_condition(func_get_args(), 'or', false);
 	}
 	
 	public function _xor() {
-		$this->last_used_builder()->add_condition('xor', false, func_get_args());
-		return $this;
+		return $this->add_condition(func_get_args(), 'xor', false);
 	}
 	
 	public function _and_not() {
-		$this->last_used_builder()->add_condition('and', true, func_get_args());
-		return $this;
+		return $this->add_condition(func_get_args(), 'and', true);
 	}
 	
 	public function _or_not() {
-		$this->last_used_builder()->add_condition('or', true, func_get_args());
-		return $this;
+		return $this->add_condition(func_get_args(), 'or', true);
 	}
 	
 	public function _xor_not() {
-		$this->last_used_builder()->add_condition('xor', true, func_get_args());
-		return $this;
+		return $this->add_condition(func_get_args(), 'xor', true);
+	}
+	
+	public function start_group($logic='and') {
+		return $this->start_condition_group($logic);
+	}
+	
+	public function end_group() {
+		return $this->end_condition_group();
 	}
 	
 	public function parse() {

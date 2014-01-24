@@ -30,4 +30,8 @@ class Group extends \PHPixie\DB\Conditions\Condition {
 	public function conditions(){
 		return $this->conditions;
 	}
+	
+	public function set_conditions($conditions) {
+		$this->conditions = $conditions;
+	}
 }

@@ -2,12 +2,23 @@
 
 class BuilderStub {
 	public $passed = array();
+	public $start_group_logic;
+	public $end_group_called = false;
+	
 	public function add_condition() {
 		$this->passed[] = func_get_args();
 	}
 	
 	public function get_conditions() {
 		return array(1);
+	}
+	
+	public function start_group($logic) {
+		$this->start_group_logic = $logic;
+	}
+	
+	public function end_group() {
+		$this->end_group_called = true;
 	}
 }
 
@@ -111,6 +122,19 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($this->query, call_user_func(array($this->query, 'xor_'.$name.'_not'), 'id', 1));
 		$this->assertEquals(array('xor', true, array('id', 1)), end($this->builder->passed));
 		
+		$this->assertEquals($this->query, call_user_func(array($this->query, 'start_'.$name.'_group')));
+		$this->assertEquals($this->query, call_user_func(array($this->query, 'end_'.$name.'_group')));
+		$this->assertEquals('and', $this->builder->start_group_logic);
+		$this->assertEquals(true, $this->builder->end_group_called);
+		
+		$this->builder->start_group_logic = null;
+		$this->builder->end_group_called = false;
+		
+		$this->assertEquals($this->query, call_user_func(array($this->query, 'start_'.$name.'_group'), 'or'));
+		$this->assertEquals($this->query, call_user_func(array($this->query, 'end_'.$name.'_group')));
+		$this->assertEquals('or', $this->builder->start_group_logic);
+		$this->assertEquals(true, $this->builder->end_group_called);
+		
 		if($test_get)
 			$this->assertEquals(array(1), $this->query->get_conditions($name));
 		
@@ -120,10 +144,14 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase {
 		$this->assertBuilderException(function() {
 			$this->query->_and('a', 1);
 		});
+		$this->assertBuilderException(function() {
+			$this->query->start_group();
+		});
 		$this->query->where('a', 1);
 		$this->genericBuilderTest($this->builder);
 	}
 	protected function genericBuilderTest($builder) {
+	
 		$this->assertEquals($this->query, $this->query->_and('id', 1));
 		$this->assertEquals(array('and', false, array('id', 1)), end($builder->passed));
 		
@@ -141,6 +169,11 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase {
 		
 		$this->assertEquals($this->query, $this->query->_xor_not('id', 1));
 		$this->assertEquals(array('xor', true, array('id', 1)), end($builder->passed));
+		
+		$this->assertEquals($this->query, call_user_func(array($this->query, 'start_group'), 'or'));
+		$this->assertEquals($this->query, call_user_func(array($this->query, 'end_group')));
+		$this->assertEquals('or', $builder->start_group_logic);
+		$this->assertEquals(true, $builder->end_group_called);
 	}
 	
 	protected function assertBuilderException($callback) {
