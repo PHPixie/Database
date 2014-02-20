@@ -49,6 +49,10 @@ class DB {
 		return new \PHPixie\DB\Conditions\Condition\Operator($field, $operator, $value);
 	}
 	
+	public function condition_placeholder() {
+		return new \PHPixie\DB\Conditions\Condition\Placeholder();
+	}
+	
 	public function expr($sql = '', $params = array()) {
 		return new \PHPixie\DB\SQL\Expression($sql, $params);
 	}

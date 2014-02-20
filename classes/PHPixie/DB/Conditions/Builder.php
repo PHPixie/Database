@@ -12,19 +12,17 @@ class Builder {
 	public function __construct($db, $default_operator = '='){
 		$this->db = $db;
 		$this->default_operator = $default_operator;
-		$this->current_group = $this->db->condition_group();
-		$this->group_stack[] = $this->current_group;
-		
+		$this->push_group($this->db->condition_group());
 	}
 	
 	public function start_group($logic = 'and', $negate = false) {
 		$group = $this->condition_group();
-		$this->push_group($logic, $negate, $group);
+		$this->add_subgroup($logic, $negate, $group, $this->current_group);
+		$this->push_group($group);
 		return $this;
 	}
 	
-	protected function push_group($logic, $negate, $group) {
-		$this->add_subgroup($logic, $negate, $group, $this->current_group);
+	protected function push_group($group) {
 		$this->group_stack[]=$group;
 		$this->current_group = $group;
 	}
@@ -109,7 +107,9 @@ class Builder {
 	public function add_placeholder($logic, $negate) {
 		//NEEDS TEST
 		$placeholder = $this->build_placeholder();
-		$this->current_group->add($placeholder, $logic);
+		if ($negate)
+			$placeholder->negate();
+		$this->current_group->add($logic, $placeholder);
 	}
 	
 	protected function build_placeholder() {

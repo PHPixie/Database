@@ -22,11 +22,13 @@ abstract class Result implements \Iterator {
 			return $current->$column;
 	}
 	
-	public function get_column($column, $skip_nulls = false) {
+	public function get_column($column = null, $skip_nulls = false) {
 		$this->rewind();
 		$values = array();
 		foreach($this as $row)
-			if(isset($row->$column)){
+			if ($column === null)
+				$column = key(get_object_vars($row));
+			if (isset($row->$column)) {
 				$values[] = $row->$column;
 			}elseif(!$skip_nulls)
 				$values[] = null;
