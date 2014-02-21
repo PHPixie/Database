@@ -5,6 +5,8 @@ namespace PHPixie;
 class DB {
 	
 	protected $pixie;
+	protected $conditions;
+	
 	protected $drivers = array();
 	protected $connections =  array();
 	
@@ -37,16 +39,14 @@ class DB {
 		return $this->get($connection_name)->query($type);
 	}
 	
-	public function condition_builder($default_operator = '=') {
-		return new \PHPixie\DB\Conditions\Builder($this, $default_operator);
-	}
-
-	public function condition_group() {
-		return new \PHPixie\DB\Conditions\Condition\Group();
+	public function conditions() {
+		if ($this->conditions === null)
+			$this->conditions = $this->build_conditions();
+		return $this->conditions;
 	}
 	
-	public function operator($field, $operator, $value) {
-		return new \PHPixie\DB\Conditions\Condition\Operator($field, $operator, $value);
+	protected function get_conditions() {
+		return new \PHPixie\DB\Conditions();
 	}
 	
 	public function expr($sql = '', $params = array()) {

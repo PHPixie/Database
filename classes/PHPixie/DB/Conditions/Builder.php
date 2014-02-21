@@ -4,21 +4,20 @@ namespace PHPixie\DB\Conditions;
 
 class Builder {
 	
-	protected $db;
+	protected $conditions;
 	protected $group_stack = array();
 	protected $current_group;
 	protected $default_operator;
 	
-	public function __construct($db, $default_operator = '='){
-		$this->db = $db;
+	public function __construct($conditions, $default_operator = '='){
+		$this->conditions = $conditions;
 		$this->default_operator = $default_operator;
-		$this->current_group = $this->db->condition_group();
-		$this->group_stack[] = $this->current_group;
+		$this->push_group($this->conditions->condition_group());
 		
 	}
 	
 	public function start_group($logic = 'and', $negate = false) {
-		$group = $this->condition_group();
+		$group = $this->conditions->condition_group();
 		$this->push_group($logic, $negate, $group);
 		return $this;
 	}
@@ -29,16 +28,17 @@ class Builder {
 		$this->current_group = $group;
 	}
 	
-	protected function add_subgroup($logic, $negate, $group, $parent) {
-		switch($logic) {
+	protected function add_subgroup($extended_logic, $negate, $group, $parent) {
+		switch($extended_logic) {
 			case 'and':
 			case 'or':
 			case 'xor':
+				$logic = $extended_logic;
 				break;
 			case 'and_not':
 			case 'or_not':
 			case 'xor_not':
-				$logic = substr($logic, 0, -4);
+				$logic = substr($extended_logic, 0, -4);
 				$negate = !$negate;
 				break;
 			default:
@@ -80,9 +80,7 @@ class Builder {
 		
 		if ($count === 1)
 			if (is_callable($callback = $args[0])) {
-				if ($negate)
-					$logic = $logic.'_not';
-				$this->start_group($logic);
+				$this->start_group($logic, $negate);
 				$callback($this);
 				$this->end_group();
 				return $this;
@@ -92,41 +90,26 @@ class Builder {
 		throw new \PHPixie\DB\Exception("Not enough arguments provided");
 	}
 	
-	protected function build_operator_condition($negate, $field, $operator, $values) {
-		$condition = $this->operator($field, $operator, $values);
-		if ($negate)
-			$condition->negate();
-			
-		return $condition;
-	}
-	
 	public function add_operator_condition($logic, $negate, $field, $operator, $values) {
-		$condition = $this->build_operator_condition($negate, $field, $operator, $values);
-		$this->current_group->add($condition, $logic);
-		return $condition;
+		$condition = $this->conditions->operator($field, $operator, $values);
+		$this->add_to_current($logic, $negate, $condition);
 	}
 	
 	public function add_placeholder($logic, $negate) {
-		//NEEDS TEST
-		$placeholder = $this->build_placeholder();
-		$this->current_group->add($placeholder, $logic);
-	}
-	
-	protected function build_placeholder() {
-		//NEEDS TEST
-		return $this->db->condition_placeholder();
-	}
-	
-	protected function operator($field, $operator, $values) {
-		return $this->db->operator($field, $operator, $values);
-	}
-	
-	protected function condition_group() {
-		return $this->db->condition_group();
+		$placeholder = $this->placeholder();
+		$this->add_to_current($logic, $negate, $placeholder);
+		return $placeholder;
 	}
 	
 	public function get_conditions() {
 		return $this->group_stack[0]->conditions();
+	}
+	
+	protected function add_to_current($logic, $negate, $condition) {
+		if ($negate)
+			$condition->negate();
+		
+		$this->current_group->add($condition, $logic);
 	}
 	
 	public function _and() {

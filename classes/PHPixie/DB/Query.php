@@ -100,7 +100,7 @@ abstract class Query {
 		}
 	
 		if (!isset($this->condition_builders[$name]))
-			$this->condition_builders[$name] = $this->db->condition_builder();
+			$this->condition_builders[$name] = $this->db->conditions()->builder();
 		 
 		$this->last_used_builder = $this->condition_builders[$name];
 		return $this->last_used_builder;
