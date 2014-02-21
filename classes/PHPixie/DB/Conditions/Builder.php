@@ -19,11 +19,16 @@ class Builder {
 	public function start_group($logic = 'and', $negate = false) {
 		$group = $this->conditions->condition_group();
 		$this->push_group($logic, $negate, $group);
+	}
+	
+	public function start_group($logic = 'and', $negate = false) {
+		$group = $this->condition_group();
+		$this->add_subgroup($logic, $negate, $group, $this->current_group);
+		$this->push_group($group);
 		return $this;
 	}
 	
-	protected function push_group($logic, $negate, $group) {
-		$this->add_subgroup($logic, $negate, $group, $this->current_group);
+	protected function push_group($group) {
 		$this->group_stack[]=$group;
 		$this->current_group = $group;
 	}
@@ -96,10 +101,11 @@ class Builder {
 	}
 	
 	public function add_placeholder($logic, $negate) {
-		$placeholder = $this->placeholder();
+		$placeholder = $this->conditions->placeholder();
 		$this->add_to_current($logic, $negate, $placeholder);
 		return $placeholder;
 	}
+	
 	
 	public function get_conditions() {
 		return $this->group_stack[0]->conditions();
