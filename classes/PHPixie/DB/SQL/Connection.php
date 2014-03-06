@@ -9,37 +9,41 @@ namespace PHPixie\DB\PDO;
 class Connection extends \PHPixie\DB\Connection
 {
 
-	protected $pixie;
-	protected $adapter;
-	
-	public function __construct($pixie, $config)
-	{
-		parent::__construct($pixie, $config);
-		
-		$this->conn = new \PDO(
-			$pixie->config->get("db.{$config}.connection"),
-			$pixie->config->get("db.{$config}.user", ''),
-			$pixie->config->get("db.{$config}.password", '')
-		);
-		
-		$this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-		$db_type = strtolower(str_replace('PDO_', '', $this->conn->getAttribute(\PDO::ATTR_DRIVER_NAME)));
-		$this->adapter = $this->pixie->sql->pdo_adapter($db, $this);
-	}
+    protected $pixie;
+    protected $adapter;
 
-	public function query($type) {
-		return $this->pixie->db->pdo_query('PDO', $this, $type);
-	}
+    public function __construct($pixie, $config)
+    {
+        parent::__construct($pixie, $config);
 
-	public function insert_id() {
-		return $this->adapter->insert_id();
-	}
+        $this->conn = new \PDO(
+            $pixie->config->get("db.{$config}.connection"),
+            $pixie->config->get("db.{$config}.user", ''),
+            $pixie->config->get("db.{$config}.password", '')
+        );
 
-	public function list_columns($table) {
-		return $this->adapter->list_columns($table);
-	}
+        $this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $dbType = strtolower(str_replace('PDO_', '', $this->conn->getAttribute(\PDO::ATTR_DRIVER_NAME)));
+        $this->adapter = $this->pixie->sql->pdoAdapter($db, $this);
+    }
 
-	public function execute($query, $params = array()){
-	}
+    public function query($type)
+    {
+        return $this->pixie->db->pdoQuery('PDO', $this, $type);
+    }
+
+    public function insertId()
+    {
+        return $this->adapter->insertId();
+    }
+
+    public function listColumns($table)
+    {
+        return $this->adapter->listColumns($table);
+    }
+
+    public function execute($query, $params = array())
+    {
+    }
 
 }

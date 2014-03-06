@@ -2,105 +2,118 @@
 
 namespace PHPixie\DB\Driver\Mongo;
 
-class Parser extends \PHPixie\DB\Parser{
-	protected $group_parser;
-	
-	public function __construct($db, $driver, $config, $group_parser) {
-		parent::__construct($db, $driver, $config);
-		$this->group_parser = $group_parser;
-	}
-	
-	public function parse($query) {
-		$runner = $this->driver->runner();;
-		switch($query->get_type()) {
-			case 'select':
-				return $this->select_query($query, $runner);
-			case 'insert':
-				return $this->insert_query($query, $runner);
-			case 'update':
-				return $this->update_query($query, $runner);
-			case 'delete':
-				return $this->delete_query($query, $runner);
-			case 'count':
-				return $this->count_query($query, $runner);
-			default:
-				throw new \Exception("Query type $type is not supported");
-		}
-	}
-	
-	public function select_query($query, $runner) {
-		$this->chain_collection($query, $runner);
-		$fields = $query->get_fields();
-		$conditions = $this->group_parser->parse($query->get_conditions('where'));
-		$limit = $query->get_limit();
-		$offset = $query->get_offset();
-		$order_by = $query->get_order_by();
-		
-		if (empty($offset) && $limit === 1 && empty($order_by)) {
-			$runner->chain_method('findOne', array($conditions, $fields));
-		}else {
-			$runner->chain_method('find', array($conditions, $fields));
-			
-			if (!empty($order_by)) {
-				$ordering =  array();
-				foreach($order_by as $order) {
-					list($column, $dir) = $order;
-					$ordering[$column] = $dir == 'asc' ? 1 : -1;
-				}
-				$runner->chain_method('sort', array($ordering));
-			}
-			
-			if ($limit !== null)
-				$runner->chain_method('limit', array($limit));
-				
-			if ($offset !== null)
-				$runner->chain_method('skip', array($offset));
-		}
-		
-		return $runner;
-	}
-	
-	public function insert_query($query, $runner) {
-		$this->chain_collection($query, $runner);
-		$data = $query->get_data();
-		if ($data === null)
-			throw new \PHPixie\DB\Exception\Parser("No data set for insertion");
-			
-		$runner->chain_method('insert', array($data));
-		return $runner;
-	}
-	
-	public function update_query($query, $runner) {
-		$this->chain_collection($query, $runner);
-		$data = $query->get_data();
-		if ($data === null)
-			throw new \PHPixie\DB\Exception\Parser("No data set for update");
-			
-		$conditions = $this->group_parser->parse($query->get_conditions('where'));
-		$runner->chain_method('update', array($conditions, $data, array('multiple' => true)));
-		return $runner;
-	}
-	
-	public function delete_query($query, $runner) {
-		$this->chain_collection($query, $runner);
-		$conditions = $this->group_parser->parse($query->get_conditions('where'));
-		$runner->chain_method('remove', array($conditions));
-		return $runner;
-	}
-	
-	public function count_query($query, $runner) {
-		$this->chain_collection($query, $runner);
-		$conditions = $this->group_parser->parse($query->get_conditions('where'));
-		if (!empty($conditions))
-			$runner->chain_method('find', array($conditions));
-		$runner->chain_method('count');
-		return $runner;
-	}
-	
-	protected function chain_collection($query, $runner){
-		if (($collection = $query->get_collection()) !== null) {
-			$runner->chain_property($collection);
-		}else
-			throw new \PHPixie\DB\Exception\Parser("You must specify a collection for this query.");
-	}
+class Parser extends \PHPixie\DB\Parser
+{
+    protected $groupParser;
+
+    public function __construct($db, $driver, $config, $groupParser)
+    {
+        parent::__construct($db, $driver, $config);
+        $this->groupParser = $groupParser;
+    }
+
+    public function parse($query)
+    {
+        $runner = $this->driver->runner();;
+        switch ($query->getType()) {
+            case 'select':
+                return $this->selectQuery($query, $runner);
+            case 'insert':
+                return $this->insertQuery($query, $runner);
+            case 'update':
+                return $this->updateQuery($query, $runner);
+            case 'delete':
+                return $this->deleteQuery($query, $runner);
+            case 'count':
+                return $this->countQuery($query, $runner);
+            default:
+                throw new \Exception("Query type $type is not supported");
+        }
+    }
+
+    public function selectQuery($query, $runner)
+    {
+        $this->chainCollection($query, $runner);
+        $fields = $query->getFields();
+        $conditions = $this->groupParser->parse($query->getConditions('where'));
+        $limit = $query->getLimit();
+        $offset = $query->getOffset();
+        $orderBy = $query->getOrderBy();
+
+        if (empty($offset) && $limit === 1 && empty($orderBy)) {
+            $runner->chainMethod('findOne', array($conditions, $fields));
+        } else {
+            $runner->chainMethod('find', array($conditions, $fields));
+
+            if (!empty($orderBy)) {
+                $ordering =  array();
+                foreach ($orderBy as $order) {
+                    list($column, $dir) = $order;
+                    $ordering[$column] = $dir == 'asc' ? 1 : -1;
+                }
+                $runner->chainMethod('sort', array($ordering));
+            }
+
+            if ($limit !== null)
+                $runner->chainMethod('limit', array($limit));
+
+            if ($offset !== null)
+                $runner->chainMethod('skip', array($offset));
+        }
+
+        return $runner;
+    }
+
+    public function insertQuery($query, $runner)
+    {
+        $this->chainCollection($query, $runner);
+        $data = $query->getData();
+        if ($data === null)
+            throw new \PHPixie\DB\Exception\Parser("No data set for insertion");
+
+        $runner->chainMethod('insert', array($data));
+
+        return $runner;
+    }
+
+    public function updateQuery($query, $runner)
+    {
+        $this->chainCollection($query, $runner);
+        $data = $query->getData();
+        if ($data === null)
+            throw new \PHPixie\DB\Exception\Parser("No data set for update");
+
+        $conditions = $this->groupParser->parse($query->getConditions('where'));
+        $runner->chainMethod('update', array($conditions, $data, array('multiple' => true)));
+
+        return $runner;
+    }
+
+    public function deleteQuery($query, $runner)
+    {
+        $this->chainCollection($query, $runner);
+        $conditions = $this->groupParser->parse($query->getConditions('where'));
+        $runner->chainMethod('remove', array($conditions));
+
+        return $runner;
+    }
+
+    public function countQuery($query, $runner)
+    {
+        $this->chainCollection($query, $runner);
+        $conditions = $this->groupParser->parse($query->getConditions('where'));
+        if (!empty($conditions))
+            $runner->chainMethod('find', array($conditions));
+        $runner->chainMethod('count');
+
+        return $runner;
+    }
+
+    protected function chainCollection($query, $runner)
+    {
+        if (($collection = $query->getCollection()) !== null) {
+            $runner->chainProperty($collection);
+        }else
+            throw new \PHPixie\DB\Exception\Parser("You must specify a collection for this query.");
+    }
 }

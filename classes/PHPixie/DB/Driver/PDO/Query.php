@@ -2,6 +2,6 @@
 
 namespace PHPixie\DB\Driver\PDO;
 
-class Query extends \PHPixie\DB\SQL\Query {
-	
+class Query extends \PHPixie\DB\SQL\Query
+{
 }

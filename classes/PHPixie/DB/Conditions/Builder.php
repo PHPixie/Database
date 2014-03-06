@@ -2,143 +2,164 @@
 
 namespace PHPixie\DB\Conditions;
 
-class Builder {
-	
-	protected $conditions;
-	protected $group_stack = array();
-	protected $current_group;
-	protected $default_operator;
-	
-	public function __construct($conditions, $default_operator = '='){
-		$this->conditions = $conditions;
-		$this->default_operator = $default_operator;
-		$this->push_group($this->conditions->condition_group());
-		
-	}
-	
-	public function start_group($logic = 'and', $negate = false) {
-		$group = $this->conditions->condition_group();
-		$this->push_group($logic, $negate, $group);
-	}
-	
-	public function start_group($extended_logic = 'and', $negate = false) {
-		$group = $this->conditions->group();
-		$this->add_subgroup($extended_logic, $negate, $group, $this->current_group);
-		$this->push_group($group);
-		return $this;
-	}
-	
-	protected function push_group($group) {
-		$this->group_stack[]=$group;
-		$this->current_group = $group;
-	}
-	
-	protected function add_subgroup($extended_logic, $negate, $group, $parent) {
-		switch($extended_logic) {
-			case 'and':
-			case 'or':
-			case 'xor':
-				$logic = $extended_logic;
-				break;
-			case 'and_not':
-			case 'or_not':
-			case 'xor_not':
-				$logic = substr($extended_logic, 0, -4);
-				$negate = !$negate;
-				break;
-			default:
-				throw new \PHPixie\DB\Exception("Logic must be either 'and', 'or', 'xor', 'and_not' ,'or_not', 'xor_not'");
-		}
-		
-		if ($negate)
-			$group->negate();
-		
-		$parent->add($group, $logic);
-	
-	}
-	
-	public function end_group() {
-		if (count($this->group_stack) === 1)
-			throw new \PHPixie\DB\Exception("End() was called more times than expected.");
-			
-		array_pop($this->group_stack);
-		$this->current_group = current($this->group_stack);
-		return $this;
-	}
-	
-	public function add_condition($logic, $negate, $args) {
-		$count = count($args);
-		if ($count >= 2) {
-			$field = $args[0];
-			
-			if ($count === 2) {
-				$operator = $this->default_operator;
-				$values = array($args[1]);
-			}else {
-				$operator = $args[1];
-				$values = array_slice($args, 2);
-			}
-			
-			$this->add_operator_condition($logic, $negate, $field, $operator, $values);
-			return $this;
-		}
-		
-		if ($count === 1)
-			if (is_callable($callback = $args[0])) {
-				$this->start_group($logic, $negate);
-				$callback($this);
-				$this->end_group();
-				return $this;
-			}else 
-				throw new \PHPixie\DB\Exception("If only one argument is provided it must be a callable");
-		
-		throw new \PHPixie\DB\Exception("Not enough arguments provided");
-	}
-	
-	public function add_operator_condition($logic, $negate, $field, $operator, $values) {
-		$condition = $this->conditions->operator($field, $operator, $values);
-		$this->add_to_current($logic, $negate, $condition);
-	}
-	
-	public function add_placeholder($logic, $negate) {
-		$placeholder = $this->conditions->placeholder();
-		$this->add_to_current($logic, $negate, $placeholder);
-		return $placeholder;
-	}
-	
-	
-	public function get_conditions() {
-		return $this->group_stack[0]->conditions();
-	}
-	
-	protected function add_to_current($logic, $negate, $condition) {
-		if ($negate)
-			$condition->negate();
-		
-		$this->current_group->add($condition, $logic);
-	}
-	
-	public function _and() {
-		return $this->add_condition('and', false, func_get_args());
-	}
-	
-	public function _or() {
-		return $this->add_condition('or', false, func_get_args());
-	}
-	
-	public function _xor() {
-		return $this->add_condition('xor', false, func_get_args());
-	}
-	
-	public function _and_not() {
-		return $this->add_condition('and', true, func_get_args());
-	}
-	
-	public function _or_not() {
-		return $this->add_condition('or', true, func_get_args());
-	}
-	
-	public function _xor_not() {
-		return $this->add_condition('xor', true, func_get_args());
-	}
+class Builder
+{
+    protected $conditions;
+    protected $groupStack = array();
+    protected $currentGroup;
+    protected $defaultOperator;
+
+    public function __construct($conditions, $defaultOperator = '=')
+    {
+        $this->conditions = $conditions;
+        $this->defaultOperator = $defaultOperator;
+        $this->pushGroup($this->conditions->conditionGroup());
+
+    }
+
+    public function startGroup($logic = 'and', $negate = false)
+    {
+        $group = $this->conditions->conditionGroup();
+        $this->pushGroup($logic, $negate, $group);
+    }
+
+    public function startGroup($extendedLogic = 'and', $negate = false)
+    {
+        $group = $this->conditions->group();
+        $this->addSubgroup($extendedLogic, $negate, $group, $this->currentGroup);
+        $this->pushGroup($group);
+
+        return $this;
+    }
+
+    protected function pushGroup($group)
+    {
+        $this->groupStack[]=$group;
+        $this->currentGroup = $group;
+    }
+
+    protected function addSubgroup($extendedLogic, $negate, $group, $parent)
+    {
+        switch ($extendedLogic) {
+            case 'and':
+            case 'or':
+            case 'xor':
+                $logic = $extendedLogic;
+                break;
+            case 'and_not':
+            case 'or_not':
+            case 'xor_not':
+                $logic = substr($extendedLogic, 0, -4);
+                $negate = !$negate;
+                break;
+            default:
+                throw new \PHPixie\DB\Exception("Logic must be either 'and', 'or', 'xor', 'and_not' ,'or_not', 'xor_not'");
+        }
+
+        if ($negate)
+            $group->negate();
+
+        $parent->add($group, $logic);
+
+    }
+
+    public function endGroup()
+    {
+        if (count($this->groupStack) === 1)
+            throw new \PHPixie\DB\Exception("End() was called more times than expected.");
+
+        array_pop($this->groupStack);
+        $this->currentGroup = current($this->groupStack);
+
+        return $this;
+    }
+
+    public function addCondition($logic, $negate, $args)
+    {
+        $count = count($args);
+        if ($count >= 2) {
+            $field = $args[0];
+
+            if ($count === 2) {
+                $operator = $this->defaultOperator;
+                $values = array($args[1]);
+            } else {
+                $operator = $args[1];
+                $values = array_slice($args, 2);
+            }
+
+            $this->addOperatorCondition($logic, $negate, $field, $operator, $values);
+
+            return $this;
+        }
+
+        if ($count === 1)
+            if (is_callable($callback = $args[0])) {
+                $this->startGroup($logic, $negate);
+                $callback($this);
+                $this->endGroup();
+
+                return $this;
+            }else
+                throw new \PHPixie\DB\Exception("If only one argument is provided it must be a callable");
+
+        throw new \PHPixie\DB\Exception("Not enough arguments provided");
+    }
+
+    public function addOperatorCondition($logic, $negate, $field, $operator, $values)
+    {
+        $condition = $this->conditions->operator($field, $operator, $values);
+        $this->addToCurrent($logic, $negate, $condition);
+    }
+
+    public function addPlaceholder($logic, $negate)
+    {
+        $placeholder = $this->conditions->placeholder();
+        $this->addToCurrent($logic, $negate, $placeholder);
+
+        return $placeholder;
+    }
+
+    public function getConditions()
+    {
+        return $this->groupStack[0]->conditions();
+    }
+
+    protected function addToCurrent($logic, $negate, $condition)
+    {
+        if ($negate)
+            $condition->negate();
+
+        $this->currentGroup->add($condition, $logic);
+    }
+
+    public function _and()
+    {
+        return $this->addCondition('and', false, func_get_args());
+    }
+
+    public function _or()
+    {
+        return $this->addCondition('or', false, func_get_args());
+    }
+
+    public function _xor()
+    {
+        return $this->addCondition('xor', false, func_get_args());
+    }
+
+    public function _andNot()
+    {
+        return $this->addCondition('and', true, func_get_args());
+    }
+
+    public function _orNot()
+    {
+        return $this->addCondition('or', true, func_get_args());
+    }
+
+    public function _xorNot()
+    {
+        return $this->addCondition('xor', true, func_get_args());
+    }
 }
