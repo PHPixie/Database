@@ -17,12 +17,6 @@ class Builder
 
     }
 
-    public function startGroup($logic = 'and', $negate = false)
-    {
-        $group = $this->conditions->conditionGroup();
-        $this->pushGroup($logic, $negate, $group);
-    }
-
     public function startGroup($extendedLogic = 'and', $negate = false)
     {
         $group = $this->conditions->group();

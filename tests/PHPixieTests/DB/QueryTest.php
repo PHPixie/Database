@@ -1,4 +1,5 @@
 <?php
+namespace PHPixieTests\DB;
 
 class BuilderStub
 {
@@ -27,43 +28,62 @@ class BuilderStub
     }
 }
 
+/**
+ * @coversDefaultClass \PHPixie\DB\Query
+ */
 abstract class QueryTest extends PHPUnit_Framework_TestCase
 {
-    protected $pixie;
+    protected $db;
     protected $query;
     protected $parser;
     protected $connection;
-    public $builder;
+    protected $builder;
 
     protected function setUp()
     {
-        $this->pixie = new \PHPixie\Pixie;
-        $this->pixie->db = $this->getMock('\PHPixie\DB', array('condition_builder'), array($this->pixie));
-        $this->pixie->db
-                        ->expects($this->any())
-                        ->method('condition_builder')
-                        ->will($this->returnCallback(function () {
-                            return $this->builder;
-                        }));
+        $conditionsMock = $this->getMock('\PHPixie\DB\Conditions', array('builder'));
+        $conditionsMock
+                ->expects($this->any())
+                ->method('builder')
+                ->will($this->returnCallback(function () {
+                    return $this->builder;
+                }));
+        
+        $this->db = $this->getMock('\PHPixie\DB', array('conditions'), array($this->pixie));
+        $this->db
+                ->expects($this->any())
+                ->method('conditions')
+                ->will($this->returnValue($conditionsMock));
+        
         $this->parser = $this->mockParser();
         $this->query = $this->query();
         $this->builder = new BuilderStub();
     }
-
-    abstract protected function query();
-
+    
+    /**
+     * @covers ::data
+     * @covers ::getData
+     */
     public function testData()
     {
         $this->getSetTest('data', array('a' =>1));
     }
-
+    
+    /**
+     * @covers ::type
+     * @covers ::getType
+     */
     public function testType()
     {
         $this->assertEquals('select', $this->query->getType());
         $this->assertEquals($this->query, $this->query->type('delete'));
         $this->assertEquals('delete', $this->query->getType());
     }
-
+    
+    /**
+     * @covers ::fields
+     * @covers ::getFields
+     */
     public function testFields()
     {
         $this->assertEquals(array(), $this->query->getFields());
@@ -73,7 +93,11 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase
             $this->query->fields('test');
         });
     }
-
+    
+    /**
+     * @covers ::offset
+     * @covers ::getOffset
+     */
     public function testOffset()
     {
         $this->getSetTest('offset', 5);
@@ -81,7 +105,11 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase
             $this->query->offset('test');
         });
     }
-
+    
+    /**
+     * @covers ::limit
+     * @covers ::getLimit
+     */
     public function testLimit()
     {
         $this->getSetTest('limit', 5);
@@ -89,7 +117,11 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase
             $this->query->limit('test');
         });
     }
-
+    
+    /**
+     * @covers ::orderBy
+     * @covers ::getOrderBy
+     */
     public function testOrderBy()
     {
         $this->assertEquals(array(), $this->query->getOrderBy());
@@ -101,57 +133,46 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase
             $this->query->orderBy('name', 'test');
         });
     }
-
+    
+    /**
+     * @covers ::where
+     * @covers ::orWhere
+     * @covers ::xorWhere
+     * @covers ::whereNot
+     * @covers ::orWhereNot
+     * @covers ::xorWhereNot
+     * @covers ::startWhereGroup
+     * @covers ::endWhereGroup
+     */
     public function testWhere()
     {
         $this->builderTest('where');
     }
 
-    protected function getSetTest($method, $param, $default = null)
+    /**
+     * @covers ::parse
+     */
+    public function testParse()
     {
-        $this->assertEquals($default, call_user_func_array(array($this->query, 'get_'.$method), array()));
-        $this->assertEquals($this->query, call_user_func_array(array($this->query, $method), array($param)));
-        $this->assertEquals($param, call_user_func_array(array($this->query, 'get_'.$method), array()));
+        $query = $this->query();
+        $this->parser
+                ->expects($this->any())
+                ->method('parse')
+                ->with ($query)
+                ->will($this->returnValue('a'));
+        $this->assertEquals('a', $query->parse());
     }
 
-    protected function builderTest($name, $testGet = true)
-    {
-        $this->assertEquals($this->query, call_user_func(array($this->query, $name), 'id', 1));
-        $this->assertEquals(array('and', false, array('id', 1)), end($this->builder->passed));
-
-        $this->assertEquals($this->query, call_user_func(array($this->query, 'or_'.$name), 'id', 1));
-        $this->assertEquals(array('or', false, array('id', 1)), end($this->builder->passed));
-
-        $this->assertEquals($this->query, call_user_func(array($this->query, 'xor_'.$name), 'id', 1));
-        $this->assertEquals(array('xor', false, array('id', 1)), end($this->builder->passed));
-
-        $this->assertEquals($this->query, call_user_func(array($this->query, $name.'_not'), 'id', 1));
-        $this->assertEquals(array('and', true, array('id', 1)), end($this->builder->passed));
-
-        $this->assertEquals($this->query, call_user_func(array($this->query, 'or_'.$name.'_not'), 'id', 1));
-        $this->assertEquals(array('or', true, array('id', 1)), end($this->builder->passed));
-
-        $this->assertEquals($this->query, call_user_func(array($this->query, 'xor_'.$name.'_not'), 'id', 1));
-        $this->assertEquals(array('xor', true, array('id', 1)), end($this->builder->passed));
-
-        $this->assertEquals($this->query, call_user_func(array($this->query, 'start_'.$name.'_group')));
-        $this->assertEquals($this->query, call_user_func(array($this->query, 'end_'.$name.'_group')));
-        $this->assertEquals('and', $this->builder->startGroupLogic);
-        $this->assertEquals(true, $this->builder->endGroupCalled);
-
-        $this->builder->startGroupLogic = null;
-        $this->builder->endGroupCalled = false;
-
-        $this->assertEquals($this->query, call_user_func(array($this->query, 'start_'.$name.'_group'), 'or'));
-        $this->assertEquals($this->query, call_user_func(array($this->query, 'end_'.$name.'_group')));
-        $this->assertEquals('or', $this->builder->startGroupLogic);
-        $this->assertEquals(true, $this->builder->endGroupCalled);
-
-        if($testGet)
-            $this->assertEquals(array(1), $this->query->getConditions($name));
-
-    }
-
+    /**
+     * @covers ::_and
+     * @covers ::_or
+     * @covers ::_xor
+     * @covers ::_not
+     * @covers ::_orNot
+     * @covers ::_xorNot
+     * @covers ::startGroup
+     * @covers ::endGroup
+     */
     public function testGenericBuilder()
     {
         $this->assertBuilderException(function () {
@@ -163,6 +184,53 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase
         $this->query->where('a', 1);
         $this->genericBuilderTest($this->builder);
     }
+    
+    protected function getSetTest($method, $param, $default = null)
+    {
+        $this->assertEquals($default, call_user_func_array(array($this->query, 'get_'.$method), array()));
+        $this->assertEquals($this->query, call_user_func_array(array($this->query, $method), array($param)));
+        $this->assertEquals($param, call_user_func_array(array($this->query, 'get_'.$method), array()));
+    }
+
+    protected function builderTest($name, $testGet = true)
+    {
+        $name = ucfirst($name);
+        $this->assertEquals($this->query, call_user_func(array($this->query, $name), 'id', 1));
+        $this->assertEquals(array('and', false, array('id', 1)), end($this->builder->passed));
+
+        $this->assertEquals($this->query, call_user_func(array($this->query, 'or'.$name), 'id', 1));
+        $this->assertEquals(array('or', false, array('id', 1)), end($this->builder->passed));
+
+        $this->assertEquals($this->query, call_user_func(array($this->query, 'xor'.$name), 'id', 1));
+        $this->assertEquals(array('xor', false, array('id', 1)), end($this->builder->passed));
+
+        $this->assertEquals($this->query, call_user_func(array($this->query, $name.'Not'), 'id', 1));
+        $this->assertEquals(array('and', true, array('id', 1)), end($this->builder->passed));
+
+        $this->assertEquals($this->query, call_user_func(array($this->query, 'or'.$name.'Not'), 'id', 1));
+        $this->assertEquals(array('or', true, array('id', 1)), end($this->builder->passed));
+
+        $this->assertEquals($this->query, call_user_func(array($this->query, 'xor'.$name.'Not'), 'id', 1));
+        $this->assertEquals(array('xor', true, array('id', 1)), end($this->builder->passed));
+
+        $this->assertEquals($this->query, call_user_func(array($this->query, 'start'.$name.'Group')));
+        $this->assertEquals($this->query, call_user_func(array($this->query, 'end'.$name.'Group')));
+        $this->assertEquals('and', $this->builder->startGroupLogic);
+        $this->assertEquals(true, $this->builder->endGroupCalled);
+
+        $this->builder->startGroupLogic = null;
+        $this->builder->endGroupCalled = false;
+
+        $this->assertEquals($this->query, call_user_func(array($this->query, 'start'.$name.'Group'), 'or'));
+        $this->assertEquals($this->query, call_user_func(array($this->query, 'end'.$name.'Group')));
+        $this->assertEquals('or', $this->builder->startGroupLogic);
+        $this->assertEquals(true, $this->builder->endGroupCalled);
+
+        if($testGet)
+            $this->assertEquals(array(1), $this->query->getConditions($name));
+
+    }
+
     protected function genericBuilderTest($builder)
     {
         $this->assertEquals($this->query, $this->query->_and('id', 1));
@@ -183,33 +251,12 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->query, $this->query->_xorNot('id', 1));
         $this->assertEquals(array('xor', true, array('id', 1)), end($builder->passed));
 
-        $this->assertEquals($this->query, call_user_func(array($this->query, 'start_group'), 'or'));
-        $this->assertEquals($this->query, call_user_func(array($this->query, 'end_group')));
+        $this->assertEquals($this->query, call_user_func(array($this->query, 'startGroup'), 'or'));
+        $this->assertEquals($this->query, call_user_func(array($this->query, 'endGroup')));
         $this->assertEquals('or', $builder->startGroupLogic);
         $this->assertEquals(true, $builder->endGroupCalled);
     }
 
-    protected function assertBuilderException($callback)
-    {
-        $except = false;
-        try {
-            $callback();
-        } catch (\PHPixie\DB\Exception\Builder $e) {
-            $except = true;
-        }
-        $this->assertEquals(true, $except);
-    }
-
-    public function testParse()
-    {
-        $query = $this->query();
-        $this->parser
-                ->expects($this->any())
-                ->method('parse')
-                ->with ($query)
-                ->will($this->returnValue('a'));
-        $this->assertEquals('a', $query->parse());
-    }
-
     abstract public function testExecute();
+    abstract protected function query();
 }

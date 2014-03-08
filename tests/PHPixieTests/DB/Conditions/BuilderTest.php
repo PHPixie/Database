@@ -1,17 +1,30 @@
 <?php
 
+namespace PHPixieTests\DB\Conditions;
+
+/**
+ * @coversDefaultClass \PHPixie\DB\Conditions\Builder
+ */
 class BuilderTest extends PHPUnit_Framework_TestCase
 {
     protected $builder;
-    protected $pixie;
+    protected $conditions;
 
     public function setUp()
     {
-        $this->pixie = new \PHPixie\Pixie;
-        $this->pixie-> db = new \PHPixie\DB($this->pixie);
-        $this->builder = new \PHPixie\DB\Conditions\Builder($this->pixie->db, '=');
+        $this->conditions = new \PHPixie\DB\Conditions;
+        $this->builder = new \PHPixie\DB\Conditions\Builder($this->conditions, '=');
     }
 
+    /**
+     * @covers ::_and
+     * @covers ::_or
+     * @covers ::_xor
+     * @covers ::_andNot
+     * @covers ::_orNot
+     * @covers ::_xorNot
+     * @covers ::addCondition
+     */
     public function testConditions()
     {
         $this->builder
@@ -46,7 +59,10 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         ));
     }
 
-    public function testAddConditions()
+    /**
+     * @covers ::addCondition
+     */
+    public function testAddCondition()
     {
         $this->builder
                     ->addCondition('and', false, array('a', 1))
@@ -80,11 +96,19 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         ));
     }
 
+    /**
+     * @covers ::addOperatorCondition
+     */
     public function testAddOperatorCondition()
     {
         throw new \Exception('todo');
     }
 
+    /**
+     * @covers ::addOperatorCondition
+     * @covers ::startGroup
+     * @covers ::endGroup
+     */
     public function testNested()
     {
         $this->builder
@@ -95,7 +119,7 @@ class BuilderTest extends PHPUnit_Framework_TestCase
                             ->_or(function ($builder) {
                                 $builder
                                     ->_and('a', 3)
-                                    ->startGroup('xor_not')
+                                    ->startGroup('xorNot')
                                         ->_and('a', 4)
                                     ->endGroup();
                             });
@@ -115,53 +139,54 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         ));
     }
 
+    /**
+     * @covers ::startGroup
+     */
     public function testStartGroupException()
     {
-        $this->assertException(function () {
-            $this->builder->startGroup('test');
-        });
+        $this->setExpectedException('\PHPixie\DB\Exception');
+        $this->builder->startGroup('test');
     }
 
+    /**
+     * @covers ::endGroup
+     */
     public function testEndGroupException()
     {
-        $this->assertException(function () {
-            $this->builder->endGroup();
-        });
+        $this->setExpectedException('\PHPixie\DB\Exception');
+        $this->builder->endGroup();
     }
 
+    /**
+     * @covers ::endGroup
+     */
     public function testNestedEndGroupException()
     {
-        $this->assertException(function () {
-            $this->builder->startGroup('and')->endGroup()->endGroup();
-        });
+        $this->setExpectedException('\PHPixie\DB\Exception');
+        $this->builder->startGroup('and')->endGroup()->endGroup();
     }
 
+    /**
+     * @covers ::addCondition
+     */
     public function testSingleArgumentException()
     {
-        $this->assertException(function () {
-            $this->builder->_and('a');
-        });
+        $this->setExpectedException('\PHPixie\DB\Exception');
+        $this->builder->_and('a');
     }
 
+    /**
+     * @covers ::addCondition
+     */
     public function noArgumentsException()
     {
-        $this->assertException(function () {
-            $this->builder->_and();
-        });
+        $this->setExpectedException('\PHPixie\DB\Exception');
+        $this->builder->_and();
     }
 
-    protected function assertException($callback)
-    {
-        $except = false;
-        try {
-            $callback();
-        } catch (\PHPixie\DB\Exception $e) {
-            $except = true;
-        }
-
-        $this->assertEquals(true, $except);
-    }
-
+    /**
+     * @covers ::getConditions
+     */
     protected function assertConditions($expected)
     {
         $this->assertConditionArray($this->builder->getConditions(), $expected);

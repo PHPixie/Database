@@ -1,5 +1,9 @@
 <?php
+namespace PHPixieTests\DB;
 
+/**
+ * @coversDefaultClass \PHPixie\DB\Driver
+ */
 abstract class DriverTest extends PHPUnit_Framework_TestCase
 {
     protected $driver;
@@ -13,6 +17,9 @@ abstract class DriverTest extends PHPUnit_Framework_TestCase
         $this->pixie-> db = $this->getMock('\PHPixie\DB', array('get'), array($this->pixie));
     }
 
+    /**
+     * @covers ::parser
+     */
     public function testParser()
     {
         $parser = $this->driver->parser('test');
@@ -20,6 +27,9 @@ abstract class DriverTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->parserClass, get_class($parser));
     }
 
+    /**
+     * @covers ::query
+     */
     public function testQuery()
     {
         $query = $this->driver->query('delete', 'test');

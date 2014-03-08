@@ -1,14 +1,23 @@
 <?php
 
-require_once(ROOT.'/vendor/phpixie/db/tests/db/DB/Conditions/ConditionTest.php');
+namespace PHPixieTest\DB\Conditions\Condition;
 
-class GroupTest extends ConditionTest
+/**
+ * @coversDefaultClass \PHPixie\DB\Conditions\Condition\Group
+ */
+class GroupTest extends PHPixieTest\DB\Conditions\ConditionTest
 {
     protected function setUp()
     {
         $this->condition = new PHPixie\DB\Conditions\Condition\Group();
     }
 
+    /**
+     * @covers ::addAnd
+     * @covers ::addOr
+     * @covers ::addXor
+     * @covers ::add
+     */
     public function testGroup()
     {
         $expected = array();
@@ -29,24 +38,24 @@ class GroupTest extends ConditionTest
 
     }
 
+    /**
+     * @covers ::setConditions
+     */
     public function testSetConditions()
     {
         throw new \Exception("Not implemented");
     }
 
+    /**
+     * @covers ::add
+     */
     public function testException()
     {
-        $except = false;
-        try {
-            $this->condition->add($expected[] = $this->condition(), 'maybe');
-        } catch (\PHPixie\DB\Exception $e) {
-            $except = true;
-        }
-
-        $this->assertEquals(true, $except);
+        $this->setExpectedException('\PHPixie\DB\Exception');
+        $this->condition->add($expected[] = $this->condition(), 'maybe');
     }
 
-    public function condition()
+    protected function condition()
     {
         return new PHPixie\DB\Conditions\Condition\Operator('a', '=', 1);
     }

@@ -1,9 +1,6 @@
 <?php
-if (!defined('INIT')) {
-    define('ROOT',dirname(dirname(dirname(dirname(dirname(__FILE__))))));
-    $loader = require_once(ROOT.'/vendor/autoload.php');
-    $loader->add('PHPixie', ROOT.'/vendor/phpixie/core/classes/');
-    $loader->add('PHPixie', ROOT.'/vendor/phpixie/db/classes/');
-    $loader->add('PHPixie',ROOT.'/vendor/phpixie/orm/classes/');
-    define('INIT', true);
-}
+spl_autoload_register(function($class) {
+    $file = str_replace("\\", "/", $class).'.php';
+    if (file_exists($file))
+        require_once($file);
+});

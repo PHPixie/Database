@@ -1,8 +1,11 @@
 <?php
 
-require_once(ROOT.'/vendor/phpixie/db/tests/db/DB/Conditions/ConditionTest.php');
+namespace PHPixieTest\DB\Conditions\Condition;
 
-class OperatorTest extends ConditionTest
+/**
+ * @coversDefaultClass \PHPixie\DB\Conditions\Condition\Operator
+ */
+class OperatorTest extends PHPixieTest\DB\Conditions\ConditionTest
 {
     protected function setUp()
     {

@@ -1,11 +1,22 @@
 <?php
 
+namespace PHPixieTests\DB;
+
+/**
+ * @coversDefaultClass \PHPixie\DB\Connection
+ */
 abstract class ConnectionTest extends PHPUnit_Framework_TestCase
 {
     protected $connection;
     protected $queryClass;
     protected $config;
     protected $driver;
+    
+    protected abstract function setUp();
+    
+    /**
+     * @covers ::query
+     */
     public function testQuery()
     {
         $query = $this->connection->query();
@@ -15,31 +26,11 @@ abstract class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('insert', $query->getType());
     }
 
+    /**
+     * @covers ::config
+     */
     public function testConfig()
     {
         $this->assertEquals($this->config, $this->connection->config());
-    }
-
-    public function assertPixieException($callback)
-    {
-        $except = false;
-        try {
-            $callback();
-        } catch (\PHPixie\Exception $e) {
-            $except = true;
-        }
-
-        $this->assertEquals(true, $except);
-    }
-
-    protected function assertDBException($callback)
-    {
-        $except = false;
-        try {
-            $callback();
-        } catch (\PHPixie\DB\Exception $e) {
-            $except = true;
-        }
-        $this->assertEquals(true, $except);
     }
 }

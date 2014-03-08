@@ -1,6 +1,8 @@
 <?php
 
-class LogicParserStub extends \PHPixie\DB\Conditions\Logic\Parser
+namespace PHPixieTests\DB\Conditions\Logic;
+
+class ParserStub extends \PHPixie\DB\Conditions\Logic\Parser
 {
     public $merges ;
 
@@ -26,6 +28,9 @@ class LogicParserStub extends \PHPixie\DB\Conditions\Logic\Parser
     }
 }
 
+/**
+ * @coversDefaultClass \PHPixie\DB\Conditions\Logic\Parser
+ */
 class LogicParserTest extends PHPUnit_Framework_TestCase
 {
     protected $parser;
@@ -35,6 +40,9 @@ class LogicParserTest extends PHPUnit_Framework_TestCase
         $this->parser = new LogicParserStub();
     }
 
+    /**
+     * @covers ::expandGroup
+     */
     public function testParse()
     {
         $this->assertEquals(array(

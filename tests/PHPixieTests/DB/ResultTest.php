@@ -1,9 +1,16 @@
 <?php
+namespace PHPixieTests\DB;
 
+/**
+ * @coversDefaultClass \PHPixie\DB\Result
+ */
 abstract class ResultTest extends PHPUnit_Framework_TestCase
 {
     protected $result;
 
+    /**
+     * @covers ::valid
+     */
     public function testValid()
     {
         $this->assertEquals(true, $this->result->valid());
@@ -18,6 +25,9 @@ abstract class ResultTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(false, $this->result->valid());
     }
 
+    /**
+     * @covers ::next
+     */
     public function testNext()
     {
         $this->result->next();
@@ -26,11 +36,14 @@ abstract class ResultTest extends PHPUnit_Framework_TestCase
         $this->result->next();
     }
 
+    /**
+     * @covers ::current
+     */
     public function testCurrent()
     {
         $this->assertEquals(array('id' => 1, 'name' => 'Tinkerbell'), (array) $this->result->current());
         $this->result->next();
-        $this->assertEquals(array('id' => 2, 'name' => null), (array) $this->result->current());
+        $this->assertEquals(array('id' => null, 'name' => null), (array) $this->result->current());
         $this->result->next();
         $this->assertEquals(array('id' => 3, 'name' => 'Trixie'), (array) $this->result->current());
         $this->result->next();
@@ -39,6 +52,9 @@ abstract class ResultTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(null, $this->result->current());
     }
 
+    /**
+     * @covers ::key
+     */
     public function testKey()
     {
         $this->assertEquals(0, $this->result->key());
@@ -52,11 +68,14 @@ abstract class ResultTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(null, $this->result->key());
     }
 
+    /**
+     * @covers ::asArray
+     */
     public function testAsArray()
     {
         $expected = array(
             array('id' => 1, 'name' => 'Tinkerbell'),
-            array('id' => 2, 'name' => null),
+            array('id' => null, 'name' => null),
             array('id' => 3, 'name' => 'Trixie')
         );
 
@@ -66,40 +85,59 @@ abstract class ResultTest extends PHPUnit_Framework_TestCase
                 $this->assertEquals($value, $row->$column);
     }
 
+    /**
+     * @covers ::get
+     */
     public function testGet()
     {
         $this->assertEquals(1, $this->result->get('id'));
         $this->result->next();
-        $this->assertEquals(2, $this->result->get('id'));
+        $this->assertEquals(null, $this->result->get('id'));
         $this->result->next();
-        $this->assertEquals(3, $this->result->get('id'));
+        $this->assertEquals(3, $this->result->get());
         $this->result->next();
         $this->assertEquals(null, $this->result->get('id'));
         $this->result->next();
         $this->assertEquals(null, $this->result->get('id'));
     }
 
+    /**
+     * @covers ::getColumn
+     */
     public function testGetColumn()
     {
         $this->assertEquals(array('Tinkerbell', null, 'Trixie'), $this->result->getColumn('name'));
     }
 
+    /**
+     * @covers ::getColumn
+     */
     public function testGetColumnNulls()
     {
         $this->assertEquals(array('Tinkerbell',  'Trixie'), $this->result->getColumn('name', true));
     }
+    
+    /**
+     * @covers ::getColumn
+     */
+    public function testGetFirstColumn()
+    {
+        $this->assertEquals(array(1, null, 3), $this->result->getColumn());
+    }
 
+    /**
+     * @covers ::getColumn
+     */
+    public function testGetFirstColumnNulls()
+    {
+        $this->assertEquals(array(1, 3), $this->result->getColumn(null, true));
+    }
+    
+    
     protected function assertRewindException()
     {
+        $this->setExpectedException('\PHPixie\DB\Exception');
         $this->result->current();
         $this->result->rewind();
-        $except = false;
-        $this->result->next();
-        try {
-            $this->result->rewind();
-        } catch (\PHPixie\DB\Exception $e) {
-            $except = true;
-        }
-        $this->assertEquals(true, $except);
     }
 }

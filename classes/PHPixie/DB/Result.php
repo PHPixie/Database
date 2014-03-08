@@ -31,6 +31,7 @@ abstract class Result implements \Iterator
         foreach($this as $row)
             if ($column === null)
                 $column = key(get_object_vars($row));
+            
             if (isset($row->$column)) {
                 $values[] = $row->$column;
             }elseif(!$skipNulls)
