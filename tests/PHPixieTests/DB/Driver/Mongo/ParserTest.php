@@ -1,20 +1,25 @@
 <?php
+namespace PHPixieTests\DB\Driver\Mongo;
 
-class ParserTest extends PHPUnit_Framework_TestCase
+/**
+ * @coversDefaultClass \PHPixie\DB\Driver\Mongo\Parser
+ */
+class ParserTest extends \PHPixieTests\DB\ParserTest
 {
-    protected $parser;
-    protected $pixie;
+    protected $db;
 
     protected function setUp()
     {
-        $this->pixie = new \PHPixie\Pixie;
-        $this->pixie-> db = new \PHPixie\DB($this->pixie);
-        $driver = $this->pixie->db->driver('Mongo');
+        $this->db = new \PHPixie\DB(null);
+        $driver = $this->db->driver('Mongo');
         $operatorParser = new \PHPixie\DB\Driver\Mongo\Parser\Operator();
         $groupParser = new \PHPixie\DB\Driver\Mongo\Parser\Group($driver, $operatorParser);
-        $this->parser = new \PHPixie\DB\Driver\Mongo\Parser($this->pixie, $driver, 'default', $groupParser);
+        $this->parser = new \PHPixie\DB\Driver\Mongo\Parser($this->db, $driver, 'default', $groupParser);
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testParseSelect()
     {
         $query = $this->getQuery()->collection('fairies')
@@ -99,6 +104,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
         ));
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testParseInsert()
     {
         $query = $this->getQuery('insert')->collection('fairies')
@@ -117,6 +125,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
         ));
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testParseUpdate()
     {
         $query = $this->getQuery('update')->collection('fairies')
@@ -151,6 +162,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
         ));
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testParseDelete()
     {
         $query = $this->getQuery('delete')->collection('fairies')
@@ -184,6 +198,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testParseCount()
     {
         $query = $this->getQuery('count')->collection('fairies')
@@ -222,6 +239,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testException()
     {
         $this->assertException($this->getQuery('insert'));
@@ -234,26 +254,19 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
     protected function assertException($query)
     {
-        $except = false;
-        try {
-            $chain = $this->parser->parse($query)->getChain();
-        } catch (\PHPixie\DB\Exception\Parser $e) {
-            $except = true;
-        }
-
-        $this->assertEquals(true, $except);
+        $this->setExpectedException('\PHPixie\DB\Exception\Parser');
+        $this->parser->parse($query);
     }
 
     protected function assertQuery($query, $expect)
     {
         $chain = $this->parser->parse($query)->getChain();
-        //print_r($chain);
         $this->assertEquals($chain, $expect);
     }
 
     protected function getQuery($type = 'select')
     {
-        $query = new \PHPixie\DB\Driver\Mongo\Query($this->pixie->db, null, null, null, $type);
+        $query = new \PHPixie\DB\Driver\Mongo\Query($this->db, $this->db->conditions(), null, null, null, $type);
 
         return $query;
     }

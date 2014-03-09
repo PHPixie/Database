@@ -1,19 +1,21 @@
 <?php
-require_once(ROOT.'/vendor/phpixie/db/tests/db/DB/SQL/Parser/BaseSQLParserTest.php');
+namespace PHPixieTests\DB\SQL;
 
-abstract class SQLParserTest extends BaseSQLParserTest
+/**
+ * @coversDefaultClass \PHPixie\DB\SQL\Parser
+ */
+abstract class ParserTest extends AbstractParserTest
 {
-    protected $pixie;
+    protected $db;
     protected $parser;
     protected $expected;
 
     protected function setUp()
     {
-        $this->pixie = new \PHPixie\Pixie;
-        $this->pixie->db = new \PHPixie\DB($this->pixie);
+        $this->db = new \PHPixie\DB(null);
     }
 
-    public function queries()
+    protected function queries()
     {
         $queries = array(
             $this->query('select')->table('fairies'),
@@ -41,10 +43,10 @@ abstract class SQLParserTest extends BaseSQLParserTest
                                 ->union($this->query('select')->table('pixies'), true),
 
             $this->query('select')
-                                ->table($this->pixie->db->expr('test1', array(1)), 'b')
-                                ->join($this->pixie->db->expr('test2', array(2)), 'c', 'left_outer')
+                                ->table($this->db->expr('test1', array(1)), 'b')
+                                ->join($this->db->expr('test2', array(2)), 'c', 'left_outer')
                                 ->on('b.id', 'c.id')
-                                ->union($this->pixie-> db->expr('test3', array(3))),
+                                ->union($this->db->expr('test3', array(3))),
 
             $this->query('update')
                                 ->table('fairies')
@@ -88,6 +90,9 @@ abstract class SQLParserTest extends BaseSQLParserTest
         return $queries;
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testParse()
     {
         foreach ($this->queries() as $key => $query) {

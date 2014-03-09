@@ -1,18 +1,24 @@
 <?php
 
-class MongoGroupTest extends PHPUnit_Framework_TestCase
+namespace PHPixieTests\DB\Driver\Mongo\Parser;
+
+/**
+ * @coversDefaultClass \PHPixie\DB\Driver\Mongo\Parser\Group
+ */
+class GroupTest extends \PHPUnit_Framework_TestCase
 {
-    protected $pixie;
     protected $groupParser;
 
     protected function setUp()
     {
-        $this->pixie = new \PHPixie\Pixie;
-        $this->pixie->db = new \PHPixie\DB($this->pixie);
+        $this->db = new \PHPixie\DB(null);
         $operatorParser = new \PHPixie\DB\Driver\Mongo\Parser\Operator();
-        $this->groupParser = new \PHPixie\DB\Driver\Mongo\Parser\Group($this->pixie->db->driver('Mongo'), $operatorParser);
+        $this->groupParser = new \PHPixie\DB\Driver\Mongo\Parser\Group($this->db->driver('Mongo'), $operatorParser);
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testParseSimple()
     {
         $builder = $this->getBuilder()
@@ -105,6 +111,9 @@ class MongoGroupTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testParseNegate()
     {
         $builder = $this->getBuilder()
@@ -114,9 +123,11 @@ class MongoGroupTest extends PHPUnit_Framework_TestCase
             'a' => 1,
             'c' => array('$ne'=>2)
         ));
-
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testParsePrecedance()
     {
         $builder = $this->getBuilder()
@@ -183,7 +194,7 @@ class MongoGroupTest extends PHPUnit_Framework_TestCase
 
     protected function getBuilder()
     {
-        $builder = new \PHPixie\DB\Conditions\Builder($this->pixie->db);
+        $builder = new \PHPixie\DB\Conditions\Builder($this->db->conditions());
 
         return $builder;
     }

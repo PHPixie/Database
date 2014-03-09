@@ -5,7 +5,7 @@ namespace PHPixieTests;
 /**
  * @coversDefaultClass \PHPixie\DB
  */
-class DBTest extends PHPUnit_Framework_TestCase
+class DBTest extends \PHPUnit_Framework_TestCase
 {
     protected $config;
     protected $db;
@@ -13,7 +13,7 @@ class DBTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->config = $this->sliceStub();
-        $this->db = new PHPixie\DB($this->config);
+        $this->db = new \PHPixie\DB($this->config);
     }
 
     /**
@@ -22,7 +22,7 @@ class DBTest extends PHPUnit_Framework_TestCase
     public function testExpr()
     {
         $expr = $this->db->expr();
-        $this->assertInstanceOf('PHPixie\DB\SQL\Expression', $expr);
+        $this->assertInstanceOf('\PHPixie\DB\SQL\Expression', $expr);
         $this->assertEquals('', $expr->sql);
         $this->assertEquals(array(), $expr->params);
         $expr = $this->db->expr('pixie');
@@ -41,7 +41,7 @@ class DBTest extends PHPUnit_Framework_TestCase
     {
         foreach (array('PDO', 'Mongo') as $driverName) {
             $driver = $this->db->driver($driverName);
-            $this->assertInstanceOf('PHPixie\DB\Driver\\'.$driverName, $driver);
+            $this->assertInstanceOf('\PHPixie\DB\Driver\\'.$driverName, $driver);
             $this->assertAttributeEquals($this->db,'db',$driver);
             $driver2 = $this->db->driver($driverName);
             $this->assertEquals($driver, $driver2);
@@ -54,13 +54,10 @@ class DBTest extends PHPUnit_Framework_TestCase
      */
     public function testGet()
     {
-        $slice = $this->sliceStub();
-        $slice
-                ->expects($this->any())
-                ->method('get')
-                ->with ('driver')
-                ->will($this->returnValue('PDO'));
-
+        $slice = $this->sliceStub(array(
+            'driver' => '\PDO',
+        ));
+        
         $this->config
                     ->expects($this->at(0))
                     ->method('slice')
@@ -73,7 +70,7 @@ class DBTest extends PHPUnit_Framework_TestCase
                     ->with ('test')
                     ->will($this->returnValue($slice));
         
-        $db = $this->getMock('\PHPixie\DB', array('driver'), array(null));
+        $db = $this->getMock('\PHPixie\DB', array('driver'), array($this->config));
         $driver = $this->getMock('\PHPixie\DB\Driver\PDO', array('buildConnection'), array($db));
 
         $conn1 = new \stdClass;
@@ -82,13 +79,13 @@ class DBTest extends PHPUnit_Framework_TestCase
         $driver
             ->expects($this->at(0))
             ->method('buildConnection')
-            ->with('default', $slice1)
+            ->with('default', $slice)
             ->will($this->returnValue($conn1));
 
         $driver
             ->expects($this->at(1))
             ->method('buildConnection')
-            ->with('test', $slice2)
+            ->with('test', $slice)
             ->will($this->returnValue($conn2));
 
         $db
@@ -144,7 +141,7 @@ class DBTest extends PHPUnit_Framework_TestCase
     public function testConditions()
     {
         $conditions = $this->db->conditions();
-        $this->assertInstanceOf('PHPixie\DB\Conditions', $conditions);
+        $this->assertInstanceOf('\PHPixie\DB\Conditions', $conditions);
         $this->assertEquals($conditions, $this->db->conditions());
     }
     

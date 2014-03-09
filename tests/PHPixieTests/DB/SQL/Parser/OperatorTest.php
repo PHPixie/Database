@@ -1,27 +1,22 @@
 <?php
+namespace PHPixieTests\DB\SQL\Parser;
 
-require_once(ROOT.'/vendor/phpixie/db/tests/db/DB/SQL/Parser/BaseSQLParserTest.php');
-abstract class SQLOperatorTest extends BaseSQLParserTest
+/**
+ * @coversDefaultClass \PHPixie\DB\SQL\Parser\Operator
+ */
+abstract class OperatorTest extends \PHPixieTests\DB\SQL\AbstractParserTest
 {
-    protected $expected;
     protected $db;
     protected $operatorParser;
 
     public function setUp()
     {
-        $pixie = new \PHPixie\Pixie;
-        $this->db = $pixie->db = new \PHPixie\DB($pixie);
+        $this->db = new \PHPixie\DB(null);
     }
 
-    public function testParse()
-    {
-        foreach ($this->conditions() as $key => $condition) {
-            $parsed = $this->operatorParser->parse($condition);
-            $this->assertEquals($this->expected[$key][0], $parsed->sql);
-            $this->assertEquals($this->expected[$key][1], $parsed->params);
-        }
-    }
-
+    /**
+     * @covers ::parse
+     */
     public function testExceptions()
     {
         foreach ($this->exceptionConditions() as $condition) {

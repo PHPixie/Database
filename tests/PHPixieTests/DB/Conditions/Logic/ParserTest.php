@@ -31,13 +31,13 @@ class ParserStub extends \PHPixie\DB\Conditions\Logic\Parser
 /**
  * @coversDefaultClass \PHPixie\DB\Conditions\Logic\Parser
  */
-class LogicParserTest extends PHPUnit_Framework_TestCase
+class ParserTest extends \PHPUnit_Framework_TestCase
 {
     protected $parser;
 
     public function setUp()
     {
-        $this->parser = new LogicParserStub();
+        $this->parser = new ParserStub();
     }
 
     /**
@@ -83,7 +83,7 @@ class LogicParserTest extends PHPUnit_Framework_TestCase
 
     protected function condition($name, $logic)
     {
-        $cond = new stdClass;
+        $cond = new \stdClass;
         $cond->name = $name;
         $cond->logic = $logic;
 

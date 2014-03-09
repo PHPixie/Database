@@ -5,7 +5,7 @@ namespace PHPixieTests\DB\Conditions;
 /**
  * @coversDefaultClass \PHPixie\DB\Conditions\Builder
  */
-class BuilderTest extends PHPUnit_Framework_TestCase
+class BuilderTest extends \PHPUnit_Framework_TestCase
 {
     protected $builder;
     protected $conditions;
@@ -74,7 +74,7 @@ class BuilderTest extends PHPUnit_Framework_TestCase
                     ->addCondition('or', false, array(function ($builder) {
                         $builder->_or('a', 1);
                     }))
-                    ->startGroup('and_not')
+                    ->startGroup('andNot')
                         ->addCondition('and', true, array('a', 1))
                     ->endGroup();
 

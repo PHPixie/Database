@@ -1,7 +1,10 @@
 <?php
+namespace PHPixieTests\DB\SQL\Parser;
 
-require_once(ROOT.'/vendor/phpixie/db/tests/db/DB/SQL/Parser/BaseSQLParserTest.php');
-abstract class SQLGroupTest extends BaseSQLParserTest
+/**
+ * @coversDefaultClass \PHPixie\DB\SQL\Parser\Group
+ */
+abstract class GroupTest extends \PHPixieTests\DB\SQL\AbstractParserTest
 {
     protected $db;
     protected $groupParser;
@@ -9,11 +12,10 @@ abstract class SQLGroupTest extends BaseSQLParserTest
 
     public function setUp()
     {
-        $pixie = new \PHPixie\Pixie;
-        $this->db = $pixie-> db = new \PHPixie\DB($pixie);
+        $this->db = new \PHPixie\DB(null);
     }
 
-    public function groups()
+    protected function groups()
     {
         $groups = array(
             $this->builder()->_and('a',1)->getConditions(),
@@ -39,6 +41,10 @@ abstract class SQLGroupTest extends BaseSQLParserTest
 
         return $groups;
     }
+    
+    /**
+     * @covers ::parse
+     */
     public function testParse()
     {
         foreach ($this->groups() as $key => $group) {
@@ -47,6 +53,9 @@ abstract class SQLGroupTest extends BaseSQLParserTest
         }
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testExceptions()
     {
         foreach ($this->exceptionGroups() as $group) {
@@ -71,7 +80,7 @@ abstract class SQLGroupTest extends BaseSQLParserTest
 
     protected function builder()
     {
-        return new PHPixie\DB\Conditions\Builder($this->db);
+        return new \PHPixie\DB\Conditions\Builder($this->db->conditions());
     }
 
 }

@@ -4,7 +4,7 @@ namespace PHPixieTests\DB;
 /**
  * @coversDefaultClass \PHPixie\DB\Result
  */
-abstract class ResultTest extends PHPUnit_Framework_TestCase
+abstract class ResultTest extends \PHPUnit_Framework_TestCase
 {
     protected $result;
 

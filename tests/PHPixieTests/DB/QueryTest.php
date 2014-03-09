@@ -31,8 +31,9 @@ class BuilderStub
 /**
  * @coversDefaultClass \PHPixie\DB\Query
  */
-abstract class QueryTest extends PHPUnit_Framework_TestCase
+abstract class QueryTest extends \PHPUnit_Framework_TestCase
 {
+    protected $conditionsMock;
     protected $db;
     protected $query;
     protected $parser;
@@ -41,19 +42,19 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $conditionsMock = $this->getMock('\PHPixie\DB\Conditions', array('builder'));
-        $conditionsMock
+        $this->conditionsMock = $this->getMock('\PHPixie\DB\Conditions', array('builder'));
+        $this->conditionsMock
                 ->expects($this->any())
                 ->method('builder')
                 ->will($this->returnCallback(function () {
                     return $this->builder;
                 }));
         
-        $this->db = $this->getMock('\PHPixie\DB', array('conditions'), array($this->pixie));
+        $this->db = $this->getMock('\PHPixie\DB', array('conditions'), array(null));
         $this->db
                 ->expects($this->any())
                 ->method('conditions')
-                ->will($this->returnValue($conditionsMock));
+                ->will($this->returnValue($this->conditionsMock));
         
         $this->parser = $this->mockParser();
         $this->query = $this->query();
@@ -138,7 +139,7 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase
      * @covers ::where
      * @covers ::orWhere
      * @covers ::xorWhere
-     * @covers ::whereNot
+     * @covers ::andWhereNot
      * @covers ::orWhereNot
      * @covers ::xorWhereNot
      * @covers ::startWhereGroup
@@ -167,7 +168,7 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase
      * @covers ::_and
      * @covers ::_or
      * @covers ::_xor
-     * @covers ::_not
+     * @covers ::_andNot
      * @covers ::_orNot
      * @covers ::_xorNot
      * @covers ::startGroup
@@ -187,9 +188,9 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase
     
     protected function getSetTest($method, $param, $default = null)
     {
-        $this->assertEquals($default, call_user_func_array(array($this->query, 'get_'.$method), array()));
+        $this->assertEquals($default, call_user_func_array(array($this->query, 'get'.ucfirst($method)), array()));
         $this->assertEquals($this->query, call_user_func_array(array($this->query, $method), array($param)));
-        $this->assertEquals($param, call_user_func_array(array($this->query, 'get_'.$method), array()));
+        $this->assertEquals($param, call_user_func_array(array($this->query, 'get'.ucfirst($method)), array()));
     }
 
     protected function builderTest($name, $testGet = true)
@@ -256,7 +257,12 @@ abstract class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('or', $builder->startGroupLogic);
         $this->assertEquals(true, $builder->endGroupCalled);
     }
-
+    
+    protected function assertBuilderException($callback) {
+        $this->setExpectedException('\PHPixie\DB\Exception\Builder');
+        $callback();
+    }
+    
     abstract public function testExecute();
     abstract protected function query();
 }

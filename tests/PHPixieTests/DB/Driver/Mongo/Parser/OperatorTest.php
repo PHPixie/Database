@@ -1,6 +1,11 @@
 <?php
 
-class MongoOperatorTest extends PHPUnit_Framework_TestCase
+namespace PHPixieTests\DB\Driver\Mongo\Parser;
+
+/**
+ * @coversDefaultClass \PHPixie\DB\Driver\Mongo\Parser\Operator
+ */
+class OperatorTest extends \PHPUnit_Framework_TestCase
 {
     protected $parser;
 
@@ -9,6 +14,9 @@ class MongoOperatorTest extends PHPUnit_Framework_TestCase
         $this->parser = new \PHPixie\DB\Driver\Mongo\Parser\Operator;
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testParseSimple()
     {
         $operators = array(
@@ -51,6 +59,9 @@ class MongoOperatorTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testParseNegated()
     {
         $operators = array(
@@ -84,9 +95,11 @@ class MongoOperatorTest extends PHPUnit_Framework_TestCase
             ),
             'between', true, array(3,4)
         );
-
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testIn()
     {
         $this->assertOperator(array('p' => array('$in' => array(6))), 'in', false,  array(array(6)));
@@ -95,6 +108,9 @@ class MongoOperatorTest extends PHPUnit_Framework_TestCase
         $this->assertOperator(array('p' => array('$nin' => array(6))), 'not in', false,  array(array(6)));
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testRegex()
     {
         $operator = new \PHPixie\DB\Conditions\Condition\Operator('p', 'regex', array('/la/'));
@@ -130,6 +146,9 @@ class MongoOperatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('MongoRegex', get_class(current($parsed)));
     }
 
+    /**
+     * @covers ::parse
+     */
     public function testException()
     {
         $this->assertException('between', 6);

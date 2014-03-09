@@ -1,4 +1,7 @@
 <?php
+
+namespace PHPixieTests\DB\Driver\Mongo\Query;
+
 class MongoRunnerStub
 {
     public $a;
@@ -19,7 +22,10 @@ class MongoRunnerConnectionTestStub extends \PHPixie\DB\Driver\Mongo\Connection
     }
 }
 
-class MongoRunnerTest extends PHPUnit_Framework_TestCase
+/**
+ * @coversDefaultClass \PHPixie\DB\Driver\Mongo\Query\Runner
+ */
+class RunnerTest extends \PHPUnit_Framework_TestCase
 {
     protected $runner;
     public function setUp()
@@ -27,6 +33,9 @@ class MongoRunnerTest extends PHPUnit_Framework_TestCase
         $this->runner = new \PHPixie\DB\Driver\Mongo\Query\Runner();
     }
 
+    /**
+     * @covers ::chain
+     */
     public function testChain()
     {
         $this->runner->chainProperty('a');
@@ -51,6 +60,9 @@ class MongoRunnerTest extends PHPUnit_Framework_TestCase
         ),$this->runner->getChain());
     }
 
+    /**
+     * @covers ::run
+     */
     public function testRun()
     {
         $this->runner->chainProperty('a');

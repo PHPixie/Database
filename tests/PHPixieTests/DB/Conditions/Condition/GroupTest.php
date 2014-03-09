@@ -1,15 +1,15 @@
 <?php
 
-namespace PHPixieTest\DB\Conditions\Condition;
+namespace PHPixieTests\DB\Conditions\Condition;
 
 /**
  * @coversDefaultClass \PHPixie\DB\Conditions\Condition\Group
  */
-class GroupTest extends PHPixieTest\DB\Conditions\ConditionTest
+class GroupTest extends \PHPixieTests\DB\Conditions\ConditionTest
 {
     protected function setUp()
     {
-        $this->condition = new PHPixie\DB\Conditions\Condition\Group();
+        $this->condition = new \PHPixie\DB\Conditions\Condition\Group();
     }
 
     /**
@@ -57,6 +57,6 @@ class GroupTest extends PHPixieTest\DB\Conditions\ConditionTest
 
     protected function condition()
     {
-        return new PHPixie\DB\Conditions\Condition\Operator('a', '=', 1);
+        return new \PHPixie\DB\Conditions\Condition\Operator('a', '=', 1);
     }
 }

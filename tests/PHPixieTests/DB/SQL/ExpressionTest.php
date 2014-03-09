@@ -1,6 +1,10 @@
 <?php
+namespace PHPixieTests\DB\SQL;
 
-class SQLExpressionTest extends PHPUnit_Framework_TestCase
+/**
+ * @coversDefaultClass \PHPixie\DB\SQL\Expression
+ */
+class ExpressionTest extends \PHPUnit_Framework_TestCase
 {
     protected $expr;
 
@@ -15,7 +19,10 @@ class SQLExpressionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array(1), $this->expr->params);
     }
 
-    public function testMerge()
+    /**
+     * @covers ::append
+     */
+    public function testAppend()
     {
         $expr = new \PHPixie\DB\SQL\Expression('b', array(2));
         $expr = $this->expr->append($expr);

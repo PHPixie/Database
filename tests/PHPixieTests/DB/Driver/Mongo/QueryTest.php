@@ -1,6 +1,10 @@
 <?php
-require_once(ROOT.'/vendor/phpixie/db/tests/db/DB/QueryTest.php');
-class MongoQueryTest extends QueryTest
+namespace PHPixieTests\DB\Driver\Mongo;
+
+/**
+ * @coversDefaultClass \PHPixie\DB\Driver\Mongo\Query
+ */
+class QueryTest extends \PHPixieTests\DB\QueryTest
 {
     public function setUp()
     {
@@ -10,7 +14,7 @@ class MongoQueryTest extends QueryTest
 
     protected function query()
     {
-        return new \PHPixie\DB\Driver\Mongo\Query($this->pixie->db ,$this->connection, $this->parser, null, 'select');
+        return new \PHPixie\DB\Driver\Mongo\Query($this->db, $this->db->conditions(), $this->connection, $this->parser, null, 'select');
     }
 
     protected function mockParser()
@@ -23,6 +27,9 @@ class MongoQueryTest extends QueryTest
         $this->getSetTest('collection', 'fairies');
     }
 
+    /**
+     * @covers ::execute
+     */
     public function testExecute()
     {
         $query = $this->query();

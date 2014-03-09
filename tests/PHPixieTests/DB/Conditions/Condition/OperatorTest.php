@@ -1,15 +1,15 @@
 <?php
 
-namespace PHPixieTest\DB\Conditions\Condition;
+namespace PHPixieTests\DB\Conditions\Condition;
 
 /**
  * @coversDefaultClass \PHPixie\DB\Conditions\Condition\Operator
  */
-class OperatorTest extends PHPixieTest\DB\Conditions\ConditionTest
+class OperatorTest extends \PHPixieTests\DB\Conditions\ConditionTest
 {
     protected function setUp()
     {
-        $this->condition = new PHPixie\DB\Conditions\Condition\Operator('a', '=', array(1));
+        $this->condition = new \PHPixie\DB\Conditions\Condition\Operator('a', '=', array(1));
     }
 
     public function testProperties()

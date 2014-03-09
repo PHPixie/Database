@@ -1,6 +1,5 @@
 <?php
-
-require_once(ROOT.'/vendor/phpixie/db/tests/db/DB/ConnectionTest.php');
+namespace PHPixieTests\DB\Driver\Mongo;
 
 class MongoConnectionTestStub extends \PHPixie\DB\Driver\Mongo\Connection
 {
@@ -17,15 +16,17 @@ class MongoConnectionTestStub extends \PHPixie\DB\Driver\Mongo\Connection
     }
 }
 
-class MongoConnectionTest extends ConnectionTest
+/**
+ * @coversDefaultClass \PHPixie\DB\Driver\Mongo\Connection
+ */
+abstract class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
 {
     protected $pixie;
     protected $queryClass = 'PHPixie\DB\Driver\Mongo\Query';
     public function setUp()
     {
-        $this->pixie = new \PHPixie\Pixie;
-        $this->pixie-> db = $this->getMock('\PHPixie\DB', array('get'), array($this->pixie));
-        $this->config = new \PHPixie\Config\Slice($this->pixie, 'test', array(
+        $this->db = $this->getMock('\PHPixie\DB', array('get'), array(null));
+        $this->config = $this->sliceStub(array(
             'connection' => 'mongodb://test:555/',
             'user'   => 'pixie',
             'password' => 5,
@@ -33,15 +34,18 @@ class MongoConnectionTest extends ConnectionTest
                 'connect'    =>  false
             )
         ));
-        $this->driver = $this->getMock('\PHPixie\DB\Driver\Mongo', array('result'), array($this->pixie->db));
+        $this->driver = $this->getMock('\PHPixie\DB\Driver\Mongo', array('result'), array($this->db));
         $this->connection = new MongoConnectionTestStub($this->driver, 'test', $this->config);
-        $this->pixie-> db
+        $this-> db
                         ->expects($this->any())
                         ->method('get')
                         ->with ('test')
                         ->will($this->returnValue($this->connection));
     }
 
+    /**
+     * @covers ::run
+     */
     public function testRunCursor()
     {
         $runner = $this->getMock('\PHPixie\DB\Driver\Mongo\Query\Runner');
@@ -59,6 +63,9 @@ class MongoConnectionTest extends ConnectionTest
         $this->assertEquals(1, $this->connection->run($runner));
     }
 
+    /**
+     * @covers ::run
+     */
     public function testRunRaw()
     {
         $runner = $this->getMock('\PHPixie\DB\Driver\Mongo\Query\Runner');
@@ -70,12 +77,19 @@ class MongoConnectionTest extends ConnectionTest
         $this->assertEquals(5, $this->connection->run($runner));
     }
 
+    /**
+     * @covers ::setInsertId
+     * @covers ::getInsertId
+     */
     public function testSetGetInsertId()
     {
         $this->connection->setInsertId(5);
         $this->assertEquals(5, $this->connection->insertId());
     }
 
+    /**
+     * @covers ::client
+     */
     public function testClient()
     {
         $this->assertAttributeEquals($this->connection->client(), 'client', $this->connection);
@@ -83,23 +97,20 @@ class MongoConnectionTest extends ConnectionTest
 
     public function testNoConnectionException()
     {
-        $this->assertPixieException(function () {
-            $config = new \PHPixie\Config\Slice($this->pixie, 'test', array());
-            $connection = new PDOConnectionTestStub($this->pixie->db->driver('PDO'), 'test', $config);
-        });
+        $this->setExpectedException('\PHPixie\DB\Exception');
+        $connection = new PDOConnectionTestStub($this->pixie->db->driver('PDO'), 'test', $this->sliceStub());
     }
 
     public function testWrongOptionsException()
     {
-        $this->assertDBException(function () {
-            $config = new \PHPixie\Config\Slice($this->pixie, 'test', array(
-                'connection' => 'mongodb://test:555/',
-                'user'   => 'pixie',
-                'password' => 5,
-                'connection_options' => 5
-            ));
-            $connection = new \PHPixie\DB\Driver\Mongo\Connection($this->pixie->db->driver('PDO'), 'test', $config);
-        });
+        $this->setExpectedException('\PHPixie\DB\Exception');
+        $config = $this->sliceStub(array(
+            'connection' => 'mongodb://test:555/',
+            'user'   => 'pixie',
+            'password' => 5,
+            'connection_options' => 5
+        ));
+        $connection = new \PHPixie\DB\Driver\Mongo\Connection($this->db->driver('PDO'), 'test', $config);
     }
 
 }

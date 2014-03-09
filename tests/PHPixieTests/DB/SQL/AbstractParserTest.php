@@ -1,6 +1,7 @@
 <?php
+namespace PHPixieTests\DB\SQL;
 
-abstract class BaseSQLParserTest extends PHPUnit_Framework_TestCase
+abstract class AbstractParserTest extends \PHPUnit_Framework_TestCase
 {
     protected function assertExpression($expr, $expected)
     {

@@ -4,7 +4,7 @@ namespace PHPixieTests\DB\Conditions;
 /**
  * @coversDefaultClass \PHPixie\DB\Conditions\Condition
  */
-abstract class ConditionTest extends PHPUnit_Framework_TestCase
+abstract class ConditionTest extends \PHPUnit_Framework_TestCase
 {
     protected $condition;
 

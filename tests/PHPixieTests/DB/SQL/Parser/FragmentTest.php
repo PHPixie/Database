@@ -1,7 +1,10 @@
 <?php
-require_once(ROOT.'/vendor/phpixie/db/tests/db/DB/SQL/Parser/BaseSQLParserTest.php');
+namespace PHPixieTests\DB\SQL\Parser;
 
-abstract class SQLFragmentTest extends BaseSQLParserTest
+/**
+  * @coversDefaultClass \PHPixie\DB\SQL\Parser\Fragment
+ */
+abstract class FragmentTest extends \PHPixieTests\DB\SQL\AbstractParserTest
 {
     protected $db;
     protected $fragmentParser;
@@ -11,10 +14,12 @@ abstract class SQLFragmentTest extends BaseSQLParserTest
 
     public function setUp()
     {
-        $pixie = new \PHPixie\Pixie;
-        $this->db = $pixie->db = new \PHPixie\DB($pixie);
+        $this->db = new \PHPixie\DB(null);
     }
 
+    /**
+     * @covers ::quote
+     */
     public function testQuote()
     {
         $this->assertEquals($this->quoted, $this->fragmentParser->quote('a'));
@@ -32,6 +37,9 @@ abstract class SQLFragmentTest extends BaseSQLParserTest
         return $columns;
     }
 
+    /**
+     * @covers ::appendColumn
+     */
     public function testAppendColumn()
     {
         foreach ($this->columns() as $key => $column) {
@@ -53,6 +61,9 @@ abstract class SQLFragmentTest extends BaseSQLParserTest
         return $tables;
     }
 
+    /**
+     * @covers ::appendTable
+     */
     public function testAppendTable()
     {
         foreach ($this->tables() as $key => $table) {
@@ -73,6 +84,9 @@ abstract class SQLFragmentTest extends BaseSQLParserTest
         return $values;
     }
 
+    /**
+     * @covers ::appendValue
+     */
     public function testAppendValue()
     {
         foreach ($this->values() as $key => $value) {

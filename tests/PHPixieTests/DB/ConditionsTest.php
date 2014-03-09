@@ -5,7 +5,7 @@ namespace PHPixieTests\DB;
 /**
  * @coversDefaultClass \PHPixie\DB\Conditions
  */
-class ConditionsTest extends PHPUnit_Framework_TestCase
+class ConditionsTest extends \PHPUnit_Framework_TestCase
 {
     protected $conditions;
 
@@ -42,6 +42,10 @@ class ConditionsTest extends PHPUnit_Framework_TestCase
     {
         $placeholder = $this->conditions->placeholder();
         $this->assertInstanceOf('PHPixie\DB\Conditions\Condition\Placeholder', $placeholder);
+        $this->assertAttributeEquals('=', 'defaultOperator', $placeholder->builder());
+        
+        $placeholder = $this->conditions->placeholder('>');
+        $this->assertAttributeEquals('>', 'defaultOperator', $placeholder->builder());
     }
     
     /**
