@@ -18,4 +18,5 @@ class MysqlTest extends \PHPixieTests\DB\Driver\PDO\AdapterTest
                         ->will($this->returnValue(null));
         $this->adapter = new \PHPixie\DB\Driver\PDO\Adapter\Mysql('test', $this->connection);
     }
+    
 }

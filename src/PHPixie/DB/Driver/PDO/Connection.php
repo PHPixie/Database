@@ -11,9 +11,9 @@ class Connection extends \PHPixie\DB\Connection
     {
         parent::__construct($driver, $name, $config);
 
-        $options = $config->get('connection_options', array());
+        $options = $config->get('connectionOptions', array());
         if (!is_array($options))
-            throw new \PHPixie\DB\Exception("PDO 'connection_options' configuration parameter must be an array");
+            throw new \PHPixie\DB\Exception("PDO 'connectionOptions' configuration parameter must be an array");
 
         $this->pdo = $this->connect(
             $config->get('connection'),

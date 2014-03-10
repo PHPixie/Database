@@ -10,22 +10,28 @@ abstract class Parser
         'or'  => 0
     );
 
-    protected function expandGroup(&$group, $level = 0)
+    protected function parseLogicLevel($iterator, $level = 0)
     {
-        $current = current($group);
+        $current = $iterator->current();
         $res = $this->normalize($current);
-
+        
         while (true) {
-            if (($next = next($group)) === false)
+            if ($iterator->offsetExists($iterator->key()+1)) {
+                $iterator->seek($iterator->key()+1);
+                $next = $iterator->current();
+            }else {
                 break;
-
+            }
+            
             if ($this->logicPrecedance[$next->logic] < $level) {
-                prev($group);
+                $iterator->seek($iterator->key()-1);
                 break;
             }
 
-            $right = $this->expandGroup($group, $this->logicPrecedance[$next->logic]+1);
-            $res = $this->merge($res, $right);
+            $right = $this->parseLogicLevel($iterator, $this->logicPrecedance[$next->logic] + 1);
+            
+            if ($right !== null)
+                $res = $this->merge($res, $right);
 
             $current = $next;
         }
@@ -33,6 +39,14 @@ abstract class Parser
         return $res;
     }
 
+    protected function parseLogic($group) {
+        if (empty($group))
+            return null;
+        
+        $iterator = new \ArrayIterator($group);
+        return $this->parseLogicLevel($iterator);
+    }
+    
     abstract protected function normalize($condition);
     abstract protected function merge($left, $right);
 

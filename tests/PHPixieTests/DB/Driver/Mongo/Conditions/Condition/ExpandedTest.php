@@ -5,7 +5,7 @@ namespace PHPixieTests\DB\Driver\Mongo\Conditions\Condition;
 /**
  * @coversDefaultClass \PHPixie\DB\Driver\Mongo\Conditions\Condition\Expanded
  */
-class ExpandedTest extends \PHPUnit_Framework_TestCase
+class ExpandedTest extends \PHPixieTests\AbstractDBTest
 {
     protected $expanded;
 
@@ -13,19 +13,22 @@ class ExpandedTest extends \PHPUnit_Framework_TestCase
     {
         $this->expanded = $this->getExpanded();
     }
-
+    
     /**
+     * @covers ::__construct
      * @covers ::add
      * @covers ::negate
      * @covers ::groups
+     * @covers ::<protected>
+     * @covers ::__clone
      */
     public function testSimpleOptimization()
     {
         $a = $this->getOperator('a');
         $b = $this->getOperator('b');
         $c = $this->getOperator('c');
-        $exp1 = $this->getExpanded();
-        $exp1->add($a)->add($b);
+        $exp1 = $this->getExpanded($a);
+        $exp1->add($b);
         $exp2 = $this->getExpanded();
         $exp2->add($c)->add($b);
         $this->expanded->add($exp1)->add($exp2, 'or');
@@ -38,6 +41,8 @@ class ExpandedTest extends \PHPUnit_Framework_TestCase
      * @covers ::add
      * @covers ::negate
      * @covers ::groups
+     * @covers ::<protected>
+     * @covers ::__clone
      */
     public function testAdd()
     {
@@ -85,6 +90,8 @@ class ExpandedTest extends \PHPUnit_Framework_TestCase
      * @covers ::add
      * @covers ::negate
      * @covers ::groups
+     * @covers ::<protected>
+     * @covers ::__clone
      */
     public function testNegate()
     {
@@ -158,6 +165,29 @@ class ExpandedTest extends \PHPUnit_Framework_TestCase
 
         return $parsed;
     }
+    
+    public function testClone() {
+        $exp1 = $this->getExpanded($this->getOperator('a'));
+        $exp2 = clone $exp1;
+    }
+    
+    /**
+     * @covers ::add
+     */
+    public function testAddOperatorException() {
+        $this->setExpectedException('\PHPixie\DB\Exception\Parser');
+        $this->expanded->add(array());
+    }
+
+    /**
+     * @covers ::add
+     */
+    public function testAddLogicException() {
+        $this->setExpectedException('\PHPixie\DB\Exception\Parser');
+        $this->expanded->add($this->getOperator('a'));
+        $this->expanded->add($this->getOperator('b'), 'xor');
+    }
+
     protected function assertGroup($expected, $expanded = null)
     {
         if ($expanded == null)
@@ -176,9 +206,9 @@ class ExpandedTest extends \PHPUnit_Framework_TestCase
                         ->getMock();
     }
 
-    protected function getExpanded()
+    protected function getExpanded($operator = null)
     {
-        return new \PHPixie\DB\Driver\Mongo\Conditions\Condition\Expanded;
+        return new \PHPixie\DB\Driver\Mongo\Conditions\Condition\Expanded($operator);
     }
 
 }

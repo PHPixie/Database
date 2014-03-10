@@ -19,6 +19,7 @@ class ParserTest extends \PHPixieTests\DB\ParserTest
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testParseSelect()
     {
@@ -72,7 +73,8 @@ class ParserTest extends \PHPixieTests\DB\ParserTest
                         'name' => 1
                     ),
                     array(
-                        'id', 'name'
+                        'id' => true,
+                        'name' => true
                     )
                 )
             ),
@@ -102,10 +104,41 @@ class ParserTest extends \PHPixieTests\DB\ParserTest
                 'args' => array (array(), array())
             )
         ));
+        
+        $query = $this->getQuery()->collection('fairies')
+                                    ->orderBy('name', 'asc')
+                                    ->orderBy('id', 'desc')
+                                    ->limit(1);
+
+        $this->assertQuery($query, array (
+            array (
+                'type' => 'property',
+                'name' => 'fairies',
+            ),
+            array (
+                'type' => 'method',
+                'name' => 'find',
+                'args' => array (array(), array())
+            ),
+            array(
+                'type' => 'method',
+                'name' => 'sort',
+                'args' => array(array(
+                    'name' => 1,
+                    'id' => -1
+                )
+            )),
+            array(
+                'type' => 'method',
+                'name' => 'limit',
+                'args' => array(1)
+            ),
+        ));
     }
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testParseInsert()
     {
@@ -127,6 +160,7 @@ class ParserTest extends \PHPixieTests\DB\ParserTest
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testParseUpdate()
     {
@@ -164,6 +198,7 @@ class ParserTest extends \PHPixieTests\DB\ParserTest
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testParseDelete()
     {
@@ -200,6 +235,7 @@ class ParserTest extends \PHPixieTests\DB\ParserTest
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testParseCount()
     {
@@ -241,11 +277,14 @@ class ParserTest extends \PHPixieTests\DB\ParserTest
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testException()
     {
+        $this->assertException($this->getQuery('pixie'));
         $this->assertException($this->getQuery('insert'));
         $this->assertException($this->getQuery('select'));
+        $this->assertException($this->getQuery('select')->collection('fairies')->fields(array('pixie' => 'test')));
         $this->assertException($this->getQuery('insert')->data(array('id'=>1)));
         $this->assertException($this->getQuery('insert')->collection('fairies'));
         $this->assertException($this->getQuery('update')->collection('fairies'));
@@ -254,8 +293,13 @@ class ParserTest extends \PHPixieTests\DB\ParserTest
 
     protected function assertException($query)
     {
-        $this->setExpectedException('\PHPixie\DB\Exception\Parser');
-        $this->parser->parse($query);
+        $except = false;
+        try {
+            $this->parser->parse($query);
+        }catch (\PHPixie\DB\Exception\Parser $e) {
+            $except = true;
+        }
+        $this->assertEquals(true, $except);
     }
 
     protected function assertQuery($query, $expect)

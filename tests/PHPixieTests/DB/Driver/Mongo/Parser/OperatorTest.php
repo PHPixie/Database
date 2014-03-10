@@ -5,7 +5,7 @@ namespace PHPixieTests\DB\Driver\Mongo\Parser;
 /**
  * @coversDefaultClass \PHPixie\DB\Driver\Mongo\Parser\Operator
  */
-class OperatorTest extends \PHPUnit_Framework_TestCase
+class OperatorTest extends \PHPixieTests\AbstractDBTest
 {
     protected $parser;
 
@@ -15,7 +15,9 @@ class OperatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::__construct
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testParseSimple()
     {
@@ -60,7 +62,9 @@ class OperatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::__construct
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testParseNegated()
     {
@@ -99,6 +103,7 @@ class OperatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testIn()
     {
@@ -110,6 +115,7 @@ class OperatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testRegex()
     {
@@ -148,6 +154,7 @@ class OperatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testException()
     {

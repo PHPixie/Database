@@ -1,8 +1,8 @@
 <?php
-namespace PHPixieTests\DB\Driver\PDO\Adapters\Mysql;
+namespace PHPixieTests\DB\Driver\PDO\Adapter\Mysql;
 
 /**
- * @coversDefaultClass \PHPixie\DB\Driver\PDO\Adapters\Mysql\Parser
+ * @coversDefaultClass \PHPixie\DB\Driver\PDO\Adapter\Mysql\Parser
  */
 class ParserTest extends \PHPixieTests\DB\Driver\PDO\ParserTest
 {
@@ -10,6 +10,7 @@ class ParserTest extends \PHPixieTests\DB\Driver\PDO\ParserTest
 
     protected $expected = array(
         array("SELECT * FROM `fairies`", array()),
+        array("SELECT `id`, `pixie` AS `test` FROM `fairies`", array()),
         array("SELECT * FROM `fairies` WHERE `a` = ? OR ( `b` = ? XOR `c` = ? ) AND `d` = ?", array(1, 1, 1, 1)),
         array("SELECT * FROM `fairies` WHERE `a` = ? GROUP BY `id`, `name` HAVING `b` = ? ORDER BY `id` DESC, `name` ASC LIMIT 7 OFFSET 9", array(1, 1)),
         array("SELECT * FROM ( SELECT * FROM `fairies` ) AS `b` INNER JOIN `pixies` ON `b`.`id` = `pixies`.`id` UNION ALL SELECT * FROM `pixies`", array()),

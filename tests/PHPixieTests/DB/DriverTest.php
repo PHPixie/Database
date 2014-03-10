@@ -4,7 +4,7 @@ namespace PHPixieTests\DB;
 /**
  * @coversDefaultClass \PHPixie\DB\Driver
  */
-abstract class DriverTest extends \PHPUnit_Framework_TestCase
+abstract class DriverTest extends \PHPixieTests\AbstractDBTest
 {
     protected $driver;
     protected $connectionStub;
@@ -22,7 +22,7 @@ abstract class DriverTest extends \PHPUnit_Framework_TestCase
     {
         $parser = $this->driver->parser('test');
         $this->assertEquals($parser, $this->driver->parser('test'));
-        $this->assertEquals($this->parserClass, get_class($parser));
+        $this->assertInstanceOf($this->parserClass, $parser);
     }
 
     /**
@@ -31,21 +31,10 @@ abstract class DriverTest extends \PHPUnit_Framework_TestCase
     public function testQuery()
     {
         $query = $this->driver->query('delete', 'test');
-        $this->assertEquals($this->queryClass, get_class($query));
+        $this->assertInstanceOf($this->queryClass, $query);
         $this->assertAttributeEquals($this->connectionStub, 'connection', $query);
         $this->assertAttributeEquals('config', 'config', $query);
         $this->assertAttributeInstanceOf($this->parserClass, 'parser', $query);
     }
     
-    protected function sliceStub($data) {
-        $slice = $this->getMock('\PHPixie\Config\Slice', array('slice', 'get'), array(), '', false);
-        foreach($data as $key => $value)
-            $slice
-                ->expects($this->any())
-                ->method('get')
-                ->with ($key)
-                ->will($this->returnValue($value));
-        return $slice;
-    }
-
 }

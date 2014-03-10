@@ -1,25 +1,10 @@
 <?php
 namespace PHPixieTests\DB\Driver\Mongo;
 
-class MongoConnectionTestStub extends \PHPixie\DB\Driver\Mongo\Connection
-{
-    protected function connect($connection, $options)
-    {
-        if ($connection !== 'mongodb://test:555/' || $options !== array(
-            'connect'  => false,
-            'username' => 'pixie',
-            'password' => 5
-        ))
-            throw new \Exception("Actual parameters differ from expected ones");
-
-        return new \stdClass;
-    }
-}
-
 /**
  * @coversDefaultClass \PHPixie\DB\Driver\Mongo\Connection
  */
-abstract class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
+class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
 {
     protected $pixie;
     protected $queryClass = 'PHPixie\DB\Driver\Mongo\Query';
@@ -30,12 +15,12 @@ abstract class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
             'connection' => 'mongodb://test:555/',
             'user'   => 'pixie',
             'password' => 5,
-            'connection_options' => array(
+            'connectionOptions' => array(
                 'connect'    =>  false
             )
         ));
         $this->driver = $this->getMock('\PHPixie\DB\Driver\Mongo', array('result'), array($this->db));
-        $this->connection = new MongoConnectionTestStub($this->driver, 'test', $this->config);
+        $this->connection = new \PHPixie\DB\Driver\Mongo\Connection($this->driver, 'test', $this->config);
         $this-> db
                         ->expects($this->any())
                         ->method('get')
@@ -45,6 +30,7 @@ abstract class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
 
     /**
      * @covers ::run
+     * @covers ::connect
      */
     public function testRunCursor()
     {
@@ -79,7 +65,7 @@ abstract class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
 
     /**
      * @covers ::setInsertId
-     * @covers ::getInsertId
+     * @covers ::insertId
      */
     public function testSetGetInsertId()
     {
@@ -95,20 +81,17 @@ abstract class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
         $this->assertAttributeEquals($this->connection->client(), 'client', $this->connection);
     }
 
-    public function testNoConnectionException()
-    {
-        $this->setExpectedException('\PHPixie\DB\Exception');
-        $connection = new PDOConnectionTestStub($this->pixie->db->driver('PDO'), 'test', $this->sliceStub());
-    }
-
+    /**
+     * @covers ::__construct
+     */
     public function testWrongOptionsException()
     {
         $this->setExpectedException('\PHPixie\DB\Exception');
         $config = $this->sliceStub(array(
-            'connection' => 'mongodb://test:555/',
+            'connectionOptions' => 5,
             'user'   => 'pixie',
             'password' => 5,
-            'connection_options' => 5
+            'connection' => 'mongodb://test:555/',
         ));
         $connection = new \PHPixie\DB\Driver\Mongo\Connection($this->db->driver('PDO'), 'test', $config);
     }

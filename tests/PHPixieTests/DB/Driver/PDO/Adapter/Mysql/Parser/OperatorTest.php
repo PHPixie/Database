@@ -1,8 +1,8 @@
 <?php
-namespace PHPixieTests\DB\Driver\PDO\Adapters\Mysql\Parser;
+namespace PHPixieTests\DB\Driver\PDO\Adapter\Mysql\Parser;
 
 /**
- * @coversDefaultClass \PHPixie\DB\Driver\PDO\Adapters\Mysql\Parser\Operator
+ * @coversDefaultClass \PHPixie\DB\Driver\PDO\Adapter\Mysql\Parser\Operator
  */
 class OperatorTest extends \PHPixieTests\DB\SQL\Parser\OperatorTest
 {

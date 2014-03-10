@@ -11,9 +11,9 @@ class PDO extends \PHPixie\DB\Driver
 
     public function buildParserInstance($connectionName)
     {
-        $connection      = $this->db->get($connectionName);
+        $connection     = $this->db->get($connectionName);
         $adapterName    = $connection->adapterName();
-        $config          = $connection->config();
+        $config         = $connection->config();
         $fragmentParser = $this->fragmentParser($adapterName);
         $operatorParser = $this->operatorParser($adapterName, $fragmentParser);
         $groupParser    = $this->groupParser($adapterName, $operatorParser);

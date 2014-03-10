@@ -4,7 +4,7 @@ namespace PHPixieTests\DB\SQL;
 /**
  * @coversDefaultClass \PHPixie\DB\SQL\Expression
  */
-class ExpressionTest extends \PHPUnit_Framework_TestCase
+class ExpressionTest extends \PHPixieTests\AbstractDBTest
 {
     protected $expr;
 

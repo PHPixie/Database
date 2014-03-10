@@ -14,12 +14,6 @@ class Result extends \PHPixie\DB\Result
         $this->statement = $statement;
     }
 
-    public function checkFetched()
-    {
-        if (!$this->fetched)
-            $this->next();
-    }
-
     public function current()
     {
         $this->checkFetched();
@@ -46,6 +40,30 @@ class Result extends \PHPixie\DB\Result
 
     public function next()
     {
+        $this->checkFetched();
+        $this->fetchNext();
+    }
+
+    public function rewind()
+    {
+        if ($this->position > 0)
+            throw new \PHPixie\DB\Exception("PDO statement cannot be rewound for unbuffered queries");
+    }
+
+    public function statement()
+    {
+        return $this->statement;
+    }
+    
+    protected function checkFetched()
+    {
+        if (!$this->fetched) {
+            $this->fetchNext();
+            $this->fetched = true;
+        }
+    }
+
+    protected function fetchNext() {
         $this->current = $this->statement->fetchObject();
         $this->fetched = true;
         if ($this->current !== false) {
@@ -59,16 +77,4 @@ class Result extends \PHPixie\DB\Result
             $this->statement->closeCursor();
         }
     }
-
-    public function rewind()
-    {
-        if ($this->position > 0)
-            throw new \PHPixie\DB\Exception("PDO statement cannot be rewound for unbuffered queries");
-    }
-
-    protected function statement()
-    {
-        return $this->statement;
-    }
-
 }

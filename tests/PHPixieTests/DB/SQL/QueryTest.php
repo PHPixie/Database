@@ -116,11 +116,12 @@ abstract class QueryTest extends \PHPixieTests\DB\QueryTest
      * @covers ::having
      * @covers ::orHaving
      * @covers ::xorHaving
-     * @covers ::andHavingNot
+     * @covers ::havingNot
      * @covers ::orHavingNot
      * @covers ::xorHavingNot
      * @covers ::startHavingGroup
      * @covers ::endHavingGroup
+     * @covers ::addCondition
      */
     public function testHaving()
     {
@@ -131,9 +132,11 @@ abstract class QueryTest extends \PHPixieTests\DB\QueryTest
      * @covers ::on
      * @covers ::orOn
      * @covers ::xorOn
-     * @covers ::andOnNot
+     * @covers ::onNot
      * @covers ::orOnNot
      * @covers ::xorOnNot
+     * @covers ::addOnCondition
+     * @covers ::lastOnBuilder
      * @covers ::startOnGroup
      * @covers ::endOnGroup
      */
@@ -201,6 +204,16 @@ abstract class QueryTest extends \PHPixieTests\DB\QueryTest
     }
 
     /**
+     * @covers ::getHavingConditions
+     * @covers ::getHavingBuilder
+     * @covers ::getConditions
+     */
+    public function testHavingBuilder() 
+    {
+        $this->checkBuilderAccess('having', $this->builder);
+    }
+    
+    /**
      * @covers ::_and
      * @covers ::_or
      * @covers ::_xor
@@ -209,40 +222,33 @@ abstract class QueryTest extends \PHPixieTests\DB\QueryTest
      * @covers ::_xorNot
      * @covers ::startGroup
      * @covers ::endGroup
+     * @covers ::addCondition
      */
-    public function testGenericBuilder()
+    public function testMultipleGenericBuilder()
     {
-        $whereBuilder = new BuilderStub();
-        $havingBuilder = new BuilderStub();
-        $onBuilder1 = new BuilderStub();
-        $onBuilder2 = new BuilderStub();
-        $this->conditionsMock = $this->getMock('\PHPixie\DB\Conditions', array('builder'));
+        $whereBuilder = $this->builderStub();
+        $havingBuilder = $this->builderStub();
+        $onBuilder1 = $this->builderStub();
+        $onBuilder2 = $this->builderStub();
+        $this->conditionsMock = $this->quickMock('\PHPixie\DB\Conditions', array('builder'));
         $this->conditionsMock
                     ->expects($this->at(0))
                     ->method('builder')
-                    ->will($this->returnCallback(function () use ($whereBuilder) {
-                        return $whereBuilder;
-                    }));
+                    ->will($this->returnValue($whereBuilder));
         $this->conditionsMock
                     ->expects($this->at(1))
                     ->method('builder')
-                    ->will($this->returnCallback(function () use ($havingBuilder) {
-                        return $havingBuilder;
-                    }));
-
+                    ->will($this->returnValue($havingBuilder));
+                    
         $this->conditionsMock
                     ->expects($this->at(2))
                     ->method('builder')
-                    ->will($this->returnCallback(function () use ($onBuilder1) {
-                        return $onBuilder1;
-                    }));
+                    ->will($this->returnValue($onBuilder1));
 
         $this->conditionsMock
                     ->expects($this->at(3))
                     ->method('builder')
-                    ->will($this->returnCallback(function () use ($onBuilder2) {
-                        return $onBuilder2;
-                    }));
+                    ->will($this->returnValue($onBuilder2));
 
         $this->assertBuilderException(function () {
             $this->query->_and('a', 1);

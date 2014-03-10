@@ -73,6 +73,15 @@ abstract class FragmentTest extends \PHPixieTests\DB\SQL\AbstractParserTest
         }
     }
 
+    /**
+     * @covers ::appendTable
+     */
+    public function testAppendTableException()
+    {
+        $this->setExpectedException('\PHPixie\DB\Exception\Parser');
+       $this->fragmentParser->appendTable(new \stdClass, null);
+    }
+    
     protected function values()
     {
         $values = array(

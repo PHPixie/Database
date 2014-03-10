@@ -21,7 +21,7 @@ class MongoTest extends \PHPixieTests\DB\DriverTest
         $this->db
                 ->expects($this->any())
                 ->method('parser')
-                ->with ('connection_name')
+                ->with('connectionName')
                 ->will($this->returnValue('parser'));
 
         $this->connectionStub
@@ -137,8 +137,9 @@ class MongoTest extends \PHPixieTests\DB\DriverTest
     public function testBuildConnection()
     {
         $config = $this->sliceStub(array(
-            'connection' => 'mongodb://test:555',
-            'connectionOptions' => array('connect' => false)
+            'connectionOptions' => array('connect' => false),
+            'user' => null,
+            'password' => null,
         ));
         
         $connection = $this->driver->buildConnection('connectionName', $config);

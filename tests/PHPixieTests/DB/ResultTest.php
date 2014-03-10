@@ -4,7 +4,7 @@ namespace PHPixieTests\DB;
 /**
  * @coversDefaultClass \PHPixie\DB\Result
  */
-abstract class ResultTest extends \PHPUnit_Framework_TestCase
+abstract class ResultTest extends \PHPixieTests\AbstractDBTest
 {
     protected $result;
 
@@ -112,13 +112,14 @@ abstract class ResultTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::getColumn
      */
-    public function testGetColumnNulls()
+    public function testGetColumnNoNulls()
     {
         $this->assertEquals(array('Tinkerbell',  'Trixie'), $this->result->getColumn('name', true));
     }
     
     /**
      * @covers ::getColumn
+     * @covers ::firstColumnName
      */
     public function testGetFirstColumn()
     {
@@ -127,6 +128,7 @@ abstract class ResultTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::getColumn
+     * @covers ::firstColumnName
      */
     public function testGetFirstColumnNulls()
     {
@@ -137,7 +139,7 @@ abstract class ResultTest extends \PHPUnit_Framework_TestCase
     protected function assertRewindException()
     {
         $this->setExpectedException('\PHPixie\DB\Exception');
-        $this->result->current();
+        $this->result->next();
         $this->result->rewind();
     }
 }

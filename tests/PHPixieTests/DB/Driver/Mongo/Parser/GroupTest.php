@@ -5,7 +5,7 @@ namespace PHPixieTests\DB\Driver\Mongo\Parser;
 /**
  * @coversDefaultClass \PHPixie\DB\Driver\Mongo\Parser\Group
  */
-class GroupTest extends \PHPUnit_Framework_TestCase
+class GroupTest extends \PHPixieTests\AbstractDBTest
 {
     protected $groupParser;
 
@@ -18,6 +18,8 @@ class GroupTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
+     * @covers ::__construct
      */
     public function testParseSimple()
     {
@@ -108,11 +110,25 @@ class GroupTest extends \PHPUnit_Framework_TestCase
                         )
                     )
         ));
-
+        
+        $builder = $this->getBuilder()->_and(function($builder) {
+            $builder->_and(function(){});
+        });
+        $this->assertGroup($builder, array());
+        
+        $builder = $this->getBuilder()->_and(function($builder) {
+            $builder
+                    ->_and('a', 1)
+                    ->_and(function($builder) {
+                        $builder->_and(function(){});
+                    });
+        });
+        $this->assertGroup($builder, array('a' => 1));
     }
-
+    
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testParseNegate()
     {
@@ -127,6 +143,7 @@ class GroupTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testParsePrecedance()
     {

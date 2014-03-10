@@ -17,6 +17,7 @@ class GroupTest extends \PHPixieTests\DB\Conditions\ConditionTest
      * @covers ::addOr
      * @covers ::addXor
      * @covers ::add
+     * @covers ::conditions
      */
     public function testGroup()
     {
@@ -40,10 +41,13 @@ class GroupTest extends \PHPixieTests\DB\Conditions\ConditionTest
 
     /**
      * @covers ::setConditions
+     * @covers ::conditions
      */
     public function testSetConditions()
     {
-        throw new \Exception("Not implemented");
+        $conditions = array('test');
+        $this->condition->setConditions($conditions);
+        $this->assertEquals($conditions, $this->condition->conditions());
     }
 
     /**

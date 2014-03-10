@@ -4,10 +4,9 @@ namespace PHPixie\DB;
 
 class Conditions
 {
-    public function placeholder($defaultOperator = '=')
+    public function placeholder($defaultOperator = '=', $allowEmpty = true)
     {
-        $builder = $this->builder($defaultOperator);
-        return new Conditions\Condition\Placeholder($builder);
+        return new Conditions\Condition\Placeholder($this, $defaultOperator, $allowEmpty);
     }
 
     public function operator($field, $operator, $values)

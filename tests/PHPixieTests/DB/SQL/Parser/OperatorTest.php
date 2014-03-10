@@ -4,7 +4,7 @@ namespace PHPixieTests\DB\SQL\Parser;
 /**
  * @coversDefaultClass \PHPixie\DB\SQL\Parser\Operator
  */
-abstract class OperatorTest extends \PHPixieTests\DB\SQL\AbstractParserTest
+abstract class OperatorTest extends \PHPixieTests\DB\Parser\OperatorTest
 {
     protected $db;
     protected $operatorParser;
@@ -16,6 +16,7 @@ abstract class OperatorTest extends \PHPixieTests\DB\SQL\AbstractParserTest
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testExceptions()
     {
@@ -45,6 +46,8 @@ abstract class OperatorTest extends \PHPixieTests\DB\SQL\AbstractParserTest
         return $conditions;
     }
 
+
+    
     protected function conditions()
     {
         $conditions = array(
@@ -75,6 +78,17 @@ abstract class OperatorTest extends \PHPixieTests\DB\SQL\AbstractParserTest
     protected function operator($field, $operator, $values)
     {
         return new \PHPixie\DB\Conditions\Condition\Operator($field, $operator, $values);
+    }
+    
+    protected function queryStub($sql, $params = array())
+    {
+        $query = $this->getMock('\PHPixie\DB\Driver\PDO\Query', array('parse'), array(), '', false);
+        $query
+            ->expects($this->any())
+            ->method('parse')
+            ->will($this->returnValue($this->db->expr($sql, $params)));
+
+        return $query;
     }
 
 }

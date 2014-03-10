@@ -77,7 +77,7 @@ abstract class Query extends \PHPixie\DB\Query
         return $this->lastUsedBuilder;
     }
 
-    public function addOnCondition($args, $logic = 'and', $negate = false)
+    protected function addOnCondition($args, $logic = 'and', $negate = false)
     {
         $this->lastUsedBuilder = $this->lastOnBuilder();
         $this->lastUsedBuilder->addCondition($logic, $negate, $args);
@@ -85,6 +85,14 @@ abstract class Query extends \PHPixie\DB\Query
         return $this;
     }
 
+    public function getHavingBuilder() {
+        return $this->conditionBuilder('having');
+    }
+    
+    public function getHavingConditions() {
+        return $this->getConditions('having');
+    }
+    
     public function having()
     {
         return $this->addCondition(func_get_args(), 'and', false, 'having');

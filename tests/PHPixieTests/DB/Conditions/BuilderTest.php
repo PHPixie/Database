@@ -5,7 +5,7 @@ namespace PHPixieTests\DB\Conditions;
 /**
  * @coversDefaultClass \PHPixie\DB\Conditions\Builder
  */
-class BuilderTest extends \PHPUnit_Framework_TestCase
+class BuilderTest extends \PHPixieTests\AbstractDBTest
 {
     protected $builder;
     protected $conditions;
@@ -17,6 +17,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::__construct
      * @covers ::_and
      * @covers ::_or
      * @covers ::_xor
@@ -24,6 +25,10 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
      * @covers ::_orNot
      * @covers ::_xorNot
      * @covers ::addCondition
+     * @covers ::getConditions
+     * @covers ::addSubgroup
+     * @covers ::addToCurrent
+     * @covers ::pushGroup
      */
     public function testConditions()
     {
@@ -61,6 +66,9 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::addCondition
+     * @covers ::getConditions
+     * @covers ::addSubgroup
+     * @covers ::addToCurrent
      */
     public function testAddCondition()
     {
@@ -97,17 +105,36 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::addCondition
+     */
+    public function testAddConditionException()
+    {
+        $this->setExpectedException('\PHPixie\DB\Exception\Builder');
+        $this->builder->addCondition('and', true, array());
+    }
+    
+    /**
      * @covers ::addOperatorCondition
+     * @covers ::getConditions
+     * @covers ::addSubgroup
+     * @covers ::addToCurrent
      */
     public function testAddOperatorCondition()
     {
-        throw new \Exception('todo');
+        $this->builder->addOperatorCondition('or', true, 'test', '>', array(5));
+        $this->assertConditions(array(
+            array('or', true, 'test', '>', array(5))
+        ));
     }
 
     /**
      * @covers ::addOperatorCondition
      * @covers ::startGroup
      * @covers ::endGroup
+     * @covers ::getConditions
+     * @covers ::addSubgroup
+     * @covers ::addToCurrent
+     * @covers ::pushGroup
      */
     public function testNested()
     {
@@ -138,13 +165,24 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
             ))
         ));
     }
-
+    
+    /**
+     * @covers ::addPlaceholder
+     */
+    public function testAddPlaceholder() {
+        $placeholder = $this->builder->addPlaceholder('or', true, false);
+        $this->assertEquals('or', $placeholder->logic());
+        $this->assertEquals(true, $placeholder->negated());
+        $this->assertAttributeEquals(false, 'allowEmpty', $placeholder);
+    }
+    
     /**
      * @covers ::startGroup
+     * @covers ::addSubgroup
      */
     public function testStartGroupException()
     {
-        $this->setExpectedException('\PHPixie\DB\Exception');
+        $this->setExpectedException('\PHPixie\DB\Exception\Builder');
         $this->builder->startGroup('test');
     }
 
@@ -153,7 +191,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testEndGroupException()
     {
-        $this->setExpectedException('\PHPixie\DB\Exception');
+        $this->setExpectedException('\PHPixie\DB\Exception\Builder');
         $this->builder->endGroup();
     }
 
@@ -162,31 +200,30 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testNestedEndGroupException()
     {
-        $this->setExpectedException('\PHPixie\DB\Exception');
+        $this->setExpectedException('\PHPixie\DB\Exception\Builder');
         $this->builder->startGroup('and')->endGroup()->endGroup();
     }
 
     /**
      * @covers ::addCondition
+     * @covers ::addToCurrent
      */
     public function testSingleArgumentException()
     {
-        $this->setExpectedException('\PHPixie\DB\Exception');
+        $this->setExpectedException('\PHPixie\DB\Exception\Builder');
         $this->builder->_and('a');
     }
 
     /**
      * @covers ::addCondition
+     * @covers ::addToCurrent
      */
-    public function noArgumentsException()
+    public function testNoArgumentsException()
     {
-        $this->setExpectedException('\PHPixie\DB\Exception');
+        $this->setExpectedException('\PHPixie\DB\Exception\Builder');
         $this->builder->_and();
     }
 
-    /**
-     * @covers ::getConditions
-     */
     protected function assertConditions($expected)
     {
         $this->assertConditionArray($this->builder->getConditions(), $expected);

@@ -27,29 +27,35 @@ class Parser extends \PHPixie\DB\Parser
             case 'count':
                 return $this->countQuery($query, $runner);
             default:
-                throw new \Exception("Query type $type is not supported");
+                throw new \PHPixie\DB\Exception\Parser("Query type '{$query->getType()}' is not supported");
         }
     }
 
-    public function selectQuery($query, $runner)
+    protected function selectQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
         $fields = $query->getFields();
-        $conditions = $this->groupParser->parse($query->getConditions('where'));
+        $conditions = $this->groupParser->parse($query->getWhereConditions());
         $limit = $query->getLimit();
         $offset = $query->getOffset();
         $orderBy = $query->getOrderBy();
-
+        
+        $fieldKeys = array();
+        foreach($fields as $key => $field) {
+            if (!is_numeric($key))
+                throw new \PHPixie\DB\Exception\Parser("Field aliases are not supported for MongoDB queries.");
+            $fieldKeys[$field] = true;
+        }
+        
         if (empty($offset) && $limit === 1 && empty($orderBy)) {
-            $runner->chainMethod('findOne', array($conditions, $fields));
+            $runner->chainMethod('findOne', array($conditions, $fieldKeys));
         } else {
-            $runner->chainMethod('find', array($conditions, $fields));
-
+            $runner->chainMethod('find', array($conditions, $fieldKeys));
             if (!empty($orderBy)) {
                 $ordering =  array();
                 foreach ($orderBy as $order) {
                     list($column, $dir) = $order;
-                    $ordering[$column] = $dir == 'asc' ? 1 : -1;
+                    $ordering[$column] = $dir === 'asc' ? 1 : -1;
                 }
                 $runner->chainMethod('sort', array($ordering));
             }
@@ -64,7 +70,7 @@ class Parser extends \PHPixie\DB\Parser
         return $runner;
     }
 
-    public function insertQuery($query, $runner)
+    protected function insertQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
         $data = $query->getData();
@@ -76,32 +82,32 @@ class Parser extends \PHPixie\DB\Parser
         return $runner;
     }
 
-    public function updateQuery($query, $runner)
+    protected function updateQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
         $data = $query->getData();
         if ($data === null)
             throw new \PHPixie\DB\Exception\Parser("No data set for update");
 
-        $conditions = $this->groupParser->parse($query->getConditions('where'));
+        $conditions = $this->groupParser->parse($query->getWhereConditions());
         $runner->chainMethod('update', array($conditions, $data, array('multiple' => true)));
 
         return $runner;
     }
 
-    public function deleteQuery($query, $runner)
+    protected function deleteQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
-        $conditions = $this->groupParser->parse($query->getConditions('where'));
+        $conditions = $this->groupParser->parse($query->getWhereConditions());
         $runner->chainMethod('remove', array($conditions));
 
         return $runner;
     }
 
-    public function countQuery($query, $runner)
+    protected function countQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
-        $conditions = $this->groupParser->parse($query->getConditions('where'));
+        $conditions = $this->groupParser->parse($query->getWhereConditions());
         if (!empty($conditions))
             $runner->chainMethod('find', array($conditions));
         $runner->chainMethod('count');

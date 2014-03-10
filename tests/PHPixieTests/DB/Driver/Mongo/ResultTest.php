@@ -1,28 +1,27 @@
 <?php
 namespace PHPixieTests\DB\Driver\Mongo;
 
-class MongoResultCursorStub extends \ArrayObject
-{
-}
-
 /**
  * @coversDefaultClass \PHPixie\DB\Driver\Mongo\Result
  */
 class ResultTest extends \PHPixieTests\DB\ResultTest
 {
+    protected $cursorStub;
+    
     public function setUp()
     {
-        $cursor = new MongoResultCursorStub(array(
+        $cursorStub = new \ArrayObject(array(
             (object) array('id' => 1, 'name' => 'Tinkerbell'),
             (object) array('id' => null, 'name' => null),
             (object) array('id' => 3, 'name' => 'Trixie')
         ));
-        $cursor = $cursor->getIterator();
-        $this->result = new \PHPixie\DB\Driver\Mongo\Result($cursor);
+        $this->cursorStub = $cursorStub->getIterator();
+        $this->result = new \PHPixie\DB\Driver\Mongo\Result($this->cursorStub);
     }
 
     /**
      * @covers ::rewind
+     * @covers ::__construct
      */
     public function testRewind()
     {
@@ -37,6 +36,14 @@ class ResultTest extends \PHPixieTests\DB\ResultTest
         $this->result->next();
         $this->result->next();
         $this->testGetColumn();
+    }
+    
+    /**
+     * @covers ::cursor
+     */
+    public function testCursor()
+    {
+        $this->assertEquals($this->cursorStub, $this->result->cursor());
     }
 
 }

@@ -117,7 +117,7 @@ abstract class Query
     {
         if ($name === null) {
             if ($this->lastUsedBuilder === null)
-                throw new \PHPixie\DB\Exception\Builder("No builder ");
+                throw new \PHPixie\DB\Exception\Builder("None of the condition builders were used");
 
             return $this->lastUsedBuilder;
         }
@@ -130,7 +130,7 @@ abstract class Query
         return $this->lastUsedBuilder;
     }
 
-    public function getConditions($name)
+    protected function getConditions($name)
     {
         if (!isset($this->conditionBuilders[$name]))
             return array();
@@ -138,27 +138,35 @@ abstract class Query
         return $this->conditionBuilders[$name]->getConditions();
     }
 
-    public function addCondition($args, $logic = 'and', $negate = false, $builderName = null)
+    protected function addCondition($args, $logic = 'and', $negate = false, $builderName = null)
     {
         $this->conditionBuilder($builderName)->addCondition($logic, $negate, $args);
 
         return $this;
     }
 
-    public function startConditionGroup($logic = 'and', $builderName = null)
+    protected function startConditionGroup($logic = 'and', $builderName = null)
     {
         $this->conditionBuilder($builderName)->startGroup($logic);
 
         return $this;
     }
 
-    public function endConditionGroup($builderName = null)
+    protected function endConditionGroup($builderName = null)
     {
         $this->conditionBuilder($builderName)->endGroup();
 
         return $this;
     }
 
+    public function getWhereBuilder() {
+        return $this->conditionBuilder('where');
+    }
+    
+    public function getWhereConditions() {
+        return $this->getConditions('where');
+    }
+    
     public function where()
     {
         return $this->addCondition(func_get_args(), 'and', false, 'where');

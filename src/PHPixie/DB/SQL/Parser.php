@@ -59,9 +59,9 @@ abstract class Parser extends \PHPixie\DB\Parser
         }
 
         $this->appendJoins($query, $expr);
-        $this->appendConditions('where', $query->getConditions('where'), $expr);
+        $this->appendConditions('where', $query->getWhereConditions(), $expr);
         $this->appendGroupBy($query, $expr);
-        $this->appendConditions('having', $query->getConditions('having'), $expr);
+        $this->appendConditions('having', $query->getHavingConditions(), $expr);
         $this->appendOrderBy($query, $expr);
         $this->appendLimitOffset($query, $expr);
         $this->appendUnion($query, $expr);
@@ -82,7 +82,7 @@ abstract class Parser extends \PHPixie\DB\Parser
         $this->appendTable($query, $expr, true);
         $this->appendJoins($query, $expr);
         $this->appendUpdateValues($query, $expr);
-        $this->appendConditions('where', $query->getConditions('where'), $expr);
+        $this->appendConditions('where', $query->getWhereConditions(), $expr);
         $this->appendOrderBy($query, $expr);
         $this->appendLimitOffset($query, $expr);
 
@@ -95,7 +95,7 @@ abstract class Parser extends \PHPixie\DB\Parser
 
         $this->appendTable($query, $expr, true);
         $this->appendJoins($query, $expr);
-        $this->appendConditions('where', $query->getConditions('where'), $expr);
+        $this->appendConditions('where', $query->getWhereConditions(), $expr);
         $this->appendOrderBy($query, $expr);
         $this->appendLimitOffset($query, $expr);
 
@@ -115,7 +115,7 @@ abstract class Parser extends \PHPixie\DB\Parser
         $expr->sql .= " FROM ";
         $this->appendTable($query, $expr, true);
         $this->appendJoins($query, $expr);
-        $this->appendConditions('where', $query->getConditions('where'), $expr);
+        $this->appendConditions('where', $query->getWhereConditions(), $expr);
     }
 
     protected function appendTable($query, $expr, $required = false)
@@ -223,7 +223,7 @@ abstract class Parser extends \PHPixie\DB\Parser
         }
     }
 
-    public function appendOrderBy($query, $expr)
+    protected function appendOrderBy($query, $expr)
     {
         $orderBy = $query->getOrderBy();
 
@@ -245,7 +245,7 @@ abstract class Parser extends \PHPixie\DB\Parser
         }
     }
 
-    public function appendLimitOffset($query, $expr)
+    protected function appendLimitOffset($query, $expr)
     {
         $limit = $query->getLimit();
         $offset = $query->getOffset();
@@ -257,7 +257,7 @@ abstract class Parser extends \PHPixie\DB\Parser
             $expr->sql.=" OFFSET $offset";
     }
 
-    public function appendUnion($query, $expr)
+    protected function appendUnion($query, $expr)
     {
         foreach ($query->getUnions() as $union) {
             list($subselect, $all) = $union;
@@ -288,14 +288,15 @@ abstract class Parser extends \PHPixie\DB\Parser
         }
 
         $first = true;
-        foreach ($query->getFields() as $field) {
-            if ($first) {
+        foreach ($query->getFields() as $key => $field) {
+            if (!$first) {
                 $expr->sql.= ', ';
+            }else
                 $first = false;
-            }
-            if (is_array($field)) {
-                $this->fragmentParser->appendColumn($field[0], $expr);
-                $expr->sql.=" AS ".$this->fragmentParser->quote($field[1]);
+            
+            if (!is_numeric($key)) {
+                $this->fragmentParser->appendColumn($field, $expr);
+                $expr->sql.=" AS ".$this->fragmentParser->quote($key);
             } else {
                 $this->fragmentParser->appendColumn($field, $expr);
             }

@@ -5,7 +5,7 @@ class PDOConnectionTestStub extends \PHPixie\DB\Driver\PDO\Connection
 {
     protected function connect($connection, $user, $password, $options)
     {
-        if (substr($connection, 0, 7) != 'sqlite:' || $user != 'test' || $password != 5 || $options !== array('some_option' => 5))
+        if (substr($connection, 0, 7) != 'sqlite:' || $user != 'test' || $password != 5 || $options !== array('someOption' => 5))
             throw new \Exception("Parameters don't match expected");
 
         return parent::connect($connection, $user, $password, array());
@@ -18,9 +18,9 @@ class PDOConnectionTestStub extends \PHPixie\DB\Driver\PDO\Connection
 }
 
 /**
- * @coversDefaultClass \PHPixie\DB\Driver\PDO\Adapter
+ * @coversDefaultClass \PHPixie\DB\Driver\PDO\Connection
  */
-abstract class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
+class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
 {
     protected $dbFile;
     protected $config;
@@ -30,7 +30,7 @@ abstract class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
     public function setUp()
     {
         $this->dbFile = tempnam(sys_get_temp_dir(), 'test.sqlite');
-        $this->config = $this->getSlice(array(
+        $this->config = $this->sliceStub(array(
             'connection' => 'sqlite:'.$this->dbFile,
             'user'       => 'test',
             'password'   =>  5,
@@ -40,7 +40,7 @@ abstract class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
             ))
         );
         $this->db = $this->getMock('\PHPixie\DB', array('get'), array(null));
-        $reflection = new ReflectionClass("\PHPixie\DB\Driver\PDO\Connection");
+        $reflection = new \ReflectionClass("\PHPixie\DB\Driver\PDO\Connection");
         $this->pdoProperty = $reflection->getProperty('pdo');
         $this->pdoProperty->setAccessible(true);
 
@@ -74,13 +74,10 @@ abstract class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
      */
     public function testInsertId()
     {
-        $this->assertDBException(function () {
-            $this->connection->insertId();
-        });
         $this->connection->execute("INSERT INTO fairies(id,name) VALUES (1,'Tinkerbell')");
         $this->assertEquals(1, $this->connection->insertId());
     }
-
+    
     /**
      * @covers ::listColumns
      */
@@ -105,17 +102,12 @@ abstract class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
         $this->assertEquals('Sqlite', $this->connection->adapterName());
     }
 
-    public function testNoConnectionException()
-    {
-        $this->setExpectedException('\PHPixie\DB\Exception');
-        $connection = new PDOConnectionTestStub($this->db->driver('PDO'), 'test', $this->sliceStub());
-    }
-
     /**
      * @covers ::execute
      */
     public function testException()
     {
+        $this->setExpectedException('\Exception');
         $this->connection->execute('pixie');
     }
 
@@ -126,7 +118,7 @@ abstract class ConnectionTest extends \PHPixieTests\DB\ConnectionTest
             'connection' => 'sqlite:'.$this->dbFile,
             'user'   => 'pixie',
             'password' => 5,
-            'connection_options' => 5
+            'connectionOptions' => 5
         ));
         $connection = new \PHPixie\DB\Driver\Mongo\Connection($this->db->driver('PDO'), 'test', $config);
     }

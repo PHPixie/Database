@@ -4,7 +4,7 @@ namespace PHPixieTests\DB\Driver\PDO;
 /**
  * @coversDefaultClass \PHPixie\DB\Driver\PDO\Adapter
  */
-abstract class AdapterTest extends \PHPUnit_Framework_TestCase{
+abstract class AdapterTest extends \PHPixieTests\AbstractDBTest{
     protected $adapter;
     protected $connection;
     protected $result;
@@ -23,6 +23,7 @@ abstract class AdapterTest extends \PHPUnit_Framework_TestCase{
 
     /**
      * @covers ::listColumns
+     * @covers ::__construct
      */
     public function testListColumns()
     {

@@ -22,7 +22,7 @@ class ParserStub extends \PHPixie\DB\Conditions\Logic\Parser
     public function parse($arr)
     {
         $this->merges = array();
-        $this->expandGroup($arr);
+        $this->parseLogic($arr);
 
         return $this->merges;
     }
@@ -31,7 +31,7 @@ class ParserStub extends \PHPixie\DB\Conditions\Logic\Parser
 /**
  * @coversDefaultClass \PHPixie\DB\Conditions\Logic\Parser
  */
-class ParserTest extends \PHPUnit_Framework_TestCase
+class ParserTest extends \PHPixieTests\AbstractDBTest
 {
     protected $parser;
 
@@ -41,7 +41,8 @@ class ParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::expandGroup
+     * @covers ::parseLogic
+     * @covers ::parseLogicLevel
      */
     public function testParse()
     {

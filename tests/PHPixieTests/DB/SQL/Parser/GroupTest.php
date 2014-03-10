@@ -44,6 +44,8 @@ abstract class GroupTest extends \PHPixieTests\DB\SQL\AbstractParserTest
     
     /**
      * @covers ::parse
+     * @covers ::__construct
+     * @covers ::<protected>
      */
     public function testParse()
     {
@@ -55,6 +57,7 @@ abstract class GroupTest extends \PHPixieTests\DB\SQL\AbstractParserTest
 
     /**
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testExceptions()
     {

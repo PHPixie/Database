@@ -13,19 +13,22 @@ class Group extends \PHPixie\DB\Conditions\Logic\Parser
         $this->operatorParser = $operatorParser;
     }
 
-    protected function normalize($condition, $convertOperator = true)
+    protected function normalize($condition)
     {
         if ($condition instanceof \PHPixie\DB\Conditions\Condition\Group) {
             $group = $condition->conditions();
-            $group = $this->expandGroup($group);
-            $group->logic = $condition->logic;
-            if ($condition->negated())
-                $group->negate();
-
+            $group = $this->parseLogic($group);
+            
+            if($group != null) {
+                $group->logic = $condition->logic;
+                if ($condition->negated())
+                    $group->negate();
+            }
+            
             return $group;
         }
 
-        if ($condition instanceof \PHPixie\DB\Conditions\Condition\Operator && $convertOperator) {
+        if ($condition instanceof \PHPixie\DB\Conditions\Condition\Operator) {
             $expanded = $this->driver->expandedCondition();
             $expanded->add($condition);
             $expanded->logic = $condition->logic;
@@ -39,21 +42,13 @@ class Group extends \PHPixie\DB\Conditions\Logic\Parser
 
     protected function merge($left, $right)
     {
-        if ($left instanceof \PHPixie\DB\Conditions\Condition\Operator) {
-            $expanded = $this->driver->expandedCondition();
-            $expanded->add($left);
-            $expanded->logic = $left->logic;
-            $left = $expanded;
-        }
-
-        if ($right->logic === 'and')
+        if ($right->logic === 'and') {
             return $left->add($right);
-
-        if ($right->logic === 'or')
+        
+        }elseif($right->logic === 'or') {
             return $left->add($right, 'or');
-
-        if ($right->logic === 'xor') {
-
+        
+        }else {
             $merged = $this->driver->expandedCondition();
             $rightClone = clone $right;
             $leftClone = clone $left;
@@ -75,12 +70,12 @@ class Group extends \PHPixie\DB\Conditions\Logic\Parser
 
     public function parse($group)
     {
-        if (empty($group))
-            return array();
-
-        $expanded = $this->expandGroup($group);
+        $expanded = $this->parseLogic($group);
         $expanded = $this->normalize($expanded);
-
+        
+        if (empty($expanded))
+            return array();
+        
         foreach ($expanded->groups() as $group) {
             $andGroup = array();
             foreach ($group as $condition) {
@@ -102,8 +97,6 @@ class Group extends \PHPixie\DB\Conditions\Logic\Parser
             $count = count($andGroup);
             if ($count === 1) {
                 $andGroup = current($andGroup);
-            } elseif ($count === 0) {
-                continue;
             } else {
                 $andGroup = array('$and' => $andGroup);
             }

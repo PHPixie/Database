@@ -25,7 +25,7 @@ class MongoRunnerConnectionTestStub extends \PHPixie\DB\Driver\Mongo\Connection
 /**
  * @coversDefaultClass \PHPixie\DB\Driver\Mongo\Query\Runner
  */
-class RunnerTest extends \PHPUnit_Framework_TestCase
+class RunnerTest extends \PHPixieTests\AbstractDBTest
 {
     protected $runner;
     public function setUp()
@@ -34,7 +34,9 @@ class RunnerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::chain
+     * @covers ::getChain
+     * @covers ::chainMethod
+     * @covers ::chainProperty
      */
     public function testChain()
     {

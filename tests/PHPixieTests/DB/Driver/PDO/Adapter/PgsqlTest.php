@@ -22,7 +22,7 @@ class PgsqlTest extends \PHPixieTests\DB\Driver\PDO\AdapterTest
     }
 
     /**
-     * @covers insertId
+     * @covers ::insertId
      */
     public function testInsertId()
     {
@@ -31,7 +31,7 @@ class PgsqlTest extends \PHPixieTests\DB\Driver\PDO\AdapterTest
     }
 
     /**
-     * @covers insertId
+     * @covers ::insertId
      */
     public function testInsertIdNull()
     {

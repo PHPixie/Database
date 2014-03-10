@@ -4,12 +4,12 @@ namespace PHPixieTests\DB\Parser;
 /**
  * @coversDefaultClass \PHPixie\DB\Parser\Operator
  */
-abstract class OperatorTest extends \PHPUnit_Framework_TestCase {
+abstract class OperatorTest extends \PHPixieTests\AbstractDBTest {
 
-    protected $expected;
-    
     /**
+     * @covers ::__construct
      * @covers ::parse
+     * @covers ::<protected>
      */
     public function testParse()
     {

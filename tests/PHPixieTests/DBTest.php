@@ -5,7 +5,7 @@ namespace PHPixieTests;
 /**
  * @coversDefaultClass \PHPixie\DB
  */
-class DBTest extends \PHPUnit_Framework_TestCase
+class DBTest extends \PHPixieTests\AbstractDBTest
 {
     protected $config;
     protected $db;
@@ -50,12 +50,11 @@ class DBTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::get
-     * @covers ::getConfig
      */
     public function testGet()
     {
         $slice = $this->sliceStub(array(
-            'driver' => '\PDO',
+            'driver' => 'PDO',
         ));
         
         $this->config
@@ -137,6 +136,7 @@ class DBTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @covers ::conditions
+     * @covers ::buildConditions
      */
     public function testConditions()
     {
@@ -145,7 +145,4 @@ class DBTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($conditions, $this->db->conditions());
     }
     
-    protected function sliceStub() {
-        return $this->getMock('\PHPixie\Config\Slice', array('slice', 'get'), array(), '', false);
-    }
 }

@@ -4,7 +4,7 @@ namespace PHPixieTests\DB;
 /**
  * @coversDefaultClass \PHPixie\DB\Parser
  */
-abstract class ParserTest extends \PHPUnit_Framework_TestCase
+abstract class ParserTest extends \PHPixieTests\AbstractDBTest
 {
     protected $parser;
 }

@@ -163,7 +163,7 @@ class PDOTest extends \PHPixieTests\DB\DriverTest
         $connection = $this->driver->buildConnection('connectionName', $config);
         $this->assertAttributeEquals('connectionName', 'name', $connection);
         $this->assertAttributeEquals($config, 'config', $connection);
-        $reflection = new ReflectionClass("\PHPixie\DB\Driver\PDO\Connection");
+        $reflection = new \ReflectionClass("\PHPixie\DB\Driver\PDO\Connection");
         $pdoProperty = $reflection->getProperty('pdo');
         $pdoProperty->setAccessible(true);
         $pdoProperty->setValue($connection, null);

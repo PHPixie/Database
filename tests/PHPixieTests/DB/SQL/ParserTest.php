@@ -20,6 +20,11 @@ abstract class ParserTest extends AbstractParserTest
         $queries = array(
             $this->query('select')->table('fairies'),
 
+            $this->query('select')->fields(array(
+                'id',
+                'test' => 'pixie'
+            ))->table('fairies'),
+            
             $this->query('select')->table('fairies')->where('a', 1)
                                                     ->orWhere(function ($builder) {
                                                         $builder->_and('b', 1)
@@ -92,6 +97,8 @@ abstract class ParserTest extends AbstractParserTest
 
     /**
      * @covers ::parse
+     * @covers ::__construct
+     * @covers ::<protected>
      */
     public function testParse()
     {
@@ -101,6 +108,10 @@ abstract class ParserTest extends AbstractParserTest
         }
     }
 
+    /**
+     * @covers ::parse
+     * @covers ::<protected>
+     */
     public function testExceptions()
     {
         foreach ($this->exceptionQueries() as $key=>$query) {

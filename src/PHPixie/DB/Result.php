@@ -14,12 +14,16 @@ abstract class Result implements \Iterator
         return $arr;
     }
 
-    public function get($column)
+    public function get($column = null)
     {
         if (!$this->valid())
             return;
-
+        
         $current = $this->current();
+        
+        if ($column === null)
+            $column = $this->firstColumnName($current);
+        
         if (isset($current->$column))
             return $current->$column;
     }
@@ -28,18 +32,22 @@ abstract class Result implements \Iterator
     {
         $this->rewind();
         $values = array();
-        foreach($this as $row)
+        foreach($this as $row) {
             if ($column === null)
-                $column = key(get_object_vars($row));
+                $column = $this->firstColumnName($row);
             
             if (isset($row->$column)) {
                 $values[] = $row->$column;
             }elseif(!$skipNulls)
                 $values[] = null;
-
+        }
         return $values;
     }
 
+    protected function firstColumnName($row) {
+        return key(get_object_vars($row));
+    }
+    
     abstract public function current();
     abstract public function next();
     abstract public function valid();

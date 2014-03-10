@@ -14,7 +14,7 @@ class QueryTest extends \PHPixieTests\DB\QueryTest
 
     protected function query()
     {
-        return new \PHPixie\DB\Driver\Mongo\Query($this->db, $this->db->conditions(), $this->connection, $this->parser, null, 'select');
+        return new \PHPixie\DB\Driver\Mongo\Query($this->db, $this->conditionsMock, $this->connection, $this->parser, null, 'select');
     }
 
     protected function mockParser()

@@ -6,7 +6,12 @@ class BuilderStub
     public $passed = array();
     public $startGroupLogic;
     public $endGroupCalled = false;
-
+    public $getConditionsStub;
+    
+    public function __construct() {
+        $this->getConditionsStub = new \stdClass;
+    }
+    
     public function addCondition()
     {
         $this->passed[] = func_get_args();
@@ -14,7 +19,7 @@ class BuilderStub
 
     public function getConditions()
     {
-        return array(1);
+        return $this->getConditionsStub;
     }
 
     public function startGroup($logic)
@@ -31,7 +36,7 @@ class BuilderStub
 /**
  * @coversDefaultClass \PHPixie\DB\Query
  */
-abstract class QueryTest extends \PHPUnit_Framework_TestCase
+abstract class QueryTest extends \PHPixieTests\AbstractDBTest
 {
     protected $conditionsMock;
     protected $db;
@@ -51,14 +56,10 @@ abstract class QueryTest extends \PHPUnit_Framework_TestCase
                 }));
         
         $this->db = $this->getMock('\PHPixie\DB', array('conditions'), array(null));
-        $this->db
-                ->expects($this->any())
-                ->method('conditions')
-                ->will($this->returnValue($this->conditionsMock));
         
         $this->parser = $this->mockParser();
         $this->query = $this->query();
-        $this->builder = new BuilderStub();
+        $this->builder = $this->builderStub();
     }
     
     /**
@@ -139,11 +140,16 @@ abstract class QueryTest extends \PHPUnit_Framework_TestCase
      * @covers ::where
      * @covers ::orWhere
      * @covers ::xorWhere
-     * @covers ::andWhereNot
+     * @covers ::whereNot
      * @covers ::orWhereNot
      * @covers ::xorWhereNot
      * @covers ::startWhereGroup
      * @covers ::endWhereGroup
+     * @covers ::endWhereGroup
+     * @covers ::addCondition
+     * @covers ::startConditionGroup
+     * @covers ::endConditionGroup
+     * @covers ::conditionBuilder
      */
     public function testWhere()
     {
@@ -173,6 +179,10 @@ abstract class QueryTest extends \PHPUnit_Framework_TestCase
      * @covers ::_xorNot
      * @covers ::startGroup
      * @covers ::endGroup
+     * @covers ::addCondition
+     * @covers ::startConditionGroup
+     * @covers ::endConditionGroup
+     * @covers ::conditionBuilder
      */
     public function testGenericBuilder()
     {
@@ -227,9 +237,8 @@ abstract class QueryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('or', $this->builder->startGroupLogic);
         $this->assertEquals(true, $this->builder->endGroupCalled);
 
-        if($testGet)
-            $this->assertEquals(array(1), $this->query->getConditions($name));
-
+        if ($testGet)
+            $this->assertEquals($this->builder->getConditionsStub, call_user_func(array($this->query, 'get'.$name.'Conditions')));
     }
 
     protected function genericBuilderTest($builder)
@@ -258,11 +267,38 @@ abstract class QueryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $builder->endGroupCalled);
     }
     
-    protected function assertBuilderException($callback) {
-        $this->setExpectedException('\PHPixie\DB\Exception\Builder');
-        $callback();
+    /**
+     * @covers ::getWhereConditions
+     * @covers ::getWhereBuilder
+     * @covers ::getConditions
+     */
+    public function testWhereBuilder() 
+    {
+        $this->checkBuilderAccess('where', $this->builder);
     }
     
+    protected function checkBuilderAccess($name, $builder) 
+    {
+        $name = ucfirst($name);
+        $this->assertEquals(array(), call_user_func(array($this->query, 'get'.$name.'Conditions')));
+        $this->assertEquals($builder, call_user_func(array($this->query, 'get'.$name.'Builder')));
+        $builder->getConditionsStub = 'test';
+        $this->assertEquals('test', call_user_func(array($this->query, 'get'.$name.'Conditions')));
+    }
+    
+    protected function assertBuilderException($callback) {
+        $except = false;
+        try {
+            $callback();
+        }catch (\PHPixie\DB\Exception\Builder $e) {
+            $except = true;
+        }
+        $this->assertEquals(true, $except);
+    }
+    
+    protected function builderStub() {
+        return new BuilderStub();
+    }
     abstract public function testExecute();
     abstract protected function query();
 }

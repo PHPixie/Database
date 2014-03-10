@@ -47,7 +47,7 @@ class Builder
                 $negate = !$negate;
                 break;
             default:
-                throw new \PHPixie\DB\Exception("Logic must be either 'and', 'or', 'xor', 'andNot' ,'orNot', 'xorNot'");
+                throw new \PHPixie\DB\Exception\Builder("Logic must be either 'and', 'or', 'xor', 'andNot' ,'orNot', 'xorNot'");
         }
 
         if ($negate)
@@ -60,7 +60,7 @@ class Builder
     public function endGroup()
     {
         if (count($this->groupStack) === 1)
-            throw new \PHPixie\DB\Exception("endGroup() was called more times than expected.");
+            throw new \PHPixie\DB\Exception\Builder("endGroup() was called more times than expected.");
 
         array_pop($this->groupStack);
         $this->currentGroup = current($this->groupStack);
@@ -95,9 +95,9 @@ class Builder
 
                 return $this;
             }else
-                throw new \PHPixie\DB\Exception("If only one argument is provided it must be a callable");
+                throw new \PHPixie\DB\Exception\Builder("If only one argument is provided it must be a callable");
 
-        throw new \PHPixie\DB\Exception("Not enough arguments provided");
+        throw new \PHPixie\DB\Exception\Builder("Not enough arguments provided");
     }
 
     public function addOperatorCondition($logic, $negate, $field, $operator, $values)
@@ -106,9 +106,9 @@ class Builder
         $this->addToCurrent($logic, $negate, $condition);
     }
 
-    public function addPlaceholder($logic, $negate)
+    public function addPlaceholder($logic, $negate, $allowEmpty = true)
     {
-        $placeholder = $this->conditions->placeholder($this->defaultOperator);
+        $placeholder = $this->conditions->placeholder($this->defaultOperator, $allowEmpty);
         $this->addToCurrent($logic, $negate, $placeholder);
 
         return $placeholder;
