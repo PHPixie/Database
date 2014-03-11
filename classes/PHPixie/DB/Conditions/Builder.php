@@ -14,13 +14,6 @@ class Builder
         $this->conditions = $conditions;
         $this->defaultOperator = $defaultOperator;
         $this->pushGroup($this->conditions->conditionGroup());
-
-    }
-
-    public function startGroup($logic = 'and', $negate = false)
-    {
-        $group = $this->conditions->conditionGroup();
-        $this->pushGroup($logic, $negate, $group);
     }
 
     public function startGroup($extendedLogic = 'and', $negate = false)
