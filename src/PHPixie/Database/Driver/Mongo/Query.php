@@ -1,0 +1,31 @@
+<?php
+
+namespace PHPixie\Database\Driver\Mongo;
+
+class Query extends \PHPixie\Database\Query
+{
+    protected $collection;
+
+    public function collection($collection)
+    {
+        $this->collection = $collection;
+
+        return $this;
+    }
+
+    public function getCollection()
+    {
+        return $this->collection;
+    }
+
+    public function parse()
+    {
+        return $this->parser->parse($this);
+    }
+
+    public function execute()
+    {
+        return $this->connection->run($this->parse());
+    }
+
+}
