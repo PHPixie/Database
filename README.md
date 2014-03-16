@@ -1,4 +1,4 @@
-PHPixie-DB
+PHPixie Database
 ==========
 
 Database Drivers for PHPixie
