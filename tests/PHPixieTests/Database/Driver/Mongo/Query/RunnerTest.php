@@ -9,16 +9,23 @@ class MongoRunnerStub
     {
         return 5;
     }
+    public function batchInsert($b)
+    {
+        return 5;
+    }
 }
 
 class MongoRunnerConnectionTestStub extends \PHPixie\Database\Driver\Mongo\Connection
 {
+    protected $database;
+    public function __construct()
+    {
+        $this->database = new \stdClass;
+    }
+    
     public function setClientStub($client)
     {
         $this->client = $client;
-    }
-    public function __construct()
-    {
     }
 }
 
@@ -71,9 +78,23 @@ class RunnerTest extends \PHPixieTests\AbstractDatabaseTest
         $this->runner->chainMethod('insert', array(array('_id'=>7)));
         $conn = new MongoRunnerConnectionTestStub();
         $conn->setClientStub(new MongoRunnerStub());
-        $conn->client()->a = new MongoRunnerStub();
+        $conn->database()->a = new MongoRunnerStub();
         $this->assertEquals(5, $this->runner->run($conn));
         $this->assertEquals(7, $conn->insertId());
+    }
+    
+    /**
+     * @covers ::run
+     */
+    public function testRunBatchInsert()
+    {
+        $this->runner->chainProperty('a');
+        $this->runner->chainMethod('batchInsert', array(array(array('_id'=>7), array('_id'=>8))));
+        $conn = new MongoRunnerConnectionTestStub();
+        $conn->setClientStub(new MongoRunnerStub());
+        $conn->database()->a = new MongoRunnerStub();
+        $this->assertEquals(5, $this->runner->run($conn));
+        $this->assertEquals(8, $conn->insertId());
     }
 
 }

@@ -94,17 +94,31 @@ abstract class QueryTest extends \PHPixieTests\Database\QueryTest
         ), $this->query->getJoins());
     }
 
-    public function testGetSetBulkData()
+    /**
+     * @covers ::batchData
+     * @covers ::getBatchData
+     */
+    public function testGetSetBatchData()
     {
         $data = array(
             'columns' => array('a', 'b'),
             'rows' => array(array(1,2), array(3,4))
         );
         
-        $this->assertEquals($this->query, $this->query->bulkData($data['columns'], $data['rows']));
-        $this->assertEquals($data, $this->query->getBulkData());
+        $this->assertEquals($this->query, $this->query->batchData($data['columns'], $data['rows']));
+        $this->assertEquals($data, $this->query->getBatchData());
         $this->query->data(array());
-        $this->assertEquals(null, $this->query->getBulkData());
+        $this->assertEquals(null, $this->query->getBatchData());
+    }
+    
+    /**
+     * @covers \PHPixie\Database\Query::data
+     * @covers ::data
+     * @covers ::getData
+     */
+    
+    public function testData() {
+        parent::testData();
     }
     
     /**

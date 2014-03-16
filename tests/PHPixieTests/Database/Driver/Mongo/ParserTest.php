@@ -91,7 +91,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
         ));
 
         $query = $this->getQuery()->collection('fairies')
-                                    ->limit(1);
+                                    ->selectSingle();
 
         $this->assertQuery($query, array (
             array (
@@ -156,6 +156,28 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
                 'args' => array (array('id'=>1, 'name'=>"Trixie"))
             )
         ));
+        
+        $query = $this->getQuery('insert')->collection('fairies')
+                                    ->batchData(array(
+                                        array('id' => 1, 'name' => "Trixie"),
+                                        array('id' => 2, 'name' => "Tinkerbell")
+                                    ));
+
+        $this->assertQuery($query, array (
+            array (
+                'type' => 'property',
+                'name' => 'fairies',
+            ),
+            array (
+                'type' => 'method',
+                'name' => 'batchInsert',
+                'args' => array(array(
+                            array('id' => 1, 'name' => "Trixie"),
+                            array('id' => 2, 'name' => "Tinkerbell")
+                        ))
+            )
+        ));
+
     }
 
     /**
@@ -175,7 +197,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'update',
-                'args' => array (array(), array('id'=>1, 'name'=>"Trixie"), array('multiple' => true))
+                'args' => array (array(), array('$set' => array('id'=>1, 'name'=>"Trixie")), array('multiple' => true))
             )
         ));
 
@@ -191,7 +213,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'update',
-                'args' => array (array('name' => 5), array('id'=>1, 'name'=>"Trixie"), array('multiple' => true))
+                'args' => array (array('name' => 5), array('$set' => array('id'=>1, 'name'=>"Trixie")), array('multiple' => true))
             )
         ));
     }

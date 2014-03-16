@@ -5,6 +5,8 @@ namespace PHPixie\Database\Driver\Mongo;
 class Connection extends \PHPixie\Database\Connection
 {
     protected $client;
+    protected $databaseName;
+    protected $database;
     protected $insertId;
 
     public function __construct($driver, $name, $config)
@@ -17,6 +19,9 @@ class Connection extends \PHPixie\Database\Connection
 
         $options['username'] = $config->get('user', '');
         $options['password'] = $config->get('password', '');
+        
+        $this->databaseName = $config->get('database');
+        $options['db'] = $this->databaseName;
 
         $this->client = $this->connect($config->get('connection'), $options);
     }
@@ -47,5 +52,12 @@ class Connection extends \PHPixie\Database\Connection
     public function client()
     {
         return $this->client;
+    }
+    
+    public function database()
+    {
+        if ($this->database === null)
+            $this->database = $this->client()->{$this->databaseName};
+        return $this->database;
     }
 }

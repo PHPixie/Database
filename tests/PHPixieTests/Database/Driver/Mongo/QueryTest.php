@@ -28,6 +28,43 @@ class QueryTest extends \PHPixieTests\Database\QueryTest
     }
 
     /**
+     * @covers ::batchData
+     * @covers ::getBatchData
+     * @covers ::data
+     */
+    public function testGetSetBatchData()
+    {
+        $data = array(
+            array('test' => 5),
+            array('test2' => 6)
+        );
+        
+        $this->assertEquals($this->query, $this->query->batchData($data));
+        $this->assertEquals($data, $this->query->getBatchData());
+        $this->query->data(array());
+        $this->assertEquals(null, $this->query->getBatchData());
+    }
+
+    /**
+     * @covers \PHPixie\Database\Query::data
+     * @covers ::data
+     * @covers ::getData
+     */
+    
+    public function testData() {
+        parent::testData();
+    }
+    
+    /**
+     * @covers ::selectSingle
+     * @covers ::getSelectSingle
+     */
+    
+    public function testSelectSingle() {
+        $this->getSetTest('selectSingle', true, false);
+    }
+    
+    /**
      * @covers ::execute
      */
     public function testExecute()

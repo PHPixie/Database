@@ -46,10 +46,10 @@ class Parser extends \PHPixie\Database\Parser
                 throw new \PHPixie\Database\Exception\Parser("Field aliases are not supported for Mongodatabase. queries.");
             $fieldKeys[$field] = true;
         }
-        
-        if (empty($offset) && $limit === 1 && empty($orderBy)) {
+
+        if ($query->getSelectSingle()) {
             $runner->chainMethod('findOne', array($conditions, $fieldKeys));
-        } else {
+        }else{
             $runner->chainMethod('find', array($conditions, $fieldKeys));
             if (!empty($orderBy)) {
                 $ordering =  array();
@@ -66,18 +66,22 @@ class Parser extends \PHPixie\Database\Parser
             if ($offset !== null)
                 $runner->chainMethod('skip', array($offset));
         }
-
         return $runner;
     }
 
     protected function insertQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
-        $data = $query->getData();
-        if ($data === null)
+        
+        
+        if (($data = $query->getBatchData()) !== null) {
+            $runner->chainMethod('batchInsert', array($data));
+        }elseif(($data = $query->getData()) !== null) {
+            $runner->chainMethod('insert', array($data));
+        }else
             throw new \PHPixie\Database\Exception\Parser("No data set for insertion");
-
-        $runner->chainMethod('insert', array($data));
+        
+        
 
         return $runner;
     }
@@ -90,6 +94,9 @@ class Parser extends \PHPixie\Database\Parser
             throw new \PHPixie\Database\Exception\Parser("No data set for update");
 
         $conditions = $this->groupParser->parse($query->getWhereConditions());
+        $data = array(
+            '$set' => $data
+        );
         $runner->chainMethod('update', array($conditions, $data, array('multiple' => true)));
 
         return $runner;

@@ -93,15 +93,15 @@ abstract class ParserTest extends AbstractParserTest
                                 
             $this->query('insert')
                                 ->table('fairies')
-                                ->bulkData(array('pixie', 'fairy'), array(array(1, 2))),
+                                ->batchData(array('pixie', 'fairy'), array(array(1, 2))),
                                 
             $this->query('insert')
                                 ->table('fairies')
-                                ->bulkData(array('pixie', 'fairy'), array(array(1, 2), array(1, 2))),
+                                ->batchData(array('pixie', 'fairy'), array(array(1, 2), array(1, 2))),
                                 
             $this->query('insert')
                                 ->table('fairies')
-                                ->bulkData(array(), array()),
+                                ->batchData(array(), array()),
 
         );
 
@@ -176,7 +176,7 @@ abstract class ParserTest extends AbstractParserTest
             
             $this->query('insert')
                                 ->table('fairies')
-                                ->bulkData(array('pixie', 'fairy'), array(array(1, 2, 3), array(array(1, 2)))),
+                                ->batchData(array('pixie', 'fairy'), array(array(1, 2, 3), array(array(1, 2)))),
 
         );
 
