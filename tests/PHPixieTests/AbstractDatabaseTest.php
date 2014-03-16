@@ -9,7 +9,7 @@ abstract class AbstractDatabaseTest extends \PHPUnit_Framework_TestCase
     }
     
     protected function sliceStub($data = array()) {
-        $slice = $this->quickMock('\PHPixie\Config\Slice', array('slice', 'get'));
+        $slice = $this->quickMock('\PHPixie\Config\Slice', array('slice', 'get', 'set', 'remove'));
         $slice
             ->expects($this->any())
             ->method('get')

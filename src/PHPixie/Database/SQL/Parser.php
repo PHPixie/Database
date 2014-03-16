@@ -132,7 +132,7 @@ abstract class Parser extends \PHPixie\Database\Parser
 
     protected function appendInsertValues($query, $expr)
     {
-        if (($insertData = $query->getBulkData()) === null) {
+        if (($insertData = $query->getBatchData()) === null) {
         
             if (($data = $query->getData()) === null)
                 $data = array();

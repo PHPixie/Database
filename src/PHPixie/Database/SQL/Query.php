@@ -8,7 +8,7 @@ abstract class Query extends \PHPixie\Database\Query
     protected $groupBy = array();
     protected $joins = array();
     protected $unions = array();
-    protected $bulkData;
+    protected $batchData;
 
     public function table($table, $alias = null)
     {
@@ -25,9 +25,9 @@ abstract class Query extends \PHPixie\Database\Query
         return $this->table;
     }
 
-    public function bulkData($columns, $rows)
+    public function batchData($columns, $rows)
     {
-        $this->bulkData = array(
+        $this->batchData = array(
             'columns' => $columns,
             'rows' => $rows
         );
@@ -35,14 +35,14 @@ abstract class Query extends \PHPixie\Database\Query
         return $this;
     }
     
-    public function getBulkData()
+    public function getBatchData()
     {
-        return $this->bulkData;
+        return $this->batchData;
     }
     
     public function data($data) 
     {
-        $this->bulkData = null;
+        $this->batchData = null;
         return parent::data($data);
     }
     

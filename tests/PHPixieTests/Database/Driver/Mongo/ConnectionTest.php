@@ -15,6 +15,7 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
             'connection' => 'mongodatabase.://test:555/',
             'user'   => 'pixie',
             'password' => 5,
+            'database' => 'test',
             'connectionOptions' => array(
                 'connect'    =>  false
             )
@@ -80,6 +81,18 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
     {
         $this->assertAttributeEquals($this->connection->client(), 'client', $this->connection);
     }
+    
+    /**
+     * @covers ::database
+     */
+    public function testDatabase()
+    {
+        $db = new \stdClass;
+        $this->connection->client()->test = $db;
+        $database = $this->connection->database();
+        $this->assertEquals($db, $database);
+        $this->assertEquals($db, $this->connection->database());
+    }
 
     /**
      * @covers ::__construct
@@ -91,6 +104,7 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
             'connectionOptions' => 5,
             'user'   => 'pixie',
             'password' => 5,
+            'database' => 'test',
             'connection' => 'mongodatabase.://test:555/',
         ));
         $connection = new \PHPixie\Database\Driver\Mongo\Connection($this->database->driver('PDO'), 'test', $config);

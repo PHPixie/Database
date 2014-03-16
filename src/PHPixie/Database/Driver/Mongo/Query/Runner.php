@@ -29,7 +29,7 @@ class Runner
 
     public function run($connection)
     {
-        $current = $connection->client();
+        $current = $connection->database();
         foreach ($this->chain as $step) {
             switch ($step['type']) {
                 case 'property':
@@ -41,7 +41,12 @@ class Runner
                     $current = call_user_func_array(array($current, $step['name']), $args);
 
                     if ($step['name'] === 'insert')
-                        $connection->setInsertId($args[0]['_id']);
+                        $connection->setInsertId((string) $args[0]['_id']);
+                        
+                    if ($step['name'] === 'batchInsert') {
+                        $last = end($args[0]);
+                        $connection->setInsertId((string) $last['_id']);
+                    }
 
                     break;
             }
