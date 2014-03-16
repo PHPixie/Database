@@ -31,21 +31,22 @@ abstract class Query extends \PHPixie\Database\Query
             'columns' => $columns,
             'rows' => $rows
         );
-        
+
         return $this;
     }
-    
+
     public function getBatchData()
     {
         return $this->batchData;
     }
-    
-    public function data($data) 
+
+    public function data($data)
     {
         $this->batchData = null;
+
         return parent::data($data);
     }
-    
+
     public function groupBy($field = null)
     {
         $this->groupBy[] = $field;
@@ -107,14 +108,16 @@ abstract class Query extends \PHPixie\Database\Query
         return $this;
     }
 
-    public function getHavingBuilder() {
+    public function getHavingBuilder()
+    {
         return $this->conditionBuilder('having');
     }
-    
-    public function getHavingConditions() {
+
+    public function getHavingConditions()
+    {
         return $this->getConditions('having');
     }
-    
+
     public function having()
     {
         return $this->addCondition(func_get_args(), 'and', false, 'having');

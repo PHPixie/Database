@@ -116,7 +116,7 @@ abstract class ResultTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->assertEquals(array('Tinkerbell',  'Trixie'), $this->result->getColumn('name', true));
     }
-    
+
     /**
      * @covers ::getColumn
      * @covers ::firstColumnName
@@ -134,8 +134,7 @@ abstract class ResultTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->assertEquals(array(1, 3), $this->result->getColumn(null, true));
     }
-    
-    
+
     protected function assertRewindException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception');

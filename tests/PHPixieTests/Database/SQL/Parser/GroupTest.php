@@ -17,10 +17,10 @@ abstract class GroupTest extends \PHPixieTests\Database\SQL\AbstractParserTest
 
     protected function groups()
     {
-     
+
         $placeholderBuilder = $this->builder()
                         ->_and('a', 1);
-        
+
         $placeholder = $placeholderBuilder->addPlaceholder('or')->builder();
         $placeholderBuilder->_xorNot(function ($builder) {
                             $builder
@@ -30,7 +30,7 @@ abstract class GroupTest extends \PHPixieTests\Database\SQL\AbstractParserTest
         $placeholder
                 ->_and('b', 1)
                 ->_or('c', 1);
-        
+
         $groups = array(
             $this->builder()->_and('a',1)->getConditions(),
             $this->builder()
@@ -43,7 +43,7 @@ abstract class GroupTest extends \PHPixieTests\Database\SQL\AbstractParserTest
 
         return $groups;
     }
-    
+
     /**
      * @covers ::parse
      * @covers ::__construct

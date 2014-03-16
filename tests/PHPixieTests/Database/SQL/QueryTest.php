@@ -104,23 +104,24 @@ abstract class QueryTest extends \PHPixieTests\Database\QueryTest
             'columns' => array('a', 'b'),
             'rows' => array(array(1,2), array(3,4))
         );
-        
+
         $this->assertEquals($this->query, $this->query->batchData($data['columns'], $data['rows']));
         $this->assertEquals($data, $this->query->getBatchData());
         $this->query->data(array());
         $this->assertEquals(null, $this->query->getBatchData());
     }
-    
+
     /**
      * @covers \PHPixie\Database\Query::data
      * @covers ::data
      * @covers ::getData
      */
-    
-    public function testData() {
+
+    public function testData()
+    {
         parent::testData();
     }
-    
+
     /**
      * @covers ::union
      * @covers ::getUnions
@@ -235,11 +236,11 @@ abstract class QueryTest extends \PHPixieTests\Database\QueryTest
      * @covers ::getHavingBuilder
      * @covers ::getConditions
      */
-    public function testHavingBuilder() 
+    public function testHavingBuilder()
     {
         $this->checkBuilderAccess('having', $this->builder);
     }
-    
+
     /**
      * @covers ::_and
      * @covers ::_or
@@ -266,7 +267,7 @@ abstract class QueryTest extends \PHPixieTests\Database\QueryTest
                     ->expects($this->at(1))
                     ->method('builder')
                     ->will($this->returnValue($havingBuilder));
-                    
+
         $this->conditionsMock
                     ->expects($this->at(2))
                     ->method('builder')

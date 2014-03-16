@@ -81,7 +81,7 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
     {
         $this->assertAttributeEquals($this->connection->client(), 'client', $this->connection);
     }
-    
+
     /**
      * @covers ::database
      */

@@ -35,6 +35,7 @@ class Database
     public function buildDriver($name)
     {
         $class = '\PHPixie\Database\Driver\\'.$name;
+
         return new $class($this);
     }
 
@@ -55,7 +56,7 @@ class Database
     {
         return new \PHPixie\Database\SQL\Expression($sql, $params);
     }
-    
+
     protected function buildConditions()
     {
         return new \PHPixie\Database\Conditions();

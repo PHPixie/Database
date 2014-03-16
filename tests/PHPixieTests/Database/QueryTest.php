@@ -7,11 +7,12 @@ class BuilderStub
     public $startGroupLogic;
     public $endGroupCalled = false;
     public $getConditionsStub;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         $this->getConditionsStub = new \stdClass;
     }
-    
+
     public function addCondition()
     {
         $this->passed[] = func_get_args();
@@ -54,14 +55,14 @@ abstract class QueryTest extends \PHPixieTests\AbstractDatabaseTest
                 ->will($this->returnCallback(function () {
                     return $this->builder;
                 }));
-        
+
         $this->database = $this->getMock('\PHPixie\Database', array('conditions'), array(null));
-        
+
         $this->parser = $this->mockParser();
         $this->query = $this->query();
         $this->builder = $this->builderStub();
     }
-    
+
     /**
      * @covers ::data
      * @covers ::getData
@@ -70,7 +71,7 @@ abstract class QueryTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->getSetTest('data', array('a' =>1));
     }
-    
+
     /**
      * @covers ::type
      * @covers ::getType
@@ -81,7 +82,7 @@ abstract class QueryTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals($this->query, $this->query->type('delete'));
         $this->assertEquals('delete', $this->query->getType());
     }
-    
+
     /**
      * @covers ::fields
      * @covers ::getFields
@@ -95,7 +96,7 @@ abstract class QueryTest extends \PHPixieTests\AbstractDatabaseTest
             $this->query->fields('test');
         });
     }
-    
+
     /**
      * @covers ::offset
      * @covers ::getOffset
@@ -107,7 +108,7 @@ abstract class QueryTest extends \PHPixieTests\AbstractDatabaseTest
             $this->query->offset('test');
         });
     }
-    
+
     /**
      * @covers ::limit
      * @covers ::getLimit
@@ -119,7 +120,7 @@ abstract class QueryTest extends \PHPixieTests\AbstractDatabaseTest
             $this->query->limit('test');
         });
     }
-    
+
     /**
      * @covers ::orderBy
      * @covers ::getOrderBy
@@ -135,7 +136,7 @@ abstract class QueryTest extends \PHPixieTests\AbstractDatabaseTest
             $this->query->orderBy('name', 'test');
         });
     }
-    
+
     /**
      * @covers ::where
      * @covers ::orWhere
@@ -195,7 +196,7 @@ abstract class QueryTest extends \PHPixieTests\AbstractDatabaseTest
         $this->query->where('a', 1);
         $this->genericBuilderTest($this->builder);
     }
-    
+
     protected function getSetTest($method, $param, $default = null)
     {
         $this->assertEquals($default, call_user_func_array(array($this->query, 'get'.ucfirst($method)), array()));
@@ -266,18 +267,18 @@ abstract class QueryTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals('or', $builder->startGroupLogic);
         $this->assertEquals(true, $builder->endGroupCalled);
     }
-    
+
     /**
      * @covers ::getWhereConditions
      * @covers ::getWhereBuilder
      * @covers ::getConditions
      */
-    public function testWhereBuilder() 
+    public function testWhereBuilder()
     {
         $this->checkBuilderAccess('where', $this->builder);
     }
-    
-    protected function checkBuilderAccess($name, $builder) 
+
+    protected function checkBuilderAccess($name, $builder)
     {
         $name = ucfirst($name);
         $this->assertEquals(array(), call_user_func(array($this->query, 'get'.$name.'Conditions')));
@@ -285,18 +286,20 @@ abstract class QueryTest extends \PHPixieTests\AbstractDatabaseTest
         $builder->getConditionsStub = 'test';
         $this->assertEquals('test', call_user_func(array($this->query, 'get'.$name.'Conditions')));
     }
-    
-    protected function assertBuilderException($callback) {
+
+    protected function assertBuilderException($callback)
+    {
         $except = false;
         try {
             $callback();
-        }catch (\PHPixie\Database\Exception\Builder $e) {
+        } catch (\PHPixie\Database\Exception\Builder $e) {
             $except = true;
         }
         $this->assertEquals(true, $except);
     }
-    
-    protected function builderStub() {
+
+    protected function builderStub()
+    {
         return new BuilderStub();
     }
     abstract public function testExecute();

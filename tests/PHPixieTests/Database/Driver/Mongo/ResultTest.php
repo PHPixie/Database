@@ -7,7 +7,7 @@ namespace PHPixieTests\Database\Driver\Mongo;
 class ResultTest extends \PHPixieTests\Database\ResultTest
 {
     protected $cursorStub;
-    
+
     public function setUp()
     {
         $cursorStub = new \ArrayObject(array(
@@ -37,7 +37,7 @@ class ResultTest extends \PHPixieTests\Database\ResultTest
         $this->result->next();
         $this->testGetColumn();
     }
-    
+
     /**
      * @covers ::cursor
      */

@@ -22,7 +22,7 @@ class MongoRunnerConnectionTestStub extends \PHPixie\Database\Driver\Mongo\Conne
     {
         $this->database = new \stdClass;
     }
-    
+
     public function setClientStub($client)
     {
         $this->client = $client;
@@ -82,7 +82,7 @@ class RunnerTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals(5, $this->runner->run($conn));
         $this->assertEquals(7, $conn->insertId());
     }
-    
+
     /**
      * @covers ::run
      */

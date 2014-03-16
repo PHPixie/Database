@@ -13,7 +13,7 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->expanded = $this->getExpanded();
     }
-    
+
     /**
      * @covers ::__construct
      * @covers ::add
@@ -165,16 +165,18 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
 
         return $parsed;
     }
-    
-    public function testClone() {
+
+    public function testClone()
+    {
         $exp1 = $this->getExpanded($this->getOperator('a'));
         $exp2 = clone $exp1;
     }
-    
+
     /**
      * @covers ::add
      */
-    public function testAddOperatorException() {
+    public function testAddOperatorException()
+    {
         $this->setExpectedException('\PHPixie\Database\Exception\Parser');
         $this->expanded->add(array());
     }
@@ -182,7 +184,8 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
     /**
      * @covers ::add
      */
-    public function testAddLogicException() {
+    public function testAddLogicException()
+    {
         $this->setExpectedException('\PHPixie\Database\Exception\Parser');
         $this->expanded->add($this->getOperator('a'));
         $this->expanded->add($this->getOperator('b'), 'xor');

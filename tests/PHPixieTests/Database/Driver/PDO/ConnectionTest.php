@@ -68,7 +68,7 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
         $result = $this->connection->execute("Select * from fairies where id = ?", array(1));
         $this->assertEquals(array((object) array('id'=>1, 'name'=>'Tinkerbell')),$result->asArray());
     }
-    
+
     /**
      * @covers ::insertId
      */
@@ -77,7 +77,7 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
         $this->connection->execute("INSERT INTO fairies(id,name) VALUES (1,'Tinkerbell')");
         $this->assertEquals(1, $this->connection->insertId());
     }
-    
+
     /**
      * @covers ::listColumns
      */

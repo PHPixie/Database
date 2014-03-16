@@ -54,7 +54,7 @@ class Result extends \PHPixie\Database\Result
     {
         return $this->statement;
     }
-    
+
     protected function checkFetched()
     {
         if (!$this->fetched) {
@@ -63,7 +63,8 @@ class Result extends \PHPixie\Database\Result
         }
     }
 
-    protected function fetchNext() {
+    protected function fetchNext()
+    {
         $this->current = $this->statement->fetchObject();
         $this->fetched = true;
         if ($this->current !== false) {

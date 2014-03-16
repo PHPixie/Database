@@ -31,24 +31,28 @@ class PDO extends \PHPixie\Database\Driver
     public function buildParser($adapterName, $config, $fragmentParser, $groupParser)
     {
         $class = '\PHPixie\Database\Driver\PDO\Adapter\\'.$adapterName.'\Parser';
+
         return new $class($this->database, $this, $config, $fragmentParser, $groupParser);
     }
 
     public function fragmentParser($adapterName)
-    {  
+    {
         $class = '\PHPixie\Database\Driver\PDO\Adapter\\'.$adapterName.'\Parser\Fragment';
+
         return new $class;
     }
 
     public function operatorParser($adapterName, $fragmentParser)
     {
         $class = '\PHPixie\Database\Driver\PDO\Adapter\\'.$adapterName.'\Parser\Operator';
+
         return new $class($this->database, $fragmentParser);
     }
 
     public function groupParser($adapterName, $operatorParser)
     {
         $class = '\PHPixie\Database\Driver\PDO\Adapter\\'.$adapterName.'\Parser\Group';
+
         return new $class($this->database, $operatorParser);
     }
 

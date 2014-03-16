@@ -36,5 +36,5 @@ abstract class DriverTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertAttributeEquals('config', 'config', $query);
         $this->assertAttributeInstanceOf($this->parserClass, 'parser', $query);
     }
-    
+
 }

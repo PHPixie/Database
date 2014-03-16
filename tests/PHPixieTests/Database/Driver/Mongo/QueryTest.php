@@ -38,7 +38,7 @@ class QueryTest extends \PHPixieTests\Database\QueryTest
             array('test' => 5),
             array('test2' => 6)
         );
-        
+
         $this->assertEquals($this->query, $this->query->batchData($data));
         $this->assertEquals($data, $this->query->getBatchData());
         $this->query->data(array());
@@ -50,20 +50,22 @@ class QueryTest extends \PHPixieTests\Database\QueryTest
      * @covers ::data
      * @covers ::getData
      */
-    
-    public function testData() {
+
+    public function testData()
+    {
         parent::testData();
     }
-    
+
     /**
      * @covers ::selectSingle
      * @covers ::getSelectSingle
      */
-    
-    public function testSelectSingle() {
+
+    public function testSelectSingle()
+    {
         $this->getSetTest('selectSingle', true, false);
     }
-    
+
     /**
      * @covers ::execute
      */

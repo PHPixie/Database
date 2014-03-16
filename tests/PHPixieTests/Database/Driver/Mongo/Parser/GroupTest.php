@@ -110,22 +110,22 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
                         )
                     )
         ));
-        
-        $builder = $this->getBuilder()->_and(function($builder) {
-            $builder->_and(function(){});
+
+        $builder = $this->getBuilder()->_and(function ($builder) {
+            $builder->_and(function () {});
         });
         $this->assertGroup($builder, array());
-        
-        $builder = $this->getBuilder()->_and(function($builder) {
+
+        $builder = $this->getBuilder()->_and(function ($builder) {
             $builder
                     ->_and('a', 1)
-                    ->_and(function($builder) {
-                        $builder->_and(function(){});
+                    ->_and(function ($builder) {
+                        $builder->_and(function () {});
                     });
         });
         $this->assertGroup($builder, array('a' => 1));
     }
-    
+
     /**
      * @covers ::parse
      * @covers ::<protected>

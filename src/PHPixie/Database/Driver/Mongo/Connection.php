@@ -19,7 +19,7 @@ class Connection extends \PHPixie\Database\Connection
 
         $options['username'] = $config->get('user', '');
         $options['password'] = $config->get('password', '');
-        
+
         $this->databaseName = $config->get('database');
         $options['db'] = $this->databaseName;
 
@@ -53,11 +53,12 @@ class Connection extends \PHPixie\Database\Connection
     {
         return $this->client;
     }
-    
+
     public function database()
     {
         if ($this->database === null)
             $this->database = $this->client()->{$this->databaseName};
+
         return $this->database;
     }
 }

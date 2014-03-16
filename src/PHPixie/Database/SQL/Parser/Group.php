@@ -34,7 +34,7 @@ abstract class Group
             $expr->sql.= "( ";
             $this->appendGroup($condition->conditions(), $expr);
             $expr->sql.= " )";
-        
+
         } else {
             throw new \PHPixie\Database\Exception\Parser("Unexpected condition type encountered");
         }

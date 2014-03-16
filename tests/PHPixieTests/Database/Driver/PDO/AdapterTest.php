@@ -4,7 +4,8 @@ namespace PHPixieTests\Database\Driver\PDO;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Adapter
  */
-abstract class AdapterTest extends \PHPixieTests\AbstractDatabaseTest{
+abstract class AdapterTest extends \PHPixieTests\AbstractDatabaseTest
+{
     protected $adapter;
     protected $connection;
     protected $result;

@@ -7,7 +7,7 @@ namespace PHPixieTests\Database\Driver\PDO;
 class ResultTest extends \PHPixieTests\Database\ResultTest
 {
     protected $statement;
-    
+
     public function setUp()
     {
         $database = new \PDO('sqlite::memory:');
@@ -39,7 +39,7 @@ class ResultTest extends \PHPixieTests\Database\ResultTest
     {
         parent::testNext();
     }
-    
+
     /**
      * @covers ::statement
      */

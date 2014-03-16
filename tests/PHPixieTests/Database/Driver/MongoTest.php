@@ -8,7 +8,7 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
 {
     protected $parserClass = 'PHPixie\Database\Driver\Mongo\Parser';
     protected $queryClass = 'PHPixie\Database\Driver\Mongo\Query';
-    
+
     public function setUp()
     {
         parent::setUp();
@@ -40,7 +40,7 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
         $operatorParser = $this->driver->operatorParser();
         $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Parser\Operator', $operatorParser);
     }
-    
+
     /**
      * @covers ::runner
      */
@@ -141,9 +141,9 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
             'user' => null,
             'password' => null,
         ));
-        
+
         $connection = $this->driver->buildConnection('connectionName', $config);
         $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Connection', $connection);
-        
+
     }
 }

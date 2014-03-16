@@ -1,5 +1,5 @@
 <?php
-namespace PHPixieTests\Database\Driver\PDO\Adapters;
+namespace PHPixieTests\Database\Driver\PDO\Adapter;
 
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Adapter\Mysql
@@ -18,5 +18,5 @@ class MysqlTest extends \PHPixieTests\Database\Driver\PDO\AdapterTest
                         ->will($this->returnValue(null));
         $this->adapter = new \PHPixie\Database\Driver\PDO\Adapter\Mysql('test', $this->connection);
     }
-    
+
 }

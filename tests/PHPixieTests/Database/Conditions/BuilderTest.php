@@ -112,7 +112,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
         $this->builder->addCondition('and', true, array());
     }
-    
+
     /**
      * @covers ::addOperatorCondition
      * @covers ::getConditions
@@ -165,22 +165,23 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
             ))
         ));
     }
-    
+
     /**
      * @covers ::addPlaceholder
      */
-    public function testAddPlaceholder() {
+    public function testAddPlaceholder()
+    {
         $placeholder = $this->builder->addPlaceholder();
         $this->assertEquals('and', $placeholder->logic());
         $this->assertEquals(false, $placeholder->negated());
         $this->assertAttributeEquals(true, 'allowEmpty', $placeholder);
-        
+
         $placeholder = $this->builder->addPlaceholder('or', true, false);
         $this->assertEquals('or', $placeholder->logic());
         $this->assertEquals(true, $placeholder->negated());
         $this->assertAttributeEquals(false, 'allowEmpty', $placeholder);
     }
-    
+
     /**
      * @covers ::startGroup
      * @covers ::addSubgroup

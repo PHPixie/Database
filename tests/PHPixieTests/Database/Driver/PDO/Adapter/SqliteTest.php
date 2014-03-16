@@ -1,5 +1,5 @@
 <?php
-namespace PHPixieTests\Database\Driver\PDO\Adapters;
+namespace PHPixieTests\Database\Driver\PDO\Adapter;
 
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Adapter\Sqlite

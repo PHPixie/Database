@@ -14,7 +14,6 @@ abstract class ParserTest extends \PHPixieTests\Database\SQL\ParserTest
         $this->parser = $this->parser();
     }
 
-    
     protected function parser()
     {
         $driver = $this->database->driver('PDO');

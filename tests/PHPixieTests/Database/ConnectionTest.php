@@ -11,7 +11,7 @@ abstract class ConnectionTest extends \PHPixieTests\AbstractDatabaseTest
     protected $queryClass;
     protected $config;
     protected $driver;
-    
+
     /**
      * @covers ::query
      */

@@ -133,56 +133,56 @@ abstract class Parser extends \PHPixie\Database\Parser
     protected function appendInsertValues($query, $expr)
     {
         if (($insertData = $query->getBatchData()) === null) {
-        
+
             if (($data = $query->getData()) === null)
                 $data = array();
-            
+
             $insertData = array(
                 'columns' => array_keys($data),
                 'rows' => array(array_values($data))
             );
         }
-        
+
         if (empty($insertData['columns']))
             return $this->appendEmptyInsertValues($expr);
-        
+
         $expr->sql .= "(";
-        
-        foreach($insertData['columns'] as $key => $column) {
+
+        foreach ($insertData['columns'] as $key => $column) {
             if($key > 0)
                 $expr->sql.= ', ';
             $this->fragmentParser->appendColumn($column, $expr);
         }
-        
+
         $expr->sql .= ") VALUES ";
-        
+
         $columnsCount = count($insertData['columns']);
-        
-        foreach($insertData['rows'] as $rowKey => $row) {
-            
+
+        foreach ($insertData['rows'] as $rowKey => $row) {
+
             if (count($row) != $columnsCount)
                     throw new \PHPixie\Database\Exception\Parser("The number of keys does not match the number of values for bulk insert.");
-            
+
             if($rowKey > 0)
                 $expr->sql.= ', ';
-            
+
             $expr->sql.= '(';
-            foreach($row as $valueKey => $value) {
+            foreach ($row as $valueKey => $value) {
                 if($valueKey > 0)
                     $expr->sql.= ', ';
-                    
+
                 $this->fragmentParser->appendValue($value, $expr);
             }
             $expr->sql.= ')';
         }
-        
+
     }
 
     protected function appendEmptyInsertValues($expr)
     {
         $expr->sql.= "() VALUES ()";
     }
-    
+
     protected function appendUpdateValues($query, $expr)
     {
         $expr->sql .= " SET ";
@@ -313,7 +313,7 @@ abstract class Parser extends \PHPixie\Database\Parser
                 $expr->sql.= ', ';
             }else
                 $first = false;
-            
+
             if (!is_numeric($key)) {
                 $this->fragmentParser->appendColumn($field, $expr);
                 $expr->sql.=" AS ".$this->fragmentParser->quote($key);

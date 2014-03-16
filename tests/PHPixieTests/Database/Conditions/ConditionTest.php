@@ -18,7 +18,7 @@ abstract class ConditionTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals($this->condition, $this->condition->negate());
         $this->assertEquals(true, $this->condition->negated());
     }
-    
+
     /**
      * @covers ::logic
      * @covers ::setLogic

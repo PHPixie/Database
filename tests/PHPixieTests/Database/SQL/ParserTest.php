@@ -24,7 +24,7 @@ abstract class ParserTest extends AbstractParserTest
                 'id',
                 'test' => 'pixie'
             ))->table('fairies'),
-            
+
             $this->query('select')->table('fairies')->where('a', 1)
                                                     ->orWhere(function ($builder) {
                                                         $builder->_and('b', 1)
@@ -90,15 +90,15 @@ abstract class ParserTest extends AbstractParserTest
 
             $this->query('insert')
                                 ->table('fairies'),
-                                
+
             $this->query('insert')
                                 ->table('fairies')
                                 ->batchData(array('pixie', 'fairy'), array(array(1, 2))),
-                                
+
             $this->query('insert')
                                 ->table('fairies')
                                 ->batchData(array('pixie', 'fairy'), array(array(1, 2), array(1, 2))),
-                                
+
             $this->query('insert')
                                 ->table('fairies')
                                 ->batchData(array(), array()),
@@ -173,7 +173,7 @@ abstract class ParserTest extends AbstractParserTest
 
             $this->query('select')
                                 ->union('a'),
-            
+
             $this->query('insert')
                                 ->table('fairies')
                                 ->batchData(array('pixie', 'fairy'), array(array(1, 2, 3), array(array(1, 2)))),

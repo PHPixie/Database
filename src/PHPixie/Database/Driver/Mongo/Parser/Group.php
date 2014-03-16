@@ -18,13 +18,13 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
         if ($condition instanceof \PHPixie\Database\Conditions\Condition\Group || $condition instanceof \PHPixie\Database\Conditions\Condition\Placeholder) {
             $group = $condition->conditions();
             $group = $this->parseLogic($group);
-            
-            if($group != null) {
+
+            if ($group != null) {
                 $group->logic = $condition->logic;
                 if ($condition->negated())
                     $group->negate();
             }
-            
+
             return $group;
         }
 
@@ -44,11 +44,11 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
     {
         if ($right->logic === 'and') {
             return $left->add($right);
-        
-        }elseif($right->logic === 'or') {
+
+        } elseif ($right->logic === 'or') {
             return $left->add($right, 'or');
-        
-        }else {
+
+        } else {
             $merged = $this->driver->expandedCondition();
             $rightClone = clone $right;
             $leftClone = clone $left;
@@ -72,10 +72,10 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
     {
         $expanded = $this->parseLogic($group);
         $expanded = $this->normalize($expanded);
-        
+
         if (empty($expanded))
             return array();
-        
+
         foreach ($expanded->groups() as $group) {
             $andGroup = array();
             foreach ($group as $condition) {

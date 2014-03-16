@@ -104,7 +104,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
                 'args' => array (array(), array())
             )
         ));
-        
+
         $query = $this->getQuery()->collection('fairies')
                                     ->orderBy('name', 'asc')
                                     ->orderBy('id', 'desc')
@@ -156,7 +156,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
                 'args' => array (array('id'=>1, 'name'=>"Trixie"))
             )
         ));
-        
+
         $query = $this->getQuery('insert')->collection('fairies')
                                     ->batchData(array(
                                         array('id' => 1, 'name' => "Trixie"),
@@ -318,7 +318,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
         $except = false;
         try {
             $this->parser->parse($query);
-        }catch (\PHPixie\Database\Exception\Parser $e) {
+        } catch (\PHPixie\Database\Exception\Parser $e) {
             $except = true;
         }
         $this->assertEquals(true, $except);

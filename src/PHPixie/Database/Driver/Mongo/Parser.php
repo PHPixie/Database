@@ -39,9 +39,9 @@ class Parser extends \PHPixie\Database\Parser
         $limit = $query->getLimit();
         $offset = $query->getOffset();
         $orderBy = $query->getOrderBy();
-        
+
         $fieldKeys = array();
-        foreach($fields as $key => $field) {
+        foreach ($fields as $key => $field) {
             if (!is_numeric($key))
                 throw new \PHPixie\Database\Exception\Parser("Field aliases are not supported for Mongodatabase. queries.");
             $fieldKeys[$field] = true;
@@ -49,7 +49,7 @@ class Parser extends \PHPixie\Database\Parser
 
         if ($query->getSelectSingle()) {
             $runner->chainMethod('findOne', array($conditions, $fieldKeys));
-        }else{
+        } else {
             $runner->chainMethod('find', array($conditions, $fieldKeys));
             if (!empty($orderBy)) {
                 $ordering =  array();
@@ -66,22 +66,20 @@ class Parser extends \PHPixie\Database\Parser
             if ($offset !== null)
                 $runner->chainMethod('skip', array($offset));
         }
+
         return $runner;
     }
 
     protected function insertQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
-        
-        
+
         if (($data = $query->getBatchData()) !== null) {
             $runner->chainMethod('batchInsert', array($data));
-        }elseif(($data = $query->getData()) !== null) {
+        } elseif (($data = $query->getData()) !== null) {
             $runner->chainMethod('insert', array($data));
         }else
             throw new \PHPixie\Database\Exception\Parser("No data set for insertion");
-        
-        
 
         return $runner;
     }

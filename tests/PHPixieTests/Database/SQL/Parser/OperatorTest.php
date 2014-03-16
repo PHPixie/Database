@@ -46,8 +46,6 @@ abstract class OperatorTest extends \PHPixieTests\Database\Parser\OperatorTest
         return $conditions;
     }
 
-
-    
     protected function conditions()
     {
         $conditions = array(
@@ -79,7 +77,7 @@ abstract class OperatorTest extends \PHPixieTests\Database\Parser\OperatorTest
     {
         return new \PHPixie\Database\Conditions\Condition\Operator($field, $operator, $values);
     }
-    
+
     protected function queryStub($sql, $params = array())
     {
         $query = $this->getMock('\PHPixie\Database\Driver\PDO\Query', array('parse'), array(), '', false);

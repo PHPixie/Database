@@ -159,14 +159,16 @@ abstract class Query
         return $this;
     }
 
-    public function getWhereBuilder() {
+    public function getWhereBuilder()
+    {
         return $this->conditionBuilder('where');
     }
-    
-    public function getWhereConditions() {
+
+    public function getWhereConditions()
+    {
         return $this->getConditions('where');
     }
-    
+
     public function where()
     {
         return $this->addCondition(func_get_args(), 'and', false, 'where');

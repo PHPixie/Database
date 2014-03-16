@@ -42,7 +42,7 @@ class Runner
 
                     if ($step['name'] === 'insert')
                         $connection->setInsertId((string) $args[0]['_id']);
-                        
+
                     if ($step['name'] === 'batchInsert') {
                         $last = end($args[0]);
                         $connection->setInsertId((string) $last['_id']);

@@ -7,7 +7,7 @@ namespace PHPixieTests\Database\Driver\PDO;
 class QueryTest extends \PHPixieTests\Database\SQL\QueryTest
 {
     protected $resultClass = '\PHPixie\Database\Driver\PDO\Result';
-    
+
     protected function query($type = 'select')
     {
         return new \PHPixie\Database\Driver\PDO\Query($this->database, $this->conditionsMock, $this->connection, $this->parser, null, $type);

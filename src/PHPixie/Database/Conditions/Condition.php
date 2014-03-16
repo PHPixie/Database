@@ -11,13 +11,14 @@ abstract class Condition
     {
         return $this->logic;
     }
-    
+
     public function setLogic($logic)
     {
         $this->logic = $logic;
+
         return $this;
     }
-    
+
     public function negate()
     {
         $this->negated = !$this->negated;

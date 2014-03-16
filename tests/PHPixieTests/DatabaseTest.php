@@ -56,19 +56,19 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
         $slice = $this->sliceStub(array(
             'driver' => 'PDO',
         ));
-        
+
         $this->config
                     ->expects($this->at(0))
                     ->method('slice')
                     ->with ('default')
                     ->will($this->returnValue($slice));
-        
+
         $this->config
                     ->expects($this->at(1))
                     ->method('slice')
                     ->with ('test')
                     ->will($this->returnValue($slice));
-        
+
         $database = $this->getMock('\PHPixie\Database', array('driver'), array($this->config));
         $driver = $this->getMock('\PHPixie\Database\Driver\PDO', array('buildConnection'), array($database));
 
@@ -133,7 +133,7 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals('query1', $database->query());
         $this->assertEquals('query2', $database->query('delete', 'test'));
     }
-    
+
     /**
      * @covers ::conditions
      * @covers ::buildConditions
@@ -144,5 +144,5 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertInstanceOf('\PHPixie\Database\Conditions', $conditions);
         $this->assertEquals($conditions, $this->database->conditions());
     }
-    
+
 }

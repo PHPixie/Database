@@ -43,11 +43,11 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
         $placeholder = $this->conditions->placeholder();
         $this->assertInstanceOf('PHPixie\Database\Conditions\Condition\Placeholder', $placeholder);
         $this->assertAttributeEquals('=', 'defaultOperator', $placeholder->builder());
-        
+
         $placeholder = $this->conditions->placeholder('>');
         $this->assertAttributeEquals('>', 'defaultOperator', $placeholder->builder());
     }
-    
+
     /**
      * @covers ::builder
      */
