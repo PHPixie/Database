@@ -61,7 +61,7 @@ class Expanded extends \PHPixie\Database\Conditions\Condition
         return $this;
     }
 
-    public function negate($debug=false)
+    public function negate()
     {
         $groups = array(array());
         $count = count($this->groups);
