@@ -6,7 +6,7 @@ abstract class Parser
 {
     protected $database;
     protected $driver;
-    protected $conig;
+    protected $config;
 
     public function __construct($database, $driver, $config)
     {
