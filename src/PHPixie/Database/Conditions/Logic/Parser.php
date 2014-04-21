@@ -33,7 +33,6 @@ abstract class Parser
             if ($right !== null)
                 $res = $this->merge($res, $right);
 
-            $current = $next;
         }
 
         return $res;
