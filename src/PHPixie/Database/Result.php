@@ -47,7 +47,8 @@ abstract class Result implements \Iterator
 
     protected function firstColumnName($row)
     {
-        return key(get_object_vars($row));
+        $data = get_object_vars($row);
+        return key($data);
     }
 
     abstract public function current();
