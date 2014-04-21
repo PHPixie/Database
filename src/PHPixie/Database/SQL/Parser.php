@@ -21,7 +21,6 @@ abstract class Parser extends \PHPixie\Database\Parser
 
     public function parse($query)
     {
-        $this->query = $query;
         $expr = $this->database->expr();
         $type = $query->getType();
 
@@ -53,7 +52,7 @@ abstract class Parser extends \PHPixie\Database\Parser
         $expr->sql = "SELECT ";
         $this->appendFields($query, $expr);
 
-        if ($this->query->getTable() !== null) {
+        if ($query->getTable() !== null) {
             $expr->sql.= " FROM ";
             $this->appendTable($query, $expr);
         }
@@ -120,7 +119,7 @@ abstract class Parser extends \PHPixie\Database\Parser
 
     protected function appendTable($query, $expr, $required = false)
     {
-        $table = $this->query->getTable();
+        $table = $query->getTable();
 
         if ($required && $table === null) {
             $type = strtoupper($query->getType());
@@ -186,7 +185,7 @@ abstract class Parser extends \PHPixie\Database\Parser
     protected function appendUpdateValues($query, $expr)
     {
         $expr->sql .= " SET ";
-        $data = $this->query->getData();
+        $data = $query->getData();
 
         if (empty($data))
             throw new \PHPixie\Database\Exception\Parser("Empty data passed to the UPDATE query");
