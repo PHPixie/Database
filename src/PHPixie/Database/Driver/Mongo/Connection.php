@@ -7,7 +7,7 @@ class Connection extends \PHPixie\Database\Connection
     protected $client;
     protected $databaseName;
     protected $database;
-    protected $insertId;
+    protected $lastInsertId;
 
     public function __construct($driver, $name, $config)
     {
