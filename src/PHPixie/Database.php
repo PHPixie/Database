@@ -4,6 +4,7 @@ namespace PHPixie;
 
 class Database
 {
+    
     protected $config;
     protected $conditions;
     protected $drivers = array();
