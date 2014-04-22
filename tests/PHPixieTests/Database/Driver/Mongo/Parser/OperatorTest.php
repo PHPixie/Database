@@ -2,6 +2,9 @@
 
 namespace PHPixieTests\Database\Driver\Mongo\Parser;
 
+if(!class_exists('\MongoRegex'))
+    require_once(__DIR__.'/OperatorTestFiles/MongoRegex.php');
+
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Parser\Operator
  */
