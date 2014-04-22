@@ -1,6 +1,9 @@
 <?php
 namespace PHPixieTests\Database\Driver\Mongo;
 
+if(!class_exists('\MongoClient'))
+    require_once(__DIR__.'\ConnectionTestFiles\MongoClient.php');
+
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Connection
  */
