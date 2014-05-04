@@ -29,7 +29,7 @@ class Builder
     protected function pushGroup($group)
     {
         $this->groupStack[]=$group;
-        $this->currentGroup = $group;
+        $this->currentGroup = $group; 
     }
 
     protected function addSubgroup($extendedLogic, $negate, $group, $parent)

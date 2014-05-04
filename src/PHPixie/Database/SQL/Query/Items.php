@@ -2,69 +2,75 @@
 
 namespace PHPixie\Database\SQL\Query;
 
-class Rows extends \PHPixie\Database\SQL\Query
+class Items extends \PHPixie\Database\SQL\Query implements \PHPixie\Database\Query\Items
 {
-	public function limit($limit)
+    public function limit($limit)
     {
-        $this->rows->limit($limit);
+        $this->common->limit($limit);
         return $this;
     }
 
     public function getLimit()
     {
-        return $this->rows->getLimit();
+        return $this->common->getLimit();
     }
 
     public function offset($offset)
     {
-        $this->rows->offset($offset);
+        $this->common->offset($offset);
         return $this;
     }
 
     public function getOffset()
     {
-        return $this->rows->getOffset();
+        return $this->common->getOffset();
     }
 
-    public function orderBy($field, $dir = 'asc')
+    public function orderAscendingBy($field)
     {
-		$this->rows->orderBy($field, $dir);
+		$this->common->orderBy($field, 'asc');
         return $this;
     }
 
+    public function orderDescendingBy($field)
+    {
+		$this->common->orderBy($field, 'desc');
+        return $this;
+    }
+    
     public function getOrderBy()
     {
-        return $this->rows->getOrderBy();
+        return $this->common->getOrderBy();
     }
 
 
     protected function addCondition($args, $logic = 'and', $negate = false, $builderName = null)
     {
-        $this->rows->addCondition($args, $logic, $negate, $builderName);
+        $this->common->addCondition($args, $logic, $negate, $builderName);
         return $this;
     }
 
     protected function startConditionGroup($logic = 'and', $builderName = null)
     {
-        $this->rows->startConditionGroup($logic, $builderName);
+        $this->common->startConditionGroup($logic, $builderName);
         return $this;
     }
 
     protected function endConditionGroup($builderName = null)
     {
-        $this->rows->endGroup($builderName);
+        $this->common->endGroup($builderName);
         return $this;
     }
 
 
     public function getWhereBuilder()
     {
-        return $this->rows->conditionBuilder('where');
+        return $this->common->conditionBuilder('where');
     }
 
     public function getWhereConditions()
     {
-        return $this->rows->getConditions('where');
+        return $this->common->getConditions('where');
     }
 
     public function where()
@@ -97,10 +103,36 @@ class Rows extends \PHPixie\Database\SQL\Query
         return $this->addCondition(func_get_args(), 'xor', true, 'where');
     }
 
-    public function startWhereGroup($logic = 'and')
+    public function startWhereGroup()
     {
-        return $this->startConditionGroup($logic, 'where');
+        return $this->startConditionGroup('and', false, 'where');
     }
+
+    public function startOrWhereGroup()
+    {
+        return $this->startConditionGroup('or', false, 'where');
+    }
+
+    public function startXorWhereGroup()
+    {
+        return $this->startConditionGroup('xor', false, 'where');
+    }
+
+    public function startWhereNotGroup()
+    {
+        return $this->startConditionGroup('and', true, 'where');
+    }
+
+    public function startOrWhereNotGroup()
+    {
+        return $this->startConditionGroup('or', true, 'where');
+    }
+
+    public function startXorWhereNotGroup()
+    {
+        return $this->startConditionGroup('xor', true, 'where');
+    }
+
 
     public function endWhereGroup()
     {
@@ -137,20 +169,46 @@ class Rows extends \PHPixie\Database\SQL\Query
         return $this->addCondition(func_get_args(), 'xor', true);
     }
 
-    public function startGroup($logic='and')
+    public function startGroup()
     {
-        $this->rows->startGroup($logic);
+        $this->common->startGroup('and', false);
     }
+
+    public function startOrGroup()
+    {
+        $this->common->startGroup('or', false);
+    }
+
+    public function startXorGroup()
+    {
+        $this->common->startGroup('xor', false);
+    }
+
+    public function startGroup()
+    {
+        $this->common->startNotGroup('and', true);
+    }
+
+    public function startOrNotGroup()
+    {
+        $this->common->startGroup('or', true);
+    }
+
+    public function startXorNotGroup()
+    {
+        $this->common->startGroup('xor', true);
+    }
+
 
     public function endGroup()
     {
-        $this->rows->endGroup();
+        $this->common->endGroup();
     }
     
     public function join($table, $alias = null, $type = 'inner')
     {
         $this->joins[] = array(
-            'builder' => $this->rows->conditionBuilder('=*'),
+            'builder' => $this->common->conditionBuilder('=*'),
             'table' => $table,
             'alias' => $alias,
             'type'  => $type
@@ -171,8 +229,8 @@ class Rows extends \PHPixie\Database\SQL\Query
 
         $join = end($this->joins);
 
-		$builder = $join['builder'];
-        $this->rows->setDefaultBuilder($builder);
+        $builder = $join['builder'];
+        $this->common->setDefaultBuilder($builder);
 
         return $builder;
     }
@@ -273,9 +331,6 @@ class Rows extends \PHPixie\Database\SQL\Query
     public function endOnGroup()
     {
         $this->lastOnBuilder()->endGroup();
-
         return $this;
     }
-	
-
 }

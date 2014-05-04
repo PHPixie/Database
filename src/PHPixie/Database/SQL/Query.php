@@ -5,9 +5,7 @@ namespace PHPixie\Database\SQL;
 abstract class Query extends \PHPixie\Database\Query
 {
     protected $table;
-    protected $groupBy = array();
-    protected $joins = array();
-    protected $unions = array();
+
     protected $batchData;
 
     public function table($table, $alias = null)
@@ -47,31 +45,7 @@ abstract class Query extends \PHPixie\Database\Query
         return parent::data($data);
     }
 
-    public function groupBy($field = null)
-    {
-        $this->groupBy[] = $field;
 
-        return $this;
-    }
-
-    public function getGroupBy()
-    {
-        return $this->groupBy;
-    }
-
-
-
-    public function union($query, $all=false)
-    {
-        $this->unions[] = array($query, $all);
-
-        return $this;
-    }
-
-    public function getUnions()
-    {
-        return $this->unions;
-    }
 
 
     public function execute()
