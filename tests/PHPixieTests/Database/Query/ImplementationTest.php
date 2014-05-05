@@ -1,39 +1,6 @@
 <?php
 namespace PHPixieTests\Database;
 
-class BuilderStub
-{
-    public $passed = array();
-    public $startGroupLogic;
-    public $endGroupCalled = false;
-    public $getConditionsStub;
-
-    public function __construct()
-    {
-        $this->getConditionsStub = new \stdClass;
-    }
-
-    public function addCondition()
-    {
-        $this->passed[] = func_get_args();
-    }
-
-    public function getConditions()
-    {
-        return $this->getConditionsStub;
-    }
-
-    public function startGroup($logic)
-    {
-        $this->startGroupLogic = $logic;
-    }
-
-    public function endGroup()
-    {
-        $this->endGroupCalled = true;
-    }
-}
-
 /**
  * @coversDefaultClass \PHPixie\Database\Query
  */
@@ -83,60 +50,7 @@ abstract class QueryTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals('delete', $this->query->getType());
     }
 
-    /**
-     * @covers ::fields
-     * @covers ::getFields
-     */
-    public function testFields()
-    {
-        $this->assertEquals(array(), $this->query->getFields());
-        $this->assertEquals($this->query, $this->query->fields(array('id')));
-        $this->assertEquals(array('id'), $this->query->getFields());
-        $this->assertBuilderException(function () {
-            $this->query->fields('test');
-        });
-    }
-
-    /**
-     * @covers ::offset
-     * @covers ::getOffset
-     */
-    public function testOffset()
-    {
-        $this->getSetTest('offset', 5);
-        $this->assertBuilderException(function () {
-            $this->query->offset('test');
-        });
-    }
-
-    /**
-     * @covers ::limit
-     * @covers ::getLimit
-     */
-    public function testLimit()
-    {
-        $this->getSetTest('limit', 5);
-        $this->assertBuilderException(function () {
-            $this->query->limit('test');
-        });
-    }
-
-    /**
-     * @covers ::orderBy
-     * @covers ::getOrderBy
-     */
-    public function testOrderBy()
-    {
-        $this->assertEquals(array(), $this->query->getOrderBy());
-        $this->assertEquals($this->query, $this->query->orderBy('id', 'desc'));
-        $this->assertEquals(array(array('id', 'desc')), $this->query->getOrderBy());
-        $this->assertEquals($this->query, $this->query->orderBy('name'));
-        $this->assertEquals(array(array('id','desc'),array('name','asc')), $this->query->getOrderBy());
-        $this->assertBuilderException(function () {
-            $this->query->orderBy('name', 'test');
-        });
-    }
-
+ 
     /**
      * @covers ::where
      * @covers ::orWhere

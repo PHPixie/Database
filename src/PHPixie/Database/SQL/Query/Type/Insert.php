@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\SQL\Query\Type;
 
-class Insert extends \PHPixie\Database\SQL\Query
+class Insert extends \PHPixie\Database\SQL\Query\Items implements \PHPixie\Database\Query\Type\Insert
 {
     protected $data;
     

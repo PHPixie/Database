@@ -3,6 +3,5 @@
 namespace PHPixie\Database\Query\Type;
 
 interface Delete extends \PHPixie\Database\Query\Items{
-    public function fields($fields);
-    public function getFields();
+
 }

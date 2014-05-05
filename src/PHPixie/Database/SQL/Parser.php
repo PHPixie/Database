@@ -4,24 +4,22 @@ namespace PHPixie\Database\SQL;
 
 abstract class Parser extends \PHPixie\Database\Parser
 {
-    protected $database;
-    protected $driver;
-    protected $config;
+    protected $sql;
     protected $fragmentParser;
     protected $groupParser;
-
     protected $supportedJoins;
 
-    public function __construct($database, $driver, $config, $fragmentParser, $groupParser)
+    public function __construct($database, $driver, $config, $sql, $fragmentParser, $groupParser)
     {
         parent::__construct($database, $driver, $config);
+        $this->sql = $sql;
         $this->fragmentParser = $fragmentParser;
         $this->groupParser = $groupParser;
     }
 
     public function parse($query)
     {
-        $expr = $this->database->expr();
+        $expr = $this->sql->expression();
         $type = $query->getType();
 
         switch ($type) {
@@ -131,19 +129,30 @@ abstract class Parser extends \PHPixie\Database\Parser
 
     protected function appendInsertValues($query, $expr)
     {
-        if (($insertData = $query->getBatchData()) === null) {
-
-            if (($data = $query->getData()) === null)
-                $data = array();
-
+        $data = $query->getData();
+        
+        if($data === null){
             $insertData = array(
-                'columns' => array_keys($data),
-                'rows' => array(array_values($data))
+                'columns' => array(),
+                'rows' => array()
+            );
+        
+        }elseif($data instanceof \PHPixie\Database\SQL\Query\Data\Bulk) {
+            $insertData = array(
+                'columns' => $data->columns(),
+                'rows' => $data->rows()
+            );
+        
+        }else{
+            $values = $data->values();
+            $insertData = array(
+                'columns' => array_keys($values),
+                'rows' => array(array_values($values))
             );
         }
 
         if (empty($insertData['columns']))
-            return $this->appendEmptyInsertValues($expr);
+            
 
         $expr->sql .= "(";
 
@@ -187,7 +196,13 @@ abstract class Parser extends \PHPixie\Database\Parser
         $expr->sql .= " SET ";
         $data = $query->getData();
 
-        if (empty($data))
+        if ($data === null){
+            $values = array();
+        }else{
+            $values = $data->values();
+        }
+        
+        if(empty($values))
             throw new \PHPixie\Database\Exception\Parser("Empty data passed to the UPDATE query");
 
         $first = true;

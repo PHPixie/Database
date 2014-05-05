@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\SQL\Query\Type;
 
-class Update extends \PHPixie\Database\SQL\Query\Rows
+class Update extends \PHPixie\Database\SQL\Query\Items implements \PHPixie\Database\Query\Type\Update
 {
     protected $data;
     

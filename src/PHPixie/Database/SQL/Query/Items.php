@@ -184,9 +184,9 @@ class Items extends \PHPixie\Database\SQL\Query implements \PHPixie\Database\Que
         $this->common->startGroup('xor', false);
     }
 
-    public function startGroup()
+    public function startNotGroup()
     {
-        $this->common->startNotGroup('and', true);
+        $this->common->startGroup('and', true);
     }
 
     public function startOrNotGroup()
@@ -240,55 +240,10 @@ class Items extends \PHPixie\Database\SQL\Query implements \PHPixie\Database\Que
         $this->lastOnBuilder()->addCondition($logic, $negate, $args);
         return $this;
     }
-
-    public function getHavingBuilder()
+    
+    public function startOnConditionGroup($logic = 'and', $negate = false)
     {
-        return $this->conditionBuilder('having');
-    }
-
-    public function getHavingConditions()
-    {
-        return $this->getConditions('having');
-    }
-
-    public function having()
-    {
-        return $this->addCondition(func_get_args(), 'and', false, 'having');
-    }
-
-    public function orHaving()
-    {
-        return $this->addCondition(func_get_args(), 'or', false, 'having');
-    }
-
-    public function xorHaving()
-    {
-        return $this->addCondition(func_get_args(), 'xor', false, 'having');
-    }
-
-    public function havingNot()
-    {
-        return $this->addCondition(func_get_args(), 'and', true, 'having');
-    }
-
-    public function orHavingNot()
-    {
-        return $this->addCondition(func_get_args(), 'or', true, 'having');
-    }
-
-    public function xorHavingNot()
-    {
-        return $this->addCondition(func_get_args(), 'xor', true, 'having');
-    }
-
-    public function startHavingGroup($logic = 'and')
-    {
-        return $this->startConditionGroup($logic, 'having');
-    }
-
-    public function endHavingGroup()
-    {
-        return $this->endConditionGroup('having');
+        $this->lastOnBuilder()->startConditionGroup($logic, $negate);
     }
 
     public function on()
@@ -321,11 +276,34 @@ class Items extends \PHPixie\Database\SQL\Query implements \PHPixie\Database\Que
         return $this->addOnCondition(func_get_args(), 'xor', true);
     }
 
-    public function startOnGroup($logic = 'and')
+    public function startOnGroup()
     {
-        $this->lastOnBuilder()->startGroup($logic);
+        return $this->startOnConditionGroup('and', false);
+    }
 
-        return $this;
+    public function startOrOnGroup()
+    {
+        return $this->startOnConditionGroup('or', false);
+    }
+
+    public function startXorOnGroup()
+    {
+        return $this->startOnConditionGroup('xor', false);
+    }
+
+    public function startOrNotGroup()
+    {
+        return $this->startOnConditionGroup('and', true);
+    }
+
+    public function startOrOnNotGroup()
+    {
+        return $this->startOnConditionGroup('or', true);
+    }
+
+    public function startXorOnNotGroup()
+    {
+        return $this->startOnConditionGroup('xor', true);
     }
 
     public function endOnGroup()

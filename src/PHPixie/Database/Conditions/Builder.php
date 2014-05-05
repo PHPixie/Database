@@ -17,12 +17,14 @@ class Builder
 
     }
 
-    public function startGroup($extendedLogic = 'and', $negate = false)
+    
+    public function startConditionGroup($logic = 'and', $negate = false)
     {
         $group = $this->conditions->group();
-        $this->addSubgroup($extendedLogic, $negate, $group, $this->currentGroup);
+        if($negate)
+            $group->negate();
+        $this->currentGroup->add($group, $logic);
         $this->pushGroup($group);
-
         return $this;
     }
 
@@ -30,31 +32,6 @@ class Builder
     {
         $this->groupStack[]=$group;
         $this->currentGroup = $group; 
-    }
-
-    protected function addSubgroup($extendedLogic, $negate, $group, $parent)
-    {
-        switch ($extendedLogic) {
-            case 'and':
-            case 'or':
-            case 'xor':
-                $logic = $extendedLogic;
-                break;
-            case 'andNot':
-            case 'orNot':
-            case 'xorNot':
-                $logic = substr($extendedLogic, 0, -3);
-                $negate = !$negate;
-                break;
-            default:
-                throw new \PHPixie\Database\Exception\Builder("Logic must be either 'and', 'or', 'xor', 'andNot' ,'orNot', 'xorNot'");
-        }
-
-        if ($negate)
-            $group->negate();
-
-        $parent->add($group, $logic);
-
     }
 
     public function endGroup()
@@ -155,5 +132,35 @@ class Builder
     public function _xorNot()
     {
         return $this->addCondition('xor', true, func_get_args());
+    }
+    
+    public function startGroup()
+    {
+        return $this->startConditionGroup('and', false);
+    }
+    
+    public function startOrGroup()
+    {
+        return $this->startConditionGroup('or', false);
+    }
+    
+    public function startXorGroup()
+    {
+        return $this->startConditionGroup('xor', false);
+    }
+    
+    public function startNotGroup()
+    {
+        return $this->startConditionGroup('and', true);
+    }
+    
+    public function startOrNotGroup()
+    {
+        return $this->startConditionGroup('or', true);
+    }
+    
+    public function startXorNotGroup()
+    {
+        return $this->startConditionGroup('xor', true);
     }
 }

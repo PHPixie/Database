@@ -4,9 +4,14 @@ namespace PHPixie\Database\SQL;
 
 abstract class Query extends \PHPixie\Database\Query
 {
+    protected $sql;
     protected $table;
-
-    protected $batchData;
+    
+    public function __construct($database, $connection, $parser, $config, $sql)
+    {
+        parent::__construct($database, $connection, $parser, $config);
+        $this->sql = $sql;
+    }
 
     public function table($table, $alias = null)
     {
@@ -45,15 +50,10 @@ abstract class Query extends \PHPixie\Database\Query
         return parent::data($data);
     }
 
-
-
-
     public function execute()
     {
         $expr = $this->parse();
         $result = $this->connection->execute($expr->sql, $expr->params);
-        if ($this->getType() === 'count')
-            return $result->get('count');
         return $result;
     }
 }

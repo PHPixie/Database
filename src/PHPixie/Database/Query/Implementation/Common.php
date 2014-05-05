@@ -2,9 +2,10 @@
 
 namespace PHPixie\Database\Query;
 
-class Rows
+class Common
 {
 	protected $conditions;
+    protected $fields;
     protected $limit;
     protected $offset;
     protected $orderBy = array();
@@ -17,13 +18,22 @@ class Rows
 		$this->conditions = $conditions;
 	}
 	
+    public function fields($fields)
+    {
+        $this->assert($fields !== null && !is_array($fields),"Field list must either be an array or NULL");
+        $this->fields = $fields;
+        return $this;
+    }
+    
+    public function getFields()
+    {
+        return $this->fields;
+    }
+    
     public function limit($limit)
     {
-        if (!is_numeric($limit))
-            throw new \PHPixie\Database\Exception\Builder("Limit must be a number");
-
+        $this->assert(is_numeric($$limit), "Limit must be a number");
         $this->limit = $limit;
-
         return $this;
     }
 
@@ -34,11 +44,8 @@ class Rows
 
     public function offset($offset)
     {
-        if (!is_numeric($offset))
-            throw new \PHPixie\Database\Exception\Builder("Offset must be a number");
-
+        $this->assert(is_numeric($offset), "Offset must be a number");
         $this->offset = $offset;
-
         return $this;
     }
 
@@ -47,27 +54,27 @@ class Rows
         return $this->offset;
     }
 
-    public function orderBy($field, $dir = 'asc')
+    public function orderAscendingBy($field)
     {
-        if ($dir !== 'asc' && $dir !== 'desc')
-            throw new \PHPixie\Database\Exception\Builder("Order direction must be either 'asc' or  'desc'");
-
-        $this->orderBy[] = array($field, $dir);
-
+        $this->orderBy[] = array($field, 'asc');
         return $this;
     }
-
+    
+    public function orderDescendingBy($field)
+    {
+        $this->orderBy[] = array($field, 'desc');
+        return $this;
+    }
+    
     public function getOrderBy()
     {
         return $this->orderBy;
     }
 
-    protected function conditionBuilder($name = null)
+    public function conditionBuilder($name = null)
     {
         if ($name === null) {
-            if ($this->defaultBuilder === null)
-                throw new \PHPixie\Database\Exception\Builder("None of the condition builders were used");
-
+            $this->assert($this->defaultBuilder !== null, "None of the condition builders were used");
             return $this->defaultBuilder;
         }
 
@@ -92,10 +99,9 @@ class Rows
         $this->conditionBuilder($builderName)->addCondition($logic, $negate, $args);
     }
 
-    public function startConditionGroup($logic = 'and', $builderName = null)
+    public function startConditionGroup($logic = 'and', $negate = false, $builderName = null)
     {
-        $this->conditionBuilder($builderName)->startGroup($logic);
-
+        $this->conditionBuilder($builderName)->startConditionGroup($logic, $negate);
     }
 
     public function endConditionGroup($builderName = null)
@@ -112,5 +118,11 @@ class Rows
 	{
 		$this->defaultBuilder = $builder;
 	}
+    
+    public function assert($condition, $exceptionMessage)
+    {
+        if(!$condition)
+            throw new \PHPixie\Database\Exception\Builder($exceptionMessage);
+    }
 
 }

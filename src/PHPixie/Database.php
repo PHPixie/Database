@@ -7,6 +7,7 @@ class Database
     
     protected $config;
     protected $conditions;
+    protected $sql;
     protected $drivers = array();
     protected $connections =  array();
 
@@ -54,13 +55,22 @@ class Database
         return $this->conditions;
     }
 
-    public function expr($sql = '', $params = array())
+    public function sql()
     {
-        return new \PHPixie\Database\SQL\Expression($sql, $params);
+        if($this->sql === null)
+            $this->sql = $this->buildSQL();
+        
+        return $this->sql;
     }
-
+    
+    
     protected function buildConditions()
     {
         return new \PHPixie\Database\Conditions();
+    }
+    
+    protected function buildSQL()
+    {
+        return new Database\SQL();
     }
 }
