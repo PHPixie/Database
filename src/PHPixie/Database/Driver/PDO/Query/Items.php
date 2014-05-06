@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver\PDO\Query;
 
-abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPixie\Database\SQL\Query\Items
+abstract class Items extends Implementation implements \PHPixie\Database\SQL\Query\Items
 {
 
     public function limit($limit)

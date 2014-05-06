@@ -2,46 +2,39 @@
 
 namespace PHPixie\Driver\PDO\Query\Type;
 
-class Select extends \PHPixie\Driver\PDO\Query\Type implements \PHPixie\Driver\SQL\Query\Type\Select
+class Select extends \PHPixie\Driver\PDO\Query\Items implements \PHPixie\Driver\SQL\Query\Type\Select
 {
     public function fields($fields)
     {
-        $this->common->fields($fields);
+        $this->builder->fields($fields);
     }
     
     public function getFields($fields)
     {
-        $this->common->getFields();
+        $this->builder->getFields();
     }
-        
 
-    
     public function groupBy($field)
     {
-        return $this->common->groupBy($field);
+        return $this->builder->groupBy($field);
         return $this;
     }
 
     public function getGroupBy()
     {
-        return $this->common->getGroupBy();
+        return $this->builder->getGroupBy();
     }
     
     public function union($query, $all=false)
     {
-        return $this->common->union($query, $all);
+        return $this->builder->union($query, $all);
         return $this;
     }
     
     public function getUnions()
     {
-        return $this->common->getUnions();
+        return $this->builder->getUnions();
     }
-    
-    
-    
-    
-    
     
     public function getHavingBuilder()
     {

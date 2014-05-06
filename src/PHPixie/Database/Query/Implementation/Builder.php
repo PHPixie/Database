@@ -4,6 +4,7 @@ namespace PHPixie\Database\Query\Implementation;
 
 class Common
 {
+    protected $driver;
 	protected $conditions;
     protected $fields;
     protected $limit;
@@ -14,8 +15,9 @@ class Common
     protected $defaultBuilder;
 
 	
-	public function __construct($conditions)
+	public function __construct($driver, $conditions)
 	{
+        $this->driver = $driver;
 		$this->conditions = $conditions;
 	}
 	
@@ -23,7 +25,6 @@ class Common
     {
         $this->assert($fields !== null && !is_array($fields),"Field list must either be an array or NULL");
         $this->fields = $fields;
-        return $this;
     }
     
     public function getFields()
@@ -35,7 +36,6 @@ class Common
     {
         $this->assert(is_numeric($$limit), "Limit must be a number");
         $this->limit = $limit;
-        return $this;
     }
 
     public function getLimit()
@@ -47,7 +47,6 @@ class Common
     {
         $this->assert(is_numeric($offset), "Offset must be a number");
         $this->offset = $offset;
-        return $this;
     }
 
     public function getOffset()
@@ -58,24 +57,27 @@ class Common
     public function orderAscendingBy($field)
     {
         $this->orderBy[] = array($field, 'asc');
-        return $this;
     }
     
     public function orderDescendingBy($field)
     {
         $this->orderBy[] = array($field, 'desc');
-        return $this;
     }
     
     public function getOrderBy()
     {
         return $this->orderBy;
     }
+
+    public function data($data)
+    {
+        $this->driver->valuesData($data);
+    }
     
     public function getData($data){
         return $this->data;
     }
-
+    
     public function conditionBuilder($name = null)
     {
         if ($name === null) {

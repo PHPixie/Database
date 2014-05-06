@@ -15,6 +15,21 @@ class Common extends \PHPixie\Database\Query\Implementation\Items\Common{
         $this->sql = $sql;
     }
     
+    public function table($table, $alias = null)
+    {
+        $this->table = array(
+            'table' => $table,
+            'alias' => $alias
+        );
+
+        return $this;
+    }
+
+    public function getTable()
+    {
+        return $this->table;
+    }
+    
     public function valuesData($data){
         $this->data = $this->sql->valuesData($data);    
     }

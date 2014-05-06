@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Query;
 
-abstract class Implementation implements \PHPixie\Database\Query
+abstract class Builder implements \PHPixie\Database\Query
 {
     protected $database;
     protected $conditions;
@@ -15,7 +15,7 @@ abstract class Implementation implements \PHPixie\Database\Query
 
     public function __construct($database, $connection, $parser, $config)
     {
-        $this->database         = $database;
+        $this->database   = $database;
         $this->connection = $connection;
         $this->parser     = $parser;
         $this->config     = $config;
