@@ -25,7 +25,7 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
                     return $this->builder;
                 }));
         
-        $this->common = new \PHPixie\Database\Query\Implementation\Common($this->conditionsMock);
+        $this->common = $this->buildCommon();
     }
     
     /**
@@ -37,9 +37,8 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals(array(), $this->query->getFields());
         $this->assertEquals($this->query, $this->query->fields(array('id')));
         $this->assertEquals(array('id'), $this->query->getFields());
-        $this->assertBuilderException(function () {
-            $this->query->fields('test');
-        });
+        $this->setExpectedException('\PHPixie\Database\Exception\Builder');
+        $this->query->fields('test');    
     }
     
     /**
@@ -49,9 +48,8 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
     public function testOffset()
     {
         $this->getSetTest('offset', 5);
-        $this->assertBuilderException(function () {
-            $this->query->offset('test');
-        });
+        $this->setExpectedException('\PHPixie\Database\Exception\Builder');
+        $this->query->offset('test');
     }
 
     /**
@@ -61,9 +59,8 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
     public function testLimit()
     {
         $this->getSetTest('limit', 5);
-        $this->assertBuilderException(function () {
-            $this->query->limit('test');
-        });
+        $this->setExpectedException('\PHPixie\Database\Exception\Builder');
+        $this->query->limit('test');
     }
 
     /**
@@ -79,6 +76,12 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals($this->query, $this->query->orderAscendingBy('name'));
         $this->assertEquals(array(array('id','desc'),array('name','asc')), $this->query->getOrderBy());
     }
+
+    /**
+     * @covers ::data
+     */
+    public abstract function testData();
+    
     
     /**
      * @covers ::conditionBuilder
@@ -120,12 +123,10 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testGetConditions()
     {
-        $this->expectCalls($this->conditionsMock, array(
-                                                    'getConditions' => array('first')
-                                                ), array(
-                                                    'getConditions' => $this->builders[0]
-                                                );
+        $this->prepareBuilder();
         $this->assertEquals(array(), $this->common->getConditions('first'));
+        
+        $firstBuilder = $this->common->conditionBuilder('first');
         
         $firstBuilder
             ->expects($this->at(0))
@@ -141,5 +142,79 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
                            
         $this->assertEquals(array(1), $this->common->getConditions('first'));
         
+    }
+    
+    /**
+     * @covers ::addCondition
+     */
+    public function testAddCondition()
+    {
+        $this->prepareBuilder();
+        $this->expectCalls($this->builders[0], array('addCondition' => array('or', true, array(5))));
+        $this->common->addCondition(array(5), 'or', true, 'first');
+    }
+    
+    /**
+     * @covers ::startConditionGroup
+     */
+    public function testStartConditionGroup()
+    {
+        $this->prepareBuilder();
+        $this->expectCalls($this->builders[0], array('startConditionGroup' => array('or', true)));
+        $this->common->startConditionGroup('or', true, 'first');
+    }
+    
+    /**
+     * @covers ::startConditionGroup
+     */
+    public function testStartConditionGroup()
+    {
+        $this->prepareBuilder();
+        $this->expectCalls($this->builders[0], array('startConditionGroup' => array('or', true)));
+        $this->common->startConditionGroup('or', true, 'first');
+    }
+    
+    /**
+     * @covers ::endConditionGroup
+     */
+    public function testEndConditionGroup()
+    {
+        $this->prepareBuilder();
+        $this->expectCalls($this->builders[0], array('endConditionGroup' => array()));
+        $this->common->endConditionGroup('first');
+    }
+    
+    /**
+     * @covers ::assert
+     */
+    public function testAssert()
+    {
+        $this->common->assert(true, 'test');
+        try{
+            $this->assert(false, 'test');
+        }catch(\PHPixie\Database\Exception\Builder $e){
+            $this->assertEquals('test', $e->getMessage());
+        }
+    }
+    
+    protected function prepareBuilder()
+    {
+        $this->expectCalls($this->conditionsMock, array(
+                                                    'getConditions' => array('first')
+                                                ), array(
+                                                    'getConditions' => $this->builders[0]
+                                                ));
+    }
+    
+    protected function getSetTest($method, $param, $default = null)
+    {
+        $this->assertEquals($default, call_user_func_array(array($this->query, 'get'.ucfirst($method)), array()));
+        $this->assertEquals($this->query, call_user_func_array(array($this->query, $method), array($param)));
+        $this->assertEquals($param, call_user_func_array(array($this->query, 'get'.ucfirst($method)), array()));
+    }
+    
+    protected function buildCommon()
+    {
+        return new \PHPixie\Database\Query\Implementation\Common($this->conditionsMock);
     }
 }

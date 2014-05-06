@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPixie\Database\Query;
+namespace PHPixie\Database\Query\Implementation;
 
 class Common
 {
@@ -9,6 +9,7 @@ class Common
     protected $limit;
     protected $offset;
     protected $orderBy = array();
+    protected $data;
     protected $conditionBuilders = array();
     protected $defaultBuilder;
 
@@ -70,6 +71,10 @@ class Common
     {
         return $this->orderBy;
     }
+    
+    public function getData($data){
+        return $this->data;
+    }
 
     public function conditionBuilder($name = null)
     {
@@ -108,16 +113,6 @@ class Common
     {
         $this->conditionBuilder($builderName)->endGroup();
     }
-    
-    public function defaultBuilder()
-    {
-		return $this->defultBuilder;
-	}
-	
-	public function setDefaultBuilder($builder)
-	{
-		$this->defaultBuilder = $builder;
-	}
     
     public function assert($condition, $exceptionMessage)
     {
