@@ -1,8 +1,7 @@
 <?php
 
-namespace PHPixie\Database\Driver\PDO\Query;
+namespace PHPixie\Database\Driver\PDO;
 
-abstract class Implementation extends \PHPixie\Database\SQL\Query\Implementation implements \PHPixie\Database\Driver\PDO\Query
+abstract class Query extends \PHPixie\Database\SQL\Query\Implementation 
 {
-
 }

@@ -2,19 +2,12 @@
 
 namespace PHPixie\Database\SQL\Query\Items;
 
-class Common extends \PHPixie\Database\Query\Implementation\Items\Common{
+class Builder extends \PHPixie\Database\Query\Implementation\Items\Common{
 
-    protected $sql;
     protected $joins = array();
     protected $groupBy = array();
     protected $unions = array();
 
-    public function __construct($conditions, $sql)
-    {
-        parent::__construct($conditions);
-        $this->sql = $sql;
-    }
-    
     public function table($table, $alias = null)
     {
         $this->table = array(
@@ -31,17 +24,17 @@ class Common extends \PHPixie\Database\Query\Implementation\Items\Common{
     }
     
     public function valuesData($data){
-        $this->data = $this->sql->valuesData($data);    
+        $this->data = $this->driver->valuesData($data);    
     }
     
-    public function bulkData($rows, $columns){
-        $this->data = $this->sql->bulkData($data);    
+    public function batchData($rows, $columns){
+        $this->data = $this->driver->batchData($data);    
     }
     
     public function join($table, $alias, $type)
     {
         $this->joins[] = array(
-            'builder' => $this->common->conditionBuilder('=*'),
+            'builder' => $this->builder->conditionBuilder('=*'),
             'table' => $table,
             'alias' => $alias,
             'type'  => $type

@@ -6,18 +6,18 @@ namespace PHPixieTests\Database\Query;
  */
 abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
 {
-    protected $database;
-    protected $query;
+    protected $connection;
     protected $parser;
     protected $builder;
+    protected $query;
     protected $type;
 
     protected function setUp()
     {
-        $this->database = $this->getMock('\PHPixie\Database', array('conditions'), array(null));
-        $this->parser = $this->mockParser();
+        $this->connection = $this->getConnection();
+        $this->parser = $this->getParser();
+        $this->builder = $this->getBuilder();
         $this->query = $this->query();
-        $this->builder = $this->builderStub();
     }
 
     /**
@@ -43,18 +43,23 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals('a', $query->parse());
     }
 
-    protected function getSetTest($method, $param, $default = null)
+    protected function testBuilderMethod($method, $with, $at=0, $params = null)
     {
-        $this->assertEquals($default, call_user_func_array(array($this->query, 'get'.ucfirst($method)), array()));
-        $this->assertEquals($this->query, call_user_func_array(array($this->query, $method), array($param)));
-        $this->assertEquals($param, call_user_func_array(array($this->query, 'get'.ucfirst($method)), array()));
+        if($params === null)
+            $params = $with;
+        
+        $methodMock = $this->builder
+                    ->expects($this->at($at))
+                    ->method($method);
+        
+        call_user_func_array(array($methodMock, 'with'), $with);
+        call_user_func_array(array($this->query, $method), $params);
     }
 
 
-    protected function builderStub()
-    {
-        return new BuilderStub();
-    }
     abstract public function testExecute();
+    abstract protected function getConnection();
+    abstract protected function getParser();
+    abstract protected function getBuilder();
     abstract protected function query();
 }

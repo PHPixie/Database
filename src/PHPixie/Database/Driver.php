@@ -21,17 +21,29 @@ abstract class Driver
         return $this->parsers[$connectionName];
     }
 
+    public function queryBuilder()
+    {
+        $conditions = $this->database->conditions();
+        return $this->buildQueryBuilder($driver, $conditions);
+    }
+    
     public function query($type = 'select', $connectionName = 'default')
     {
         $connection = $this->database->get($connectionName);
         $config     = $connection->config();
         $parser     = $this->parser($connectionName);
-
-        return $this->buildQuery($connection, $parser, $config, $type);
+        $builder    = $this->queryBuilder();
+        return $this->buildQuery($connection, $parser, $builder, $config, $type);
     }
 
+    public function valuesData($data)
+    {
+        return new \PHPixie\Database\Query\Data\Values($data);
+    }
+    
     abstract public function buildConnection($name, $config);
     abstract public function buildParserInstance($connectionName);
+    abstract public function buildQueryBuilder($driver, $conditions);
     abstract public function buildQuery($connection, $parser, $config, $type);
     abstract public function result($cursor);
 

@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Query\Data;
 
-class Bulk
+class Batch
 {
     protected $columns;
     protected $rows;

@@ -55,22 +55,14 @@ class Database
         return $this->conditions;
     }
 
-    public function sql()
+    public function sqlExpression($sql = '', $params = array())
     {
-        if($this->sql === null)
-            $this->sql = $this->buildSQL();
-        
-        return $this->sql;
+        return new SQL\Expression($sql, $params);
     }
-    
     
     protected function buildConditions()
     {
         return new \PHPixie\Database\Conditions();
     }
-    
-    protected function buildSQL()
-    {
-        return new Database\SQL();
-    }
+        
 }

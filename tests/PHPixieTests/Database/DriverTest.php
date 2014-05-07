@@ -36,5 +36,15 @@ abstract class DriverTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertAttributeEquals('config', 'config', $query);
         $this->assertAttributeInstanceOf($this->parserClass, 'parser', $query);
     }
+    
+    /**
+     * @covers ::valuesData
+     */
+    public function testValuesData()
+    {
+        $valuesData = $this->driver->valuesData(array('test'));
+        $this->assertInstanceOf('\PHPixie\Database\Query\Data\Values', $valuesData);
+        $this->assertEquals(array('test'), $valuesData->values());
+    }
 
 }

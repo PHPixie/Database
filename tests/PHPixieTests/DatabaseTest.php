@@ -19,16 +19,16 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
     /**
      * @covers ::expr
      */
-    public function testExpr()
+    public function testSQLExpression()
     {
-        $expr = $this->database->expr();
+        $expr = $this->database->sqlExpression();
         $this->assertInstanceOf('\PHPixie\Database\SQL\Expression', $expr);
         $this->assertEquals('', $expr->sql);
         $this->assertEquals(array(), $expr->params);
-        $expr = $this->database->expr('pixie');
+        $expr = $this->database->sqlExpression('pixie');
         $this->assertEquals('pixie', $expr->sql);
         $this->assertEquals(array(), $expr->params);
-        $expr = $this->database->expr('pixie', array('test'));
+        $expr = $this->database->sqlExpression('pixie', array('test'));
         $this->assertEquals('pixie', $expr->sql);
         $this->assertEquals(array('test'), $expr->params);
     }

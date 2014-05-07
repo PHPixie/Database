@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\SQL\Query;
 
-interface Items extends \PHPixie\Database\SQL\Query implements \PHPixie\Database\Query\Items
+interface Items extends \PHPixie\Database\SQL\Query, \PHPixie\Database\Query\Items
 {
     public function join($table, $alias = null, $type = 'inner');
     public function getJoins();

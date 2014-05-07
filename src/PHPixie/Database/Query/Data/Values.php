@@ -11,4 +11,9 @@ class Values
         $this->values = $values;
     }
     
+    public function values()
+    {
+        return $this->values;
+    }
+    
 }

@@ -13,11 +13,11 @@ abstract class Builder implements \PHPixie\Database\Query
     protected $data = null;
     protected $fields = array();
 
-    public function __construct($database, $connection, $parser, $config)
+    public function __construct($connection, $parser, $builder, $config)
     {
-        $this->database   = $database;
         $this->connection = $connection;
         $this->parser     = $parser;
+        $this->builder    = $builder;
         $this->config     = $config;
     }
 

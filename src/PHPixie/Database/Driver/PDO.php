@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver;
 
-class PDO extends \PHPixie\Database\Driver
+class PDO extends \PHPixie\Database\SQL\Driver
 {
     public function buildConnection($connectionName, $config)
     {
@@ -58,9 +58,19 @@ class PDO extends \PHPixie\Database\Driver
 
     public function buildQuery($connection, $parser, $config, $type)
     {
-        return new \PHPixie\Database\Driver\PDO\Query($this->database, $this->database->conditions(), $connection, $parser, $config, $type);
+        return new \PHPixie\Database\Driver\PDO\Query($this->database->conditions(), $connection, $parser, $config, $type);
     }
 
+    public function valuesData($data)
+    {
+        return new \PHPixie\Database\Driver\PDO\Query\Data\Values($data);
+    }
+    
+    public function bulkData($data)
+    {
+        return new \PHPixie\Database\Driver\PDO\Query\Data\Bulk($data);
+    }
+    
     public function result($statement)
     {
         return new \PHPixie\Database\Driver\PDO\Result($statement);
