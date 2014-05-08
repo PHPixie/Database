@@ -11,7 +11,7 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
     protected $builder;
     protected $query;
     protected $type;
-
+    
     protected function setUp()
     {
         $this->connection = $this->getConnection();
@@ -43,19 +43,30 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals('a', $query->parse());
     }
 
-    protected function testBuilderMethod($method, $with, $at=0, $params = null)
+    protected function testBuilderMethod($method, $with, $will = null, $at=null, $builderWill = null, $builderWith = null, $builderMethod = null)
     {
-        if($params === null)
-            $params = $with;
-        
-        $methodMock = $this->builder
-                    ->expects($this->at($at))
-                    ->method($method);
-        
-        call_user_func_array(array($methodMock, 'with'), $with);
-        call_user_func_array(array($this->query, $method), $params);
-    }
+        if($builderWith === null)
+            $builderWith = $with;
 
+        if($builderMethod === null)
+            $builderMethod = $method;
+        
+        if($builderMethod === null)
+            $builderMethod = $method;
+        
+        $methodMock = $this->builder;
+        
+        if($at!==null)
+            $methodMock = $methodMock->expects($this->at($at));
+        
+        $methodMock = $methodMock->method($method);
+        
+        $methodMock = call_user_func_array(array($methodMock, 'with'), $builderWith);
+        $methodMock->will($this->returnValue($builderWill));
+        
+        $result = call_user_func_array(array($this->query, $method), $with);
+        $this->acceptEquals($will, $result);
+    }
 
     abstract public function testExecute();
     abstract protected function getConnection();

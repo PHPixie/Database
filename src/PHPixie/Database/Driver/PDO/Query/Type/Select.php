@@ -7,6 +7,7 @@ class Select extends \PHPixie\Driver\PDO\Query\Items\Implementation implements \
     public function fields($fields)
     {
         $this->builder->fields($fields);
+        return $this;
     }
     
     public function getFields($fields)

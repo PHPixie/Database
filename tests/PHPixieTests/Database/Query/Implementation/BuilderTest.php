@@ -2,13 +2,15 @@
 namespace PHPixieTests\Database\Query\Implementation;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Query\Implementation\Common
+ * @coversDefaultClass \PHPixie\Database\Query\Implementation\Builder
  */
-class CommonTest extends \PHPixieTests\AbstractDatabaseTest
+class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $conditionsMock;
+    protected $driver;
     protected $builders;
-    protected $common;
+    protected $builder;
+    protected $builderClass = '\PHPixie\Database\Query\Implementation\Builder';
     
     public function setUp()
     {
@@ -24,8 +26,8 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
                 ->will($this->returnCallback(function () {
                     return $this->builder;
                 }));
-        
-        $this->common = $this->buildCommon();
+        $this->driver = $this->getDriver();
+        $this->builder = $this->builder();
     }
     
     /**
@@ -100,12 +102,12 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
             ->method('builder')
             ->will($this->returnValue($this->builders[1]));
         
-        $firstBuilder = $this->common->conditionBuilder('first');
-        $secondBuilder = $this->common->conditionBuilder('second');
-        $this->assertEquals($firstBuilder, $this->common->conditionBuilder('first'));
-        $this->assertEquals($firstBuilder, $this->common->conditionBuilder());
-        $this->assertEquals($secondBuilder, $this->common->conditionBuilder('second'));
-        $this->assertEquals($secondBuilder, $this->common->conditionBuilder());
+        $firstBuilder = $this->builder->conditionBuilder('first');
+        $secondBuilder = $this->builder->conditionBuilder('second');
+        $this->assertEquals($firstBuilder, $this->builder->conditionBuilder('first'));
+        $this->assertEquals($firstBuilder, $this->builder->conditionBuilder());
+        $this->assertEquals($secondBuilder, $this->builder->conditionBuilder('second'));
+        $this->assertEquals($secondBuilder, $this->builder->conditionBuilder());
         $this->assertNotEquals($firstBuilder, $secondBuilder);
     }
     
@@ -115,7 +117,7 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
     public function testConditionBuilderException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->common->conditionBuilder();
+        $this->builder->conditionBuilder();
     }
     
     /**
@@ -124,23 +126,23 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
     public function testGetConditions()
     {
         $this->prepareBuilder();
-        $this->assertEquals(array(), $this->common->getConditions('first'));
+        $this->assertEquals(array(), $this->builder->getConditions('first'));
         
-        $firstBuilder = $this->common->conditionBuilder('first');
+        $firstBuilder = $this->builder->conditionBuilder('first');
         
         $firstBuilder
             ->expects($this->at(0))
             ->method('getConditions')
             ->will($this->returnValue(array()));
                            
-        $this->assertEquals(array(), $this->common->getConditions('first'));
+        $this->assertEquals(array(), $this->builder->getConditions('first'));
                         
         $firstBuilder
             ->expects($this->at(0))
             ->method('getConditions')
             ->will($this->returnValue(array(1)));
                            
-        $this->assertEquals(array(1), $this->common->getConditions('first'));
+        $this->assertEquals(array(1), $this->builder->getConditions('first'));
         
     }
     
@@ -151,7 +153,7 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->prepareBuilder();
         $this->expectCalls($this->builders[0], array('addCondition' => array('or', true, array(5))));
-        $this->common->addCondition(array(5), 'or', true, 'first');
+        $this->builder->addCondition(array(5), 'or', true, 'first');
     }
     
     /**
@@ -161,7 +163,7 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->prepareBuilder();
         $this->expectCalls($this->builders[0], array('startConditionGroup' => array('or', true)));
-        $this->common->startConditionGroup('or', true, 'first');
+        $this->builder->startConditionGroup('or', true, 'first');
     }
     
     /**
@@ -171,7 +173,7 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->prepareBuilder();
         $this->expectCalls($this->builders[0], array('startConditionGroup' => array('or', true)));
-        $this->common->startConditionGroup('or', true, 'first');
+        $this->builder->startConditionGroup('or', true, 'first');
     }
     
     /**
@@ -181,7 +183,7 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->prepareBuilder();
         $this->expectCalls($this->builders[0], array('endConditionGroup' => array()));
-        $this->common->endConditionGroup('first');
+        $this->builder->endConditionGroup('first');
     }
     
     /**
@@ -189,7 +191,7 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testAssert()
     {
-        $this->common->assert(true, 'test');
+        $this->builder->assert(true, 'test');
         try{
             $this->assert(false, 'test');
         }catch(\PHPixie\Database\Exception\Builder $e){
@@ -213,8 +215,14 @@ class CommonTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals($param, call_user_func_array(array($this->query, 'get'.ucfirst($method)), array()));
     }
     
-    protected function buildCommon()
+    protected function builder()
     {
-        return new \PHPixie\Database\Query\Implementation\Common($this->conditionsMock);
+        $class = $this->builderClass;
+        return new $class($this->conditionsMock, $this->driver);
+    }
+    
+    protected function getDriver()
+    {
+        return $this->quickMock('\PHPixie\Database\Driver', array('valuesData'));
     }
 }

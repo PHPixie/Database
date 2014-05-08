@@ -1,85 +1,85 @@
 <?php
 
-namespace PHPixie\Database\Driver\PDO\Query\Items;
+namespace PHPixie\Database\Driver\PDO\Query\Implementation;
 
-abstract class Implementation extends \PHPixie\Database\Driver\PDO\Query\Implementation implements \PHPixie\Database\SQL\Query\Items
+abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation implements \PHPixie\Database\SQL\Query\Items
 {
 
     public function limit($limit)
     {
-        $this->common->limit($limit);
+        $this->builder->limit($limit);
         return $this;
     }
 
     public function getLimit()
     {
-        return $this->common->getLimit();
+        return $this->builder->getLimit();
     }
 
     public function offset($offset)
     {
-        $this->common->offset($offset);
+        $this->builder->offset($offset);
         return $this;
     }
 
     public function getOffset()
     {
-        return $this->common->getOffset();
+        return $this->builder->getOffset();
     }
 
     public function orderAscendingBy($field)
     {
-		$this->common->orderAscendingBy($field);
+		$this->builder->orderAscendingBy($field);
         return $this;
     }
 
     public function orderDescendingBy($field)
     {
-		$this->common->orderDescendingBy($field);
+		$this->builder->orderDescendingBy($field);
         return $this;
     }
     
     public function getOrderBy()
     {
-        return $this->common->getOrderBy();
+        return $this->builder->getOrderBy();
     }
 
     public function join($table, $alias = null, $type = 'inner')
     {
-        return $this->common->join($table, $alias, $type);
+        return $this->builder->join($table, $alias, $type);
     }
 
     public function getJoins()
     {
-        return $this->common->getJoins();
+        return $this->builder->getJoins();
     }
     
     protected function addCondition($args, $logic = 'and', $negate = false, $builderName = null)
     {
-        $this->common->addCondition($args, $logic, $negate, $builderName);
+        $this->builder->addCondition($args, $logic, $negate, $builderName);
         return $this;
     }
 
     protected function startConditionGroup($logic = 'and', $builderName = null)
     {
-        $this->common->startConditionGroup($logic, $builderName);
+        $this->builder->startConditionGroup($logic, $builderName);
         return $this;
     }
 
     protected function endConditionGroup($builderName = null)
     {
-        $this->common->endGroup($builderName);
+        $this->builder->endGroup($builderName);
         return $this;
     }
 
     public function getWhereBuilder()
     {
-        return $this->common->conditionBuilder('where');
+        return $this->builder->conditionBuilder('where');
     }
 
     public function getWhereConditions()
     {
-        return $this->common->getConditions('where');
+        return $this->builder->getConditions('where');
     }
 
     public function where()
@@ -180,49 +180,49 @@ abstract class Implementation extends \PHPixie\Database\Driver\PDO\Query\Impleme
 
     public function startGroup()
     {
-        $this->common->startGroup('and', false);
+        $this->builder->startGroup('and', false);
     }
 
     public function startOrGroup()
     {
-        $this->common->startGroup('or', false);
+        $this->builder->startGroup('or', false);
     }
 
     public function startXorGroup()
     {
-        $this->common->startGroup('xor', false);
+        $this->builder->startGroup('xor', false);
     }
 
     public function startNotGroup()
     {
-        $this->common->startGroup('and', true);
+        $this->builder->startGroup('and', true);
     }
 
     public function startOrNotGroup()
     {
-        $this->common->startGroup('or', true);
+        $this->builder->startGroup('or', true);
     }
 
     public function startXorNotGroup()
     {
-        $this->common->startGroup('xor', true);
+        $this->builder->startGroup('xor', true);
     }
 
 
     public function endGroup()
     {
-        $this->common->endGroup();
+        $this->builder->endGroup();
     }
     
     protected function addOnCondition($args, $logic = 'and', $negate = false)
     {
-        $this->common->addOnCondition($args, $logic, $negate);
+        $this->builder->addOnCondition($args, $logic, $negate);
         return $this;
     }
     
     public function startOnConditionGroup($logic = 'and', $negate = false)
     {
-        $this->common->startOnConditionGroup($logic, $negate);
+        $this->builder->startOnConditionGroup($logic, $negate);
     }
 
     public function on()
