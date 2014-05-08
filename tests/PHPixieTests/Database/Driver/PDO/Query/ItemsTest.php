@@ -1,11 +1,11 @@
 <?php
 
-namespace PHPixieTests\Database\Driver\PDO\Query\Implementation;
+namespace PHPixieTests\Database\Driver\PDO\Query;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Implementation\Items
+ * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Items
  */
-class ItemsTest extends \PHPixieTests\Database\Driver\PDO\Query\ImplementationTest
+class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
 {
     /**
      * @covers ::limit
@@ -24,7 +24,8 @@ class ItemsTest extends \PHPixieTests\Database\Driver\PDO\Query\ImplementationTe
     public function testOffset()
     {
         $this->testBuilderMethod('offset', array(5), $this->query, 0); 
-        $this->testBuilderMethod('getOffset', array(), 3, 1, 3);     }
+        $this->testBuilderMethod('getOffset', array(), 3, 1, 3);     
+    }
     
     /**
      * @covers ::orderAscendingBy
@@ -113,45 +114,5 @@ class ItemsTest extends \PHPixieTests\Database\Driver\PDO\Query\ImplementationTe
     public function testOnMethods()
     {
         $this->testConditionMethods('on', false, 'addCondition', 'startConditionGroup', 'endConditionGroup');
-    }
-
-    
-    protected function testConditionMethods($name, $testConditionBuilder= true, $operatorMethod = 'addCondition', $startGroupMethod = 'startConditionGroup', $endGroupMethod = 'endConditionGroup')
-    {
-        $at = 0;
-        foreach(array(false, true) as $negate) {
-            foreach(array('and', 'or', 'xor') and $logic) {
-                if($name !== null){
-                    if($logic === 'and'){
-                        $method = $name;
-                    }else{
-                        $method = $logic.ucfirst($name); 
-                    }
-                    if($negate)
-                        $method.='Not';
-                    $groupMethod = 'start'.ucfirst($method).'Group';
-                }else{
-                    $method = $logic;
-                    if($negate)
-                        $method.='Not';
-                    
-                    $groupMethod = 'start'.ucfirst($method).'Group';
-                    $method = '_'.$method;
-                }
-                
-                $this->testBuilderMethod($method, array('test', 1, 2), $this->query, $at++, null, array(array('test', 1, 2), $logic, $negate, $name), $operatorMethod);
-                
-                $this->testBuilderMethod($groupMethod, array(), $this->query, $at++, null, array($logic, $negate, $name), $startGroupMethod);
-                
-            }
-        }
-        
-        $this->testBuilderMethod('end'.ucfirst($name).'Group', array(), $this->query, $at++, null, array($name), $endGroupMethod);
-        
-        if($testConditionBuilder){
-            $this->testBuilderMethod('get'.ucfirst($name).'Builder', array(), $this->query, $at++, null, array($name), 'conditionBuilder');
-        $this->testBuilderMethod('get'.ucfirst($name).'Conditions', array(), $this->query, $at++, null, array($name), 'getConditions');
-        }
-        
     }
 }

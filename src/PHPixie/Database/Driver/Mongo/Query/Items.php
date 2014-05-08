@@ -1,8 +1,8 @@
 <?php
 
-namespace PHPixie\Database\Driver\Mongo\Query\Items;
+namespace PHPixie\Database\Driver\Mongo\Query;
 
-abstract class Implementation extends Item implements \PHPixie\Database\Query\Items
+abstract class Items extends Item implements \PHPixie\Database\Query\Items
 {
     public function limit($limit)
     {

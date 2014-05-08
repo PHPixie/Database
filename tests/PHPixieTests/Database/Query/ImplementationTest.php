@@ -29,10 +29,7 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
     }
 
  
-    /**
-     * @covers ::parse
-     */
-    public function testParse()
+    protected function parserTest()
     {
         $query = $this->query();
         $this->parser
@@ -66,6 +63,45 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         
         $result = call_user_func_array(array($this->query, $method), $with);
         $this->acceptEquals($will, $result);
+    }
+    
+    protected function testConditionMethods($name, $testConditionBuilder= true, $operatorMethod = 'addCondition', $startGroupMethod = 'startConditionGroup', $endGroupMethod = 'endConditionGroup')
+    {
+        $at = 0;
+        foreach(array(false, true) as $negate) {
+            foreach(array('and', 'or', 'xor') as $logic) {
+                if($name !== null){
+                    if($logic === 'and'){
+                        $method = $name;
+                    }else{
+                        $method = $logic.ucfirst($name); 
+                    }
+                    if($negate)
+                        $method.='Not';
+                    $groupMethod = 'start'.ucfirst($method).'Group';
+                }else{
+                    $method = $logic;
+                    if($negate)
+                        $method.='Not';
+                    
+                    $groupMethod = 'start'.ucfirst($method).'Group';
+                    $method = '_'.$method;
+                }
+                
+                $this->testBuilderMethod($method, array('test', 1, 2), $this->query, $at++, null, array(array('test', 1, 2), $logic, $negate, $name), $operatorMethod);
+                
+                $this->testBuilderMethod($groupMethod, array(), $this->query, $at++, null, array($logic, $negate, $name), $startGroupMethod);
+                
+            }
+        }
+        
+        $this->testBuilderMethod('end'.ucfirst($name).'Group', array(), $this->query, $at++, null, array($name), $endGroupMethod);
+        
+        if($testConditionBuilder){
+            $this->testBuilderMethod('get'.ucfirst($name).'Builder', array(), $this->query, $at++, null, array($name), 'conditionBuilder');
+        $this->testBuilderMethod('get'.ucfirst($name).'Conditions', array(), $this->query, $at++, null, array($name), 'getConditions');
+        }
+        
     }
 
     abstract public function testExecute();

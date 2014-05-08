@@ -14,6 +14,7 @@ abstract class ImplementationTest extends \PHPixieTests\Database\Query\Implement
     {
         $this->testBuilderMethod('table', array('pixie', 'test'));
         $this->testBuilderMethod('table', array('pixie', null), 1, array('pixie'));
+        $this->testBuilderMethod('getTable', array('pixie'), 1, array('pixie'));
     }
     
     public function execute()
@@ -21,6 +22,14 @@ abstract class ImplementationTest extends \PHPixieTests\Database\Query\Implement
         $expr = $this->parse();
         $result = $this->connection->execute($expr->sql, $expr->params);
         return $result;
+    }
+    
+    /**
+     * @covers ::parse
+     */
+    public function testParse()
+    {
+        $this->parserTest();
     }
     
     /**

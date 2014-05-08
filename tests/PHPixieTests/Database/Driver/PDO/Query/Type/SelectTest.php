@@ -4,9 +4,10 @@ namespace PHPixieTests\Database\Driver\PDO\Query\Type;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Type\Select;
  */
-class SelectTest extends \PHPixieTests\Database\Driver\PDO\Query\Implementation\ItemTest
+class SelectTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemTest
 {
     protected $queryClass = '\PHPixie\Database\Driver\PDO\Query\Type\Select';
+    protected $type = 'select';
     
     /**
      * @covers ::fields

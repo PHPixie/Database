@@ -4,68 +4,49 @@ namespace PHPixieTests\Database\Driver\Mongo;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Query
  */
-class QueryTest extends \PHPixieTests\Database\QueryTest
+abstract class QueryTest extends \PHPixieTests\Database\Query\ImplementationTest
 {
-    public function setUp()
+    protected $queryClass;
+    
+    protected function getConnection()
     {
-        parent::setUp();
-        $this->connection = $this->getMock('\PHPixie\Database\Driver\Mongo\Connection', array('run'), array(), '', null, false);
+        return $this->connection = $this->quickMock('\PHPixie\Database\Driver\Mongo\Connection', array('run'));
     }
 
     protected function query()
     {
-        return new \PHPixie\Database\Driver\Mongo\Query($this->database, $this->conditionsMock, $this->connection, $this->parser, null, 'select');
+        $class = $this->queryClass;
+        return new $class($this->connection, $this->parser, $this->builder);
     }
 
-    protected function mockParser()
+    protected function getParser()
     {
-        return $this->getMock('\PHPixie\Database\Driver\Mongo\Parser', array('parse'), array(null, null, null, null, null));
+        return $this->quickMock('\PHPixie\Database\Driver\Mongo\Parser', array('parse'), array());
     }
 
-    public function testCollection()
+    protected function getBuilder()
     {
-        $this->getSetTest('collection', 'fairies');
+        return $this->quickMock('\PHPixie\Database\Driver\Mongo\Query\Implementation\Builder', null, array());
+    }
+    
+    /**
+     * @covers ::collection
+     * @covers ::getCollection
+     */
+    public function testGetSetCollection()
+    {
+        $this->testBuilderMethod('collection', array('pixie'));
+        $this->testBuilderMethod('getCollection', array('pixie'), 1, array('pixie'));
     }
 
     /**
-     * @covers ::batchData
-     * @covers ::getBatchData
-     * @covers ::data
+     * @covers ::parse
      */
-    public function testGetSetBatchData()
+    public function testParse()
     {
-        $data = array(
-            array('test' => 5),
-            array('test2' => 6)
-        );
-
-        $this->assertEquals($this->query, $this->query->batchData($data));
-        $this->assertEquals($data, $this->query->getBatchData());
-        $this->query->data(array());
-        $this->assertEquals(null, $this->query->getBatchData());
+        $this->parserTest();
     }
-
-    /**
-     * @covers \PHPixie\Database\Query::data
-     * @covers ::data
-     * @covers ::getData
-     */
-
-    public function testData()
-    {
-        parent::testData();
-    }
-
-    /**
-     * @covers ::selectSingle
-     * @covers ::getSelectSingle
-     */
-
-    public function testSelectSingle()
-    {
-        $this->getSetTest('selectSingle', true, false);
-    }
-
+    
     /**
      * @covers ::execute
      */

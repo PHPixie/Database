@@ -4,11 +4,11 @@ namespace PHPixieTests\Database\Driver\PDO\Query\Type;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Type\Count;
  */
-class CountTest extends \PHPixieTests\Database\Driver\PDO\Query\Implementation\ItemTest
+class CountTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemTest
 {
     
     protected $queryClass = '\PHPixie\Database\Driver\PDO\Query\Type\Count';
-
+    protected $type = 'count';
     
     /**
      * @covers ::execute

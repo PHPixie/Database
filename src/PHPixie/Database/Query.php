@@ -4,7 +4,7 @@ namespace PHPixie\Database;
 
 interface Query
 {
-    public function getType();
+    public function type();
     public function parse();
     public function execute();
 }

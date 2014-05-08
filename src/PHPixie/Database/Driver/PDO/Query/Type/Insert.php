@@ -2,7 +2,7 @@
 
 namespace PHPixie\Driver\PDO\Query\Type;
 
-class Insert extends \PHPixie\Driver\PDO\Query\Items\Implementation implements \PHPixie\Driver\SQL\Query\Type\Insert
+class Insert extends \PHPixie\Driver\PDO\Query\Items implements \PHPixie\Driver\SQL\Query\Type\Insert
 {
     public function data($data)
     {

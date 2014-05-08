@@ -17,6 +17,11 @@ abstract class Implementation extends \PHPixie\Database\Query\Implementation imp
         return $this->builder->getTable();
     }
     
+    public function parse()
+    {
+        return $this->parser->parse($this);
+    }
+    
     public function execute()
     {
         $expr = $this->parse();

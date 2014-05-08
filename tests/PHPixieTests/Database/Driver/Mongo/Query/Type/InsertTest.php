@@ -1,12 +1,12 @@
 <?php
-namespace PHPixieTests\Database\Driver\PDO\Query\Type;
+namespace PHPixieTests\Database\Driver\Mongo\Query\Type;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Type\Insert;
+ * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Query\Type\Insert
  */
-class InsertTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemTest
+class InsertTest extends \PHPixie\Database\Driver\Mongo\Query\ItemsTest
 {
-    protected $queryClass = '\PHPixie\Database\Driver\PDO\Query\Type\Insert';
+    protected $queryClass = '\PHPixie\Database\Driver\Mongo\Query\Type\Insert';
     protected $type = 'insert';
     
     /**

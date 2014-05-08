@@ -1,8 +1,8 @@
 <?php
 
-namespace PHPixie\Database\Driver\Mongo\Query\Items;
+namespace PHPixie\Database\Driver\Mongo\Query;
 
-abstract class Item extends \PHPixie\Database\Driver\Mongo\Query\Implementation
+abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
 {
     protected function addCondition($args, $logic = 'and', $negate = false, $builderName = null)
     {

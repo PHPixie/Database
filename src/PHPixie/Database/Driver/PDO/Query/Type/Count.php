@@ -2,7 +2,7 @@
 
 namespace PHPixie\Driver\PDO\Query\Type;
 
-class Count extends \PHPixie\Driver\PDO\Query\Items\Implementation implements \PHPixie\Driver\SQL\Query\Type\Count
+class Count extends \PHPixie\Driver\PDO\Query\Items implements \PHPixie\Driver\SQL\Query\Type\Count
 {
     public function execute()
     {

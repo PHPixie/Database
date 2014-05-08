@@ -4,23 +4,29 @@ namespace PHPixieTests\Database\Driver\PDO;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query
  */
-class QueryTest extends \PHPixieTests\Database\SQL\QueryTest
+abstract class QueryTest extends \PHPixieTests\Database\SQL\Query\ImplementationTest
 {
+    protected $queryClass;
     protected $resultClass = '\PHPixie\Database\Driver\PDO\Result';
 
-    protected function query($type = 'select')
-    {
-        return new \PHPixie\Database\Driver\PDO\Query($this->database, $this->conditionsMock, $this->connection, $this->parser, null, $type);
-    }
-
-    protected function mockParser()
+    protected function getParser()
     {
         return $this->quickMock('\PHPixie\Database\Driver\PDO\Mysql\Parser', array('parse'), array());
     }
 
-    protected function mockConnection()
+    protected function getConnection()
     {
         return $this->getMock('\PHPixie\Database\Driver\PDO\Connection', array('execute'), array(), '', null, false);
     }
-
+    
+    protected function getBuilder()
+    {
+        return $this->getMock('\PHPixie\Database\Driver\PDO\Query\Implementation\Builder', array('execute'), array(), '', null, false);
+    }
+    
+    protected function query()
+    {
+        $class = $this->queryClass;
+        return new $class($this->connection, $this->parser, $this->builder);
+    }
 }

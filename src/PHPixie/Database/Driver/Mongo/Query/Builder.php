@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPixie\Database\Driver\Mongo\Query\Implementation;
+namespace PHPixie\Database\Driver\Mongo\Query;
 
 class Builder extends \PHPixie\Database\Query\Implementation\Builder
 {

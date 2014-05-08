@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver\Mongo\Query\Type;
 
-class Select extends \PHPixie\Database\Driver\Mongo\Query\Items\Implementation implements \PHPixie\Database\Query\Type\Select
+class Select extends \PHPixie\Database\Driver\Mongo\Query\Items implements \PHPixie\Database\Query\Type\Select
 {
     public function fields($fields)
     {

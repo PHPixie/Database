@@ -1,14 +1,14 @@
 <?php
-namespace PHPixieTests\Database\Driver\PDO\Query\Type;
+namespace PHPixieTests\Database\Driver\Mongo\Query\Type;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Type\Update;
+ * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Query\Type\Update
  */
-class UpdateTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemTest
+class UpdateTest extends \PHPixie\Database\Driver\Mongo\Query\ItemsTest
 {
-    protected $queryClass = '\PHPixie\Database\Driver\PDO\Query\Type\Update';
+    protected $queryClass = '\PHPixie\Database\Driver\Mongo\Query\Type\Update';
     protected $type = 'update';
-
+    
     /**
      * @covers ::data
      * @covers ::getData
