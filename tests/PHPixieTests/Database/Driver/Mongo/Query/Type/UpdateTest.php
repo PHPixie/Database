@@ -35,14 +35,14 @@ class UpdateTest extends \PHPixieTests\Database\Driver\Mongo\Query\ItemsTest
     
     /**
      * @covers ::_unset
-     * @covers ::remove
+     * @covers ::unset
      * @covers ::clearUnset
      * @covers ::getUnset
      */
     public function testUnset()
     {
         $this->builderMethodTest('_unset', array('name'), $this->query, null, array(array('name')), 'addUnset');
-        $this->builderMethodTest('remove', array('name'), $this->query, null, array(array('name')), 'addUnset');
+        $this->builderMethodTest('unset', array('name'), $this->query, null, array(array('name')), 'addUnset');
         $this->clearGetTest('unset', 'array');
     }
 }

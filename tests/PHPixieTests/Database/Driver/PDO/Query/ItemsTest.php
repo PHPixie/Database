@@ -90,9 +90,9 @@ class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
      * @covers ::_or
      * @covers ::_xor
      * @covers ::_not
-     * @covers ::_andNot
-     * @covers ::_orNot
-     * @covers ::_xorNot
+     * @covers ::andNot
+     * @covers ::orNot
+     * @covers ::xorNot
      * @covers ::startGroup
      * @covers ::startAndGroup
      * @covers ::startOrGroup
@@ -106,6 +106,17 @@ class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
     public function testShorthandMethods()
     {
         $this->conditionMethodsTest(null, false);
+    }
+    
+    /**
+     * @covers ::__call
+     * @covers ::and
+     * @covers ::or
+     * @covers ::xor
+     */
+    public function testAliasedConditionMethods()
+    {
+        $this->conditionAliasTest();
     }
 
     /**

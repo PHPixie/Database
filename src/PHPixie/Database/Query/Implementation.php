@@ -9,9 +9,7 @@ abstract class Implementation implements \PHPixie\Database\Query
     protected $connection;
     protected $parser;
     protected $config;
-
-    protected $data = null;
-    protected $fields = array();
+    protected $aliases = array();
 
     public function __construct($connection, $parser, $builder)
     {
@@ -20,6 +18,13 @@ abstract class Implementation implements \PHPixie\Database\Query
         $this->builder    = $builder;
     }
 
+    public function __call($method, $args)
+    {
+        if(!array_key_exists($method, $this->aliases))
+            throw new \PHPixie\Database\Exception\Builder("Method $method does not exist.");
+        return call_user_func_array(array($this, $this->aliases[$method]), $args);
+    }
+    
     abstract public function type();
     abstract public function execute();
     abstract public function parse();

@@ -4,6 +4,16 @@ namespace PHPixie\Database\Driver\Mongo\Query\Type;
 
 class Update extends \PHPixie\Database\Driver\Mongo\Query\Items implements \PHPixie\Database\Query\Type\Update
 {
+    
+    public function __construct($connection, $parser, $builder)
+    {
+        parent::__construct($connection, $parser, $builder);
+        
+        $this->aliases = array_merge($this->aliases, array(
+            'unset' => '_unset',
+        ));
+    }
+    
     public function type()
     {
         return 'update';
@@ -24,11 +34,6 @@ class Update extends \PHPixie\Database\Driver\Mongo\Query\Items implements \PHPi
     public function getSet()
     {
         return $this->builder->getArray('set');
-    }
-    
-    public function remove($keys)
-    {
-        return $this->_unset($keys);
     }
     
     public function _unset($keys)

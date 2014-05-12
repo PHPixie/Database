@@ -4,6 +4,18 @@ namespace PHPixie\Database\Driver\Mongo\Query;
 
 abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
 {
+    public function __construct($connection, $parser, $builder)
+    {
+        parent::__construct($connection, $parser, $builder);
+        
+        $this->aliases = array_merge($this->aliases, array(
+            'and' => '_and',
+            'or'  => '_or',
+            'xor' => '_xor',
+            'not' => '_not',
+        ));
+    }
+    
     protected function addCondition($args, $logic = 'and', $negate = false, $builderName = null)
     {
         $this->builder->addCondition($args, $logic, $negate, $builderName);
@@ -138,17 +150,17 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
         return $this->addCondition(func_get_args(), 'and', true);
     }
     
-    public function _andNot()
+    public function andNot()
     {
         return $this->addCondition(func_get_args(), 'and', true);
     }
 
-    public function _orNot()
+    public function orNot()
     {
         return $this->addCondition(func_get_args(), 'or', true);
     }
 
-    public function _xorNot()
+    public function xorNot()
     {
         return $this->addCondition(func_get_args(), 'xor', true);
     }

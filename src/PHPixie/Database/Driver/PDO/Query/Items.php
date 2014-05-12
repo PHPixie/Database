@@ -5,6 +5,18 @@ namespace PHPixie\Database\Driver\PDO\Query;
 abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPixie\Database\SQL\Query\Items
 {
 
+    public function __construct($connection, $parser, $builder)
+    {
+        parent::__construct($connection, $parser, $builder);
+        
+        $this->aliases = array_merge($this->aliases, array(
+            'and' => '_and',
+            'or'  => '_or',
+            'xor' => '_xor',
+            'not' => '_not',
+        ));
+    }
+    
     public function limit($limit)
     {
         $this->builder->setLimit($limit);
@@ -213,17 +225,17 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
         return $this->addCondition(func_get_args(), 'and', true);
     }
     
-    public function _andNot()
+    public function andNot()
     {
         return $this->addCondition(func_get_args(), 'and', true);
     }
 
-    public function _orNot()
+    public function orNot()
     {
         return $this->addCondition(func_get_args(), 'or', true);
     }
 
-    public function _xorNot()
+    public function xorNot()
     {
         return $this->addCondition(func_get_args(), 'xor', true);
     }

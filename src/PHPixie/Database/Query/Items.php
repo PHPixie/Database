@@ -41,9 +41,9 @@ interface Items extends \PHPixie\Database\Query
     public function _or();
     public function _xor();
     public function _not();
-    public function _andNot();
-    public function _orNot();
-    public function _xorNot();
+    public function andNot();
+    public function orNot();
+    public function xorNot();
     public function startGroup();
     public function startAndGroup();
     public function startOrGroup();

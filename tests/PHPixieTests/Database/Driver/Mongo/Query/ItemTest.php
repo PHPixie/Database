@@ -35,12 +35,15 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
      * @covers ::_and
      * @covers ::_or
      * @covers ::_xor
-     * @covers ::_andNot
-     * @covers ::_orNot
-     * @covers ::_xorNot
+     * @covers ::_not
+     * @covers ::andNot
+     * @covers ::orNot
+     * @covers ::xorNot
      * @covers ::startGroup
+     * @covers ::startAndGroup
      * @covers ::startOrGroup
      * @covers ::startXorGroup
+     * @covers ::startNotGroup
      * @covers ::startAndNotGroup
      * @covers ::startOrNotGroup
      * @covers ::startXorNotGroup
@@ -49,5 +52,16 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
     public function testShorthandMethods()
     {
         $this->conditionMethodsTest(null, false);
+    }
+    
+    /**
+     * @covers ::__call
+     * @covers ::and
+     * @covers ::or
+     * @covers ::xor
+     */
+    public function testAliasedConditionMethods()
+    {
+        $this->conditionAliasTest();
     }
 }

@@ -7,7 +7,6 @@ namespace PHPixieTests\Database\Query\Implementation;
 class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $conditionsMock;
-    protected $driver;
     protected $builders;
     protected $builder;
     protected $builderClass = '\PHPixie\Database\Query\Implementation\Builder';
@@ -20,82 +19,173 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
         );
         
         $this->conditionsMock = $this->quickMock('\PHPixie\Database\Conditions', array('builder'));
-        $this->conditionsMock
-                ->expects($this->any())
-                ->method('builder')
-                ->will($this->returnCallback(function () {
-                    return $this->builder;
-                }));
-        $this->driver = $this->getDriver();
         $this->builder = $this->builder();
     }
     
     /**
-     * @covers ::fields
-     * @covers ::getFields
+     * @covers ::__construct
      */
-    public function testFields()
+    public function testConstruct()
     {
-        $this->assertEquals(array(), $this->query->getFields());
-        $this->assertEquals($this->query, $this->query->fields(array('id')));
-        $this->assertEquals(array('id'), $this->query->getFields());
-        $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->query->fields('test');    
+    
     }
     
     /**
-     * @covers ::offset
-     * @covers ::getOffset
+     * @covers ::<protected>
+     * @covers ::addFields
      */
-    public function testOffset()
+    public function testAddFields()
     {
-        $this->getSetTest('offset', 5);
-        $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->query->offset('test');
+        $builder = $this->builder;
+        $builder->addFields(array('test'));
+        $builder->addFields(array('test', 'alias'));
+        $builder->addFields(array(array('pixie', 'fairy' => 'trixie')));
+        
+        $this->assertException(function() use($builder){
+            $builder->addFields(array('test', 'alias', 'test'));
+        });
+        
+        $this->assertEquals(array(
+            'test',
+            'alias' => 'test',
+            'pixie',
+            'fairy' => 'trixie'
+        ), $builder->getArray('fields'));
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::setOffset
+     */
+    public function testSetOffset()
+    {
+        $builder = $this->builder;
+        $builder->setOffset(6);
+        
+        $this->assertException(function() use($builder){
+            $builder->setOffset('t');
+        });
+        
+        $this->assertEquals(6, $builder->getValue('offset'));
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::setLimit
+     */
+    public function testSetLimit()
+    {
+        $builder = $this->builder;
+        $builder->setLimit(6);
+        
+        $this->assertException(function() use($builder){
+            $builder->setLimit('t');
+        });
+        
+        $this->assertEquals(6, $builder->getValue('limit'));
     }
 
     /**
-     * @covers ::limit
-     * @covers ::getLimit
-     */
-    public function testLimit()
-    {
-        $this->getSetTest('limit', 5);
-        $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->query->limit('test');
-    }
-
-    /**
-     * @covers ::orderAscendingBy
-     * @covers ::orderDescendingBy
-     * @covers ::getOrderBy
+     * @covers ::<protected>
+     * @covers ::addOrderAscendingBy
+     * @covers ::addOrderDescendingBy
      */
     public function testOrderBy()
     {
-        $this->assertEquals(array(), $this->query->getOrderBy());
-        $this->assertEquals($this->query, $this->query->orderDescendingBy('id'));
-        $this->assertEquals(array(array('id', 'desc')), $this->query->getOrderBy());
-        $this->assertEquals($this->query, $this->query->orderAscendingBy('name'));
-        $this->assertEquals(array(array('id','desc'),array('name','asc')), $this->query->getOrderBy());
+        $builder = $this->builder;
+        $builder->addOrderAscendingBy('test');
+        $builder->addOrderAscendingBy('pixie');
+        $builder->addOrderDescendingBy('trixie');
+        $builder->addOrderDescendingBy('test');
+        
+        $this->assertEquals(array(
+            array('field' => 'test', 'dir' => 'asc'),
+            array('field' => 'pixie', 'dir' => 'asc'),
+            array('field' => 'trixie', 'dir' => 'desc'),
+            array('field' => 'test', 'dir' => 'desc'),
+        ), $builder->getArray('orderBy'));
     }
-
-    /**
-     * @covers ::data
-     */
-    public abstract function testData();
     
+    /**
+     * @covers ::<protected>
+     * @covers ::addSet
+     */
+    public function testAddSet()
+    {
+        $builder = $this->builder;
+        $builder->addSet(array('test', 'pixie'));
+        $builder->addSet(array(array('trixie' => 'fairy', 'test2' => 5)));
+        $builder->addSet(array('test2', 6));
+        
+        $this->assertException(function() use($builder){
+            $builder->addSet(array('t'));
+        });
+        
+        $this->assertException(function() use($builder){
+            $builder->addSet(array(array('t')));
+        });
+        
+        $this->assertException(function() use($builder){
+            $builder->addSet('t');
+        });
+        
+        $this->assertEquals(array(
+            'test'   => 'pixie',
+            'trixie' => 'fairy',
+            'test2'  => 6
+        ), $builder->getArray('set'));
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::setData
+     */
+    public function testSetData()
+    {
+        $builder = $this->builder;
+        $builder->setData(array('f' => 1));
+        
+        $this->assertException(function() use($builder){
+            $builder->setData('t');
+        });
+        
+        $this->assertEquals(array('f' => 1), $builder->getValue('data'));
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::clearValue
+     * @covers ::getValue
+     */
+    public function testGetClearValue()
+    {
+        $this->assertEquals(null, $this->builder->getValue('limit'));
+        $this->builder->setLimit(5);
+        $this->assertEquals(5, $this->builder->getValue('limit'));
+        $this->builder->clearValue('limit');
+        $this->assertEquals(null, $this->builder->getValue('limit'));
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::clearArray
+     * @covers ::getArray
+     */
+    public function testGetClearArray()
+    {
+        $this->assertEquals(null, $this->builder->getArray('fields'));
+        $this->builder->addFields(array('test'));
+        $this->assertEquals(array('test'), $this->builder->getArray('fields'));
+        $this->builder->clearValue('limit');
+        $this->assertEquals(null, $this->builder->getValue('fields'));
+    }
     
     /**
      * @covers ::conditionBuilder
      */
     public function testConditionBuilder()
     {
-        $this
-            ->conditionsMock
-            ->expects($this->at(0))
-            ->method('builder')
-            ->will($this->returnValue($this->builders[0]));
-        
+        $this->prepareBuilder();
         $this
             ->conditionsMock
             ->expects($this->at(1))
@@ -108,7 +198,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals($firstBuilder, $this->builder->conditionBuilder());
         $this->assertEquals($secondBuilder, $this->builder->conditionBuilder('second'));
         $this->assertEquals($secondBuilder, $this->builder->conditionBuilder());
-        $this->assertNotEquals($firstBuilder, $secondBuilder);
+        $this->assertNotSame($firstBuilder, $secondBuilder);
     }
     
     /**
@@ -167,22 +257,12 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     }
     
     /**
-     * @covers ::startConditionGroup
-     */
-    public function testStartConditionGroup()
-    {
-        $this->prepareBuilder();
-        $this->expectCalls($this->builders[0], array('startConditionGroup' => array('or', true)));
-        $this->builder->startConditionGroup('or', true, 'first');
-    }
-    
-    /**
      * @covers ::endConditionGroup
      */
     public function testEndConditionGroup()
     {
         $this->prepareBuilder();
-        $this->expectCalls($this->builders[0], array('endConditionGroup' => array()));
+        $this->expectCalls($this->builders[0], array('endGroup' => array()));
         $this->builder->endConditionGroup('first');
     }
     
@@ -193,32 +273,36 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->builder->assert(true, 'test');
         try{
-            $this->assert(false, 'test');
+            $this->builder->assert(false, 'test');
         }catch(\PHPixie\Database\Exception\Builder $e){
             $this->assertEquals('test', $e->getMessage());
         }
     }
     
-    protected function prepareBuilder()
+    protected function assertException($callback)
     {
-        $this->expectCalls($this->conditionsMock, array(
-                                                    'getConditions' => array('first')
-                                                ), array(
-                                                    'getConditions' => $this->builders[0]
-                                                ));
+        $except = false;
+        try{
+            $callback();
+        }catch(\PHPixie\Database\Exception\Builder $e){
+            $except = true;
+        }
+        
+        $this->assertEquals(true, $except);
     }
     
-    protected function getSetTest($method, $param, $default = null)
+    protected function prepareBuilder()
     {
-        $this->assertEquals($default, call_user_func_array(array($this->query, 'get'.ucfirst($method)), array()));
-        $this->assertEquals($this->query, call_user_func_array(array($this->query, $method), array($param)));
-        $this->assertEquals($param, call_user_func_array(array($this->query, 'get'.ucfirst($method)), array()));
+        $this->conditionsMock
+                ->expects($this->at(0))
+                ->method('builder')
+                ->will($this->returnValue($this->builders[0]));
     }
     
     protected function builder()
     {
         $class = $this->builderClass;
-        return new $class($this->conditionsMock, $this->driver);
+        return new $class($this->conditionsMock);
     }
     
     protected function getDriver()

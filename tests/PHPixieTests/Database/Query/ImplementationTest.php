@@ -89,7 +89,9 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
                     
                     $groupMethod = ($logic === 'short_and' ? '' : $logic).($negate?'Not':'');
                     $groupMethod = 'start'.ucfirst($groupMethod).'Group';
-                    $method = '_'.$method;
+                    
+                    if(!$negate || ($negate && $logic === 'short_hand'))
+                        $method = '_'.$method;
                 }
                 
                 if($logic === 'short_and')
@@ -118,6 +120,14 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
             $this->builderMethodTest('get'.ucfirst($name).'Conditions', array(), array('test'), array('test'), $with, 'getConditions');
         }
         
+    }
+    
+    protected function conditionAliasTest()
+    {
+        $this->builderMethodTest('and', array('test', 1, 2), $this->query,  null, array(array('test', 1, 2), 'and', false), 'addCondition');
+        $this->builderMethodTest('or', array('test', 1, 2), $this->query,  null, array(array('test', 1, 2), 'or', false), 'addCondition');
+        $this->builderMethodTest('xor', array('test', 1, 2), $this->query,  null, array(array('test', 1, 2), 'xor', false), 'addCondition');
+        $this->builderMethodTest('not', array('test', 1, 2), $this->query,  null, array(array('test', 1, 2), 'and', true), 'addCondition');
     }
 
     protected function setClearGetTest($name, $paramSets, $type = 'value', $clearGetName = null)
