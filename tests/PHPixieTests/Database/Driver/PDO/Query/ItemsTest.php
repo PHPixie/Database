@@ -9,69 +9,79 @@ class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
 {
     /**
      * @covers ::limit
+     * @covers ::clearLimit
      * @covers ::getLimit
      */
     public function testLimit()
     {
-        $this->testBuilderMethod('limit', array(5), $this->query, 0); 
-        $this->testBuilderMethod('getLimit', array(), 3, 3, 1); 
+         $this->setClearGetTest('limit', array(
+            array(array(5)),
+        ));
     }
     
     /**
      * @covers ::offset
+     * @covers ::clearOffset
      * @covers ::getOffset
      */
     public function testOffset()
     {
-        $this->testBuilderMethod('offset', array(5), $this->query, 0); 
-        $this->testBuilderMethod('getOffset', array(), 3, 1, 3);     
+        $this->setClearGetTest('offset', array(
+            array(array(5)),
+        ));
     }
     
     /**
      * @covers ::orderAscendingBy
      * @covers ::orderDescendingBy
+     * @covers ::clearOrderBy
      * @covers ::getOrderBy
      */
     public function testOrderBy()
     {
-        $this->testBuilderMethod('orderAscendingBy', array('name'), $this->query, 0);
-        $this->testBuilderMethod('orderDescendingBy', array('name'), $this->query, 1);
-        $this->testBuilderMethod('getOrderBy', array(), array('test'), 2, array('test'));   
+        $this->builderMethodTest('orderAscendingBy', array('name'), $this->query, null, null, 'addOrderAscendingBy');
+        $this->builderMethodTest('orderDescendingBy', array('name'), $this->query, null, null, 'addOrderDescendingBy');
+        $this->clearGetTest('orderBy', 'array');
     }
     
     /**
      * @covers ::join
+     * @covers ::clearJoins
      * @covers ::getJoins
      */
     public function testJoin()
     {
-        $this->testBuilderMethod('join', array('test', 't', 'left'), $this->query, 0);
-        $this->testBuilderMethod('join', array('test'), $this->query, 1, array('test', null, 'inner'));
-        $this->testBuilderMethod('getJoin', array(), array('test'), 2, array('test'));
+        $this->setClearGetTest('join', array(
+            array(array('test', 't', 'left')),
+            array(array('test'), array('test', null, 'inner')),
+        ), 'array', 'joins');
     }
-    
 
     /**
      * @covers ::<protected>
      * @covers ::getWhereBuilder
      * @covers ::getWhereConditions
      * @covers ::where
+     * @covers ::andWhere
      * @covers ::orWhere
      * @covers ::xorWhere
      * @covers ::whereNot
+     * @covers ::andWhereNot
      * @covers ::orWhereNot
      * @covers ::xorWhereNot
      * @covers ::startWhereGroup
+     * @covers ::startAndWhereGroup
      * @covers ::startOrWhereGroup
      * @covers ::startXorWhereGroup
      * @covers ::startWhereNotGroup
+     * @covers ::startAndWhereNotGroup
      * @covers ::startOrWhereNotGroup
      * @covers ::startXorWhereNotGroup
      * @covers ::endWhereGroup
      */
     public function testWhereMethods()
     {
-        $this->testConditionMethods('where');
+        $this->conditionMethodsTest('where');
     }
     
     /**
@@ -79,12 +89,15 @@ class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
      * @covers ::_and
      * @covers ::_or
      * @covers ::_xor
+     * @covers ::_not
      * @covers ::_andNot
      * @covers ::_orNot
      * @covers ::_xorNot
      * @covers ::startGroup
+     * @covers ::startAndGroup
      * @covers ::startOrGroup
      * @covers ::startXorGroup
+     * @covers ::startNotGroup
      * @covers ::startAndNotGroup
      * @covers ::startOrNotGroup
      * @covers ::startXorNotGroup
@@ -92,27 +105,31 @@ class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
      */
     public function testShorthandMethods()
     {
-        $this->testConditionMethods(null, false);
+        $this->conditionMethodsTest(null, false);
     }
 
     /**
      * @covers ::<protected>
      * @covers ::on
+     * @covers ::andOn
      * @covers ::orOn
      * @covers ::xorOn
      * @covers ::onNot
+     * @covers ::andOnNot
      * @covers ::orOnNot
      * @covers ::xorOnNot
      * @covers ::startOnGroup
+     * @covers ::startAndOnGroup
      * @covers ::startOrOnGroup
      * @covers ::startXorOnGroup
      * @covers ::startOnNotGroup
+     * @covers ::startAndOnNotGroup
      * @covers ::startOrOnNotGroup
      * @covers ::startXorOnNotGroup
      * @covers ::endOnGroup
      */
     public function testOnMethods()
     {
-        $this->testConditionMethods('on', false, 'addCondition', 'startConditionGroup', 'endConditionGroup');
+        $this->conditionMethodsTest('on', false, 'addOnCondition', 'startOnConditionGroup', 'endOnConditionGroup', false);
     }
 }

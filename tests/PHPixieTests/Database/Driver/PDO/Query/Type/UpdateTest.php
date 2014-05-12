@@ -2,20 +2,34 @@
 namespace PHPixieTests\Database\Driver\PDO\Query\Type;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Type\Update;
+ * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Type\Update
  */
-class UpdateTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemTest
+class UpdateTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemsTest
 {
     protected $queryClass = '\PHPixie\Database\Driver\PDO\Query\Type\Update';
     protected $type = 'update';
 
     /**
-     * @covers ::data
-     * @covers ::getData
+     * @covers ::set
+     * @covers ::clearSet
+     * @covers ::getSet
      */
-    public function testData()
+    public function testSet()
     {
-        $this->testBuilderMethod('data', array(array('test' => 1)), null, 0,$this->query);
-        $this->testBuilderMethod('getData', array(), null, 1,array('test'), array('test'));
+        $this->setClearGetTest('set', array(
+            array(array('test'), array(array('test'))),
+        ), 'array');
+    }
+    
+    /**
+     * @covers ::increment
+     * @covers ::clearIncrement
+     * @covers ::getIncrement
+     */
+    public function testIncrement()
+    {
+        $this->setClearGetTest('increment', array(
+            array(array('test'), array(array('test'))),
+        ), 'array');
     }
 }

@@ -29,6 +29,7 @@ abstract class AbstractDatabaseTest extends \PHPUnit_Framework_TestCase
     {
         $at = 0;
         $methods = array_merge(array_keys($with), array_keys($will));
+        $methods = array_unique($methods);
         foreach ($methods as $methodName) {
             $method = $mock
                         ->expects($this->at($at++))

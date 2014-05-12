@@ -8,13 +8,15 @@ abstract class ImplementationTest extends \PHPixieTests\Database\Query\Implement
 {
     /**
      * @covers ::table
+     * @covers ::clearTable
      * @covers ::getTable
      */
     public function testGetSetTable()
     {
-        $this->testBuilderMethod('table', array('pixie', 'test'));
-        $this->testBuilderMethod('table', array('pixie', null), 1, array('pixie'));
-        $this->testBuilderMethod('getTable', array('pixie'), 1, array('pixie'));
+        $this->setClearGetTest('table', array(
+            array(array('pixie', 'test')),
+            array(array('pixie'), array('pixie', null)),
+        ));
     }
     
     public function execute()

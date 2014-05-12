@@ -26,17 +26,22 @@ abstract class QueryTest extends \PHPixieTests\Database\Query\ImplementationTest
 
     protected function getBuilder()
     {
-        return $this->quickMock('\PHPixie\Database\Driver\Mongo\Query\Implementation\Builder', null, array());
+        return $this->getMockBuilder('\PHPixie\Database\Driver\Mongo\Query\Builder')
+            ->disableOriginalConstructor(true)
+            ->getMock();
+
     }
     
     /**
      * @covers ::collection
+     * @covers ::clearCollection
      * @covers ::getCollection
      */
     public function testGetSetCollection()
     {
-        $this->testBuilderMethod('collection', array('pixie'));
-        $this->testBuilderMethod('getCollection', array('pixie'), 1, array('pixie'));
+        $this->setClearGetTest('collection', array(
+            array(array('pixie')),
+        ));
     }
 
     /**

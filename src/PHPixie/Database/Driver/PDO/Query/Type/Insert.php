@@ -1,23 +1,45 @@
 <?php
 
-namespace PHPixie\Driver\PDO\Query\Type;
+namespace PHPixie\Database\Driver\PDO\Query\Type;
 
-class Insert extends \PHPixie\Driver\PDO\Query\Items implements \PHPixie\Driver\SQL\Query\Type\Insert
+class Insert extends \PHPixie\Database\Driver\PDO\Query\Items implements \PHPixie\Database\SQL\Query\Type\Insert
 {
     public function data($data)
     {
-        $this->builder->data($data);
+        $this->builder->setData($data);
         return $this;
+    }
+
+    public function clearData()
+    {
+        $this->builder->clearValue('data');
+        return $this;
+    }
+    
+    public function getData()
+    {
+        return $this->builder->getValue('data');
     }
     
     public function batchData($columns, $rows)
     {
-        $this->builder->batchData($columns, $rows);
+        $this->builder->setBatchData($columns, $rows);
         return $this;
     }
     
-    public function getData($data)
+    public function clearBatchData()
     {
-        $this->builder->getData();
+        $this->builder->clearValue('batchData');
+        return $this;
+    }
+    
+    public function getBatchData()
+    {
+        return $this->builder->getValue('batchData');
+    }
+    
+    public function type()
+    {
+        return 'insert';
     }
 }

@@ -6,35 +6,40 @@ namespace PHPixieTests\Database\Driver\Mongo\Query;
  */
 abstract class ItemsTest extends ItemTest
 {
-     /**
+    /**
      * @covers ::limit
+     * @covers ::clearLimit
      * @covers ::getLimit
      */
     public function testLimit()
     {
-        $this->testBuilderMethod('limit', array(5), $this->query, 0); 
-        $this->testBuilderMethod('getLimit', array(), 3, 3, 1); 
+         $this->setClearGetTest('limit', array(
+            array(array(5)),
+        ));
     }
     
     /**
      * @covers ::offset
+     * @covers ::clearOffset
      * @covers ::getOffset
      */
     public function testOffset()
     {
-        $this->testBuilderMethod('offset', array(5), $this->query, 0); 
-        $this->testBuilderMethod('getOffset', array(), 3, 1, 3);     
+        $this->setClearGetTest('offset', array(
+            array(array(5)),
+        ));
     }
     
     /**
      * @covers ::orderAscendingBy
      * @covers ::orderDescendingBy
+     * @covers ::clearOrderBy
      * @covers ::getOrderBy
      */
     public function testOrderBy()
     {
-        $this->testBuilderMethod('orderAscendingBy', array('name'), $this->query, 0);
-        $this->testBuilderMethod('orderDescendingBy', array('name'), $this->query, 1);
-        $this->testBuilderMethod('getOrderBy', array(), array('test'), 2, array('test'));   
+        $this->builderMethodTest('orderAscendingBy', array('name'), $this->query, null, null, 'addOrderAscendingBy');
+        $this->builderMethodTest('orderDescendingBy', array('name'), $this->query, null, null, 'addOrderDescendingBy');
+        $this->clearGetTest('orderBy', 'array');
     }
 }

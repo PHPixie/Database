@@ -21,7 +21,9 @@ abstract class QueryTest extends \PHPixieTests\Database\SQL\Query\Implementation
     
     protected function getBuilder()
     {
-        return $this->getMock('\PHPixie\Database\Driver\PDO\Query\Implementation\Builder', array('execute'), array(), '', null, false);
+        return $this->getMockBuilder('\PHPixie\Database\Driver\PDO\Query\Builder')
+        ->disableOriginalConstructor(true)
+        ->getMock();
     }
     
     protected function query()

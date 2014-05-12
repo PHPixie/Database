@@ -8,4 +8,9 @@ class Count extends \PHPixie\Database\Driver\Mongo\Query\Items\Implementation im
     {
         return 'count';
     }
+    
+    public function execute()
+    {
+        return parent::execute();
+    }
 }

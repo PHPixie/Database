@@ -8,13 +8,19 @@ abstract class Implementation extends \PHPixie\Database\Query\Implementation imp
 
     public function table($table, $alias = null)
     {
-        $this->builder->table($table, $alias);
+        $this->builder->setTable($table, $alias);
+        return $this;
+    }
+
+    public function clearTable()
+    {
+        $this->builder->clearValue('table');
         return $this;
     }
     
     public function getTable()
     {
-        return $this->builder->getTable();
+        return $this->builder->getValue('table');
     }
     
     public function parse()

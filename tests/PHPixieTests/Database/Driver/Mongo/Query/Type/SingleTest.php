@@ -11,12 +11,14 @@ class SingleTest extends \PHPixie\Database\Driver\Mongo\Query\ItemsTest
 
     /**
      * @covers ::fields
+     * @covers ::clearFields
      * @covers ::getFields
      */
     public function testFields()
     {
-        $this->testBuilderMethod('fields', array(array('test')), null, 0,$this->query);
-        $this->testBuilderMethod('getFields', array(), null, 1,array('test'), array('test'));
+        $this->setClearGetTest('fields', array(
+            array(array('pixie'), array(array('pixie'))),
+        ), 'array');
     }
 
 }

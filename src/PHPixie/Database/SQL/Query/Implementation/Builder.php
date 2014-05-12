@@ -1,65 +1,60 @@
 <?php
 
-namespace PHPixie\Database\SQL\Query\Items;
+namespace PHPixie\Database\SQL\Query\Implementation;
 
-class Builder extends \PHPixie\Database\Query\Implementation\Items\Common{
+class Builder extends \PHPixie\Database\Query\Implementation\Builder{
 
     protected $joins = array();
-    protected $groupBy = array();
-    protected $unions = array();
 
-    public function table($table, $alias = null)
+    public function setTable($table, $alias)
     {
-        $this->table = array(
+        $this->setValue('table', array(
             'table' => $table,
             'alias' => $alias
-        );
-
-        return $this;
+        ));
     }
-
-    public function getTable()
+    
+    public function addJoin($table, $alias, $type)
     {
-        return $this->table;
-    }
-    
-    public function valuesData($data){
-        $this->data = $this->driver->valuesData($data);    
-    }
-    
-    public function batchData($rows, $columns){
-        $this->data = $this->driver->batchData($data);    
-    }
-    
-    public function join($table, $alias, $type)
-    {
-        $this->joins[] = array(
+        $this->addToArray('joins', array(
             'builder' => $this->builder->conditionBuilder('=*'),
             'table' => $table,
             'alias' => $alias,
             'type'  => $type
-        );
+        ));
     }
 
-    public function getJoins()
+    public function addGroupBy($args)
     {
-        return $this->joins;
+        $this->builder->addValuesToArray('groupBy', $args);
+    }
+
+    public function addUnion($query, $all)
+    {
+        $this->builder->addToArray('unions', array('query' => $query, 'all' => $all));
+    }
+
+    public function addIncrement($args)
+    {
+        $this->builder->addKeyValuesToArray('increment', $args, true);
+    }
+    
+    public function setBatchData($columns, $rows)
+    {
+        $this->setValue('batchData', array('columns' => $columns, 'rows' => $rows));
     }
     
     protected function lastOnBuilder()
     {
-        if (empty($this->joins))
-            throw new \PHPixie\Database\Exception\Builder("Cannot add join conditions as no joins have been added to the query.");
-
+        $this->assert(!empty($this->joins), "Cannot add join conditions as no joins have been added to the query.");
         $join = end($this->joins);
-
         $builder = $join['builder'];
         $this->defaultBuilder = $builder;
 
         return $builder;
     }
 
-    protected function addOnCondition($args, $logic, $negate)
+    public function addOnCondition($args, $logic, $negate)
     {
         $this->lastOnBuilder()->addCondition($logic, $negate, $args);
     }
@@ -72,26 +67,6 @@ class Builder extends \PHPixie\Database\Query\Implementation\Items\Common{
     public function endOnConditionGroup()
     {
         $this->lastOnBuilder()->startConditionGroup();
-    }
-    
-    public function groupBy($field)
-    {
-        $this->groupBy[] = $field;
-    }
-
-    public function getGroupBy()
-    {
-        return $this->groupBy;
-    }
-    
-    public function union($query)
-    {
-        $this->unions[] = array($query, $all);
-    }
-    
-    public function getUnions()
-    {
-        return $this->unions;
     }
     
 }

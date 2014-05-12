@@ -2,80 +2,56 @@
 
 namespace PHPixie\Database\Query\Implementation;
 
-class Common
+class Builder
 {
     protected $driver;
 	protected $conditions;
-    protected $fields;
-    protected $limit;
-    protected $offset;
-    protected $orderBy = array();
-    protected $data;
+    protected $values = array();
+    protected $arrays = array();
     protected $conditionBuilders = array();
     protected $defaultBuilder;
 
 	
-	public function __construct($driver, $conditions)
+	public function __construct($conditions)
 	{
-        $this->driver = $driver;
 		$this->conditions = $conditions;
 	}
 	
-    public function fields($fields)
+    public function addFields($args)
     {
-        $this->assert($fields !== null && !is_array($fields),"Field list must either be an array or NULL");
-        $this->fields = $fields;
+        $this->addKeyValuesToArray('fields', $args, false, false);
     }
     
-    public function getFields()
+    public function setLimit($limit)
     {
-        return $this->fields;
-    }
-    
-    public function limit($limit)
-    {
-        $this->assert(is_numeric($$limit), "Limit must be a number");
-        $this->limit = $limit;
+        $this->assert(is_numeric($limit), "Limit must be a number");
+        $this->setValue('limit', $limit);
     }
 
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    public function offset($offset)
+    public function setOffset($offset)
     {
         $this->assert(is_numeric($offset), "Offset must be a number");
-        $this->offset = $offset;
+        $this->setValue('offset', $offset);
     }
 
-    public function getOffset()
+    public function addOrderAscendingBy($field)
     {
-        return $this->offset;
-    }
-
-    public function orderAscendingBy($field)
-    {
-        $this->orderBy[] = array($field, 'asc');
+        $this->addToArray('orderBy', array('field' => $field, 'dir' => 'asc'));
     }
     
-    public function orderDescendingBy($field)
+    public function addOrderDescendingBy($field)
     {
-        $this->orderBy[] = array($field, 'desc');
+        $this->addToArray('orderBy', array('field' => $field, 'dir' => 'desc'));
     }
     
-    public function getOrderBy()
+    public function addSet($args)
     {
-        return $this->orderBy;
-    }
-
-    public function data($data)
-    {
-        $this->driver->valuesData($data);
+        $this->builder->addKeyValuesToArray('set', $args, true);
     }
     
-    public function getData($data){
-        return $this->data;
+    public function setData($data)
+    {
+        $this->setValue('data', $data);
     }
     
     public function conditionBuilder($name = null)
@@ -114,6 +90,85 @@ class Common
     public function endConditionGroup($builderName = null)
     {
         $this->conditionBuilder($builderName)->endGroup();
+    }
+    
+    public function setValue($name, $value)
+    {
+        $this->values[$name] = $value;
+    }
+    
+    public function clearValue($name)
+    {
+        $this->values[$name] = null;
+    }
+    
+    public function getValue($name)
+    {
+        if(!array_key_exists($name, $this->values))
+            return null;
+        
+        return $this->values[$name];
+    }
+    
+    protected function ensureArray($name)
+    {
+        if(!array_key_exists($this->arrays, $name))
+            $this->arrays[$name] = array();
+    }
+
+    public function addToArray($name, $value)
+    {
+        $this->ensureArray($name);
+        $this->arrays[$name][]= $value;
+    }
+    
+    public function addValuesToArray($name, $args, $unique = false)
+    {
+        $values = $args[0];
+        if(!is_array($values)){
+            $values = array($values);
+        }
+        
+        $this->ensureArray($name);
+        foreach($values as $value)
+            if(!$unique || !in_array($value, $this->arrays[$name]))
+                $this->arrays[$name][]= $value;
+    }
+    
+    public function addKeyValuesToArray($name, $args, $requireKeys = false, $firstParameterIsKey = true)
+    {
+        $array = $args[0];
+        
+        if(!is_array($array)){
+            $args = func_get_args();
+            $this->assert(count($args) === 2, "Only an array of keys and values or a single key value pair may be passed.");
+            if($firstParameterIsKey) {
+                $array = array($array => $args[1]);
+            }else{
+                $array = array($args[1] => $array);
+            }
+        }
+        
+        $this->ensureArray($name);
+        foreach($array as $key => $value) {
+            if(!is_string($key)) {
+                $this->assert(!$requireKeys, "A key must be specified.");
+                $this->arrays[$name][]= $value;
+            }else {
+                $this->arrays[$name][$key]= $value;
+            }
+        }
+    }
+    
+    public function clearArray()
+    {
+        $this->arrays[$name] = array();
+    }
+    
+    public function getArray()
+    {
+        $this->ensureArray($name);
+        return $this->arrays[$name];
     }
     
     public function assert($condition, $exceptionMessage)

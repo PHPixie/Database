@@ -1,8 +1,11 @@
 <?php
 
-namespace PHPixie\Driver\PDO\Query\Type;
+namespace PHPixie\Database\Driver\PDO\Query\Type;
 
-class Delete extends \PHPixie\Driver\PDO\Query\Items implements \PHPixie\Driver\SQL\Query\Type\Delete
+class Delete extends \PHPixie\Database\Driver\PDO\Query\Items implements \PHPixie\Database\SQL\Query\Type\Delete
 {
-    
+    public function type()
+    {
+        return 'delete';
+    }
 }

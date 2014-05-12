@@ -24,7 +24,7 @@ abstract class Driver
     public function queryBuilder()
     {
         $conditions = $this->database->conditions();
-        return $this->buildQueryBuilder($driver, $conditions);
+        return $this->buildQueryBuilder($conditions);
     }
     
     public function query($type = 'select', $connectionName = 'default')
@@ -36,11 +36,6 @@ abstract class Driver
         return $this->buildQuery($connection, $parser, $builder, $config, $type);
     }
 
-    public function valuesData($data)
-    {
-        return new \PHPixie\Database\Query\Data\Values($data);
-    }
-    
     abstract public function buildConnection($name, $config);
     abstract public function buildParserInstance($connectionName);
     abstract public function buildQueryBuilder($driver, $conditions);

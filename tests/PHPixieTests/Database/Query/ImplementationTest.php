@@ -40,7 +40,7 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals('a', $query->parse());
     }
 
-    protected function testBuilderMethod($method, $with, $will = null, $at=null, $builderWill = null, $builderWith = null, $builderMethod = null)
+    protected function builderMethodTest($method, $with, $will = null, $builderWill = null, $builderWith = null, $builderMethod = null)
     {
         if($builderWith === null)
             $builderWith = $with;
@@ -53,25 +53,24 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         
         $methodMock = $this->builder;
         
-        if($at!==null)
-            $methodMock = $methodMock->expects($this->at($at));
-        
-        $methodMock = $methodMock->method($method);
+        $methodMock = $methodMock->expects($this->at(0));
+
+        $methodMock = $methodMock->method($builderMethod);
         
         $methodMock = call_user_func_array(array($methodMock, 'with'), $builderWith);
         $methodMock->will($this->returnValue($builderWill));
         
         $result = call_user_func_array(array($this->query, $method), $with);
-        $this->acceptEquals($will, $result);
+        $this->assertEquals($will, $result);
     }
     
-    protected function testConditionMethods($name, $testConditionBuilder= true, $operatorMethod = 'addCondition', $startGroupMethod = 'startConditionGroup', $endGroupMethod = 'endConditionGroup')
+    protected function conditionMethodsTest($name, $testConditionBuilder= true, $operatorMethod = 'addCondition', $startGroupMethod = 'startConditionGroup', $endGroupMethod = 'endConditionGroup', $passBuilderName = true)
     {
-        $at = 0;
         foreach(array(false, true) as $negate) {
-            foreach(array('and', 'or', 'xor') as $logic) {
+            foreach(array('and', 'or', 'xor', 'short_and') as $logic) {
+                
                 if($name !== null){
-                    if($logic === 'and'){
+                    if($logic === 'short_and'){
                         $method = $name;
                     }else{
                         $method = $logic.ucfirst($name); 
@@ -80,30 +79,78 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
                         $method.='Not';
                     $groupMethod = 'start'.ucfirst($method).'Group';
                 }else{
-                    $method = $logic;
-                    if($negate)
-                        $method.='Not';
+                    if($logic === 'short_and'){
+                        $method = $negate ? 'not' : '';
+                    }else{
+                        $method = $logic;
+                        if($negate)
+                            $method.='Not';
+                    }
                     
-                    $groupMethod = 'start'.ucfirst($method).'Group';
+                    $groupMethod = ($logic === 'short_and' ? '' : $logic).($negate?'Not':'');
+                    $groupMethod = 'start'.ucfirst($groupMethod).'Group';
                     $method = '_'.$method;
                 }
                 
-                $this->testBuilderMethod($method, array('test', 1, 2), $this->query, $at++, null, array(array('test', 1, 2), $logic, $negate, $name), $operatorMethod);
+                if($logic === 'short_and')
+                    $logic = 'and';
                 
-                $this->testBuilderMethod($groupMethod, array(), $this->query, $at++, null, array($logic, $negate, $name), $startGroupMethod);
+                if($method !== '_'){
+                    $with = array(array('test', 1, 2), $logic, $negate);
+                    if($passBuilderName)
+                        $with[]=$name;
+                    $this->builderMethodTest($method, array('test', 1, 2), $this->query,  null, $with, $operatorMethod);
+                }
+                
+                $with = array($logic, $negate);
+                if($passBuilderName)
+                    $with[]=$name;
+                $this->builderMethodTest($groupMethod, array(), $this->query, null, $with, $startGroupMethod);
                 
             }
         }
         
-        $this->testBuilderMethod('end'.ucfirst($name).'Group', array(), $this->query, $at++, null, array($name), $endGroupMethod);
+        $with = $passBuilderName ? array($name) : array();
+        $this->builderMethodTest('end'.ucfirst($name).'Group', array(), $this->query, null, $with, $endGroupMethod);
         
         if($testConditionBuilder){
-            $this->testBuilderMethod('get'.ucfirst($name).'Builder', array(), $this->query, $at++, null, array($name), 'conditionBuilder');
-        $this->testBuilderMethod('get'.ucfirst($name).'Conditions', array(), $this->query, $at++, null, array($name), 'getConditions');
+            $this->builderMethodTest('get'.ucfirst($name).'Builder', array(), $this->builder, $this->builder, $with, 'conditionBuilder');
+            $this->builderMethodTest('get'.ucfirst($name).'Conditions', array(), array('test'), array('test'), $with, 'getConditions');
         }
         
     }
 
+    protected function setClearGetTest($name, $paramSets, $type = 'value', $clearGetName = null)
+    {
+        $uname = ucfirst($name);
+        
+        if($clearGetName === null)
+            $clearGetName = $name;
+        
+        foreach($paramSets as $paramSet)
+        {
+            $with = $paramSet[0];
+            if(isset($paramSet[1])){
+                $builderWith = $paramSet[1];
+            }else{
+                $builderWith = $with;
+            }
+            $builderMethod = $type === 'value' ? 'set'.$uname : 'add'.$uname;
+            $this->builderMethodTest($name, $with, $this->query, null, $builderWith, $builderMethod);    
+        }
+        
+        $this->clearGetTest($clearGetName, $type);
+    }
+    
+    protected function clearGetTest($name, $type = 'value')
+    {
+        $uname = ucfirst($name);
+        $utype = ucfirst($type);
+        
+        $this->builderMethodTest('clear'.$uname, array(), $this->query, null, array($name), 'clear'.$utype);
+        $this->builderMethodTest('get'.$uname, array(), 5, 5, array($name), 'get'.$utype);
+    }
+        
     abstract public function testExecute();
     abstract protected function getConnection();
     abstract protected function getParser();

@@ -6,30 +6,30 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
 {
     protected function addCondition($args, $logic = 'and', $negate = false, $builderName = null)
     {
-        $this->common->addCondition($args, $logic, $negate, $builderName);
+        $this->builder->addCondition($args, $logic, $negate, $builderName);
         return $this;
     }
 
-    protected function startConditionGroup($logic = 'and', $builderName = null)
+    protected function startConditionGroup($logic = 'and', $negate = false, $builderName = null)
     {
-        $this->common->startConditionGroup($logic, $builderName);
+        $this->builder->startConditionGroup($logic, $negate, $builderName);
         return $this;
     }
 
     protected function endConditionGroup($builderName = null)
     {
-        $this->common->endGroup($builderName);
+        $this->builder->endConditionGroup($builderName);
         return $this;
     }
 
     public function getWhereBuilder()
     {
-        return $this->common->conditionBuilder('where');
+        return $this->builder->conditionBuilder('where');
     }
 
     public function getWhereConditions()
     {
-        return $this->common->getConditions('where');
+        return $this->builder->getConditions('where');
     }
 
     public function where()
@@ -37,6 +37,11 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
         return $this->addCondition(func_get_args(), 'and', false, 'where');
     }
 
+    public function andWhere()
+    {
+        return $this->addCondition(func_get_args(), 'and', false, 'where');
+    }
+    
     public function orWhere()
     {
         return $this->addCondition(func_get_args(), 'or', false, 'where');
@@ -52,6 +57,11 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
         return $this->addCondition(func_get_args(), 'and', true, 'where');
     }
 
+    public function andWhereNot()
+    {
+        return $this->addCondition(func_get_args(), 'and', true, 'where');
+    }
+    
     public function orWhereNot()
     {
         return $this->addCondition(func_get_args(), 'or', true, 'where');
@@ -67,6 +77,11 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
         return $this->startConditionGroup('and', false, 'where');
     }
 
+    public function startAndWhereGroup()
+    {
+        return $this->startConditionGroup('and', false, 'where');
+    }
+    
     public function startOrWhereGroup()
     {
         return $this->startConditionGroup('or', false, 'where');
@@ -82,6 +97,11 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
         return $this->startConditionGroup('and', true, 'where');
     }
 
+    public function startAndWhereNotGroup()
+    {
+        return $this->startConditionGroup('and', true, 'where');
+    }
+    
     public function startOrWhereNotGroup()
     {
         return $this->startConditionGroup('or', true, 'where');
@@ -113,6 +133,11 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
         return $this->addCondition(func_get_args(), 'xor', false);
     }
 
+    public function _not()
+    {
+        return $this->addCondition(func_get_args(), 'and', true);
+    }
+    
     public function _andNot()
     {
         return $this->addCondition(func_get_args(), 'and', true);
@@ -130,36 +155,46 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
 
     public function startGroup()
     {
-        $this->common->startGroup('and', false);
+        return $this->startConditionGroup('and', false);
     }
 
+    public function startAndGroup()
+    {
+        return $this->startConditionGroup('and', false);
+    }
+    
     public function startOrGroup()
     {
-        $this->common->startGroup('or', false);
+        return $this->startConditionGroup('or', false);
     }
 
     public function startXorGroup()
     {
-        $this->common->startGroup('xor', false);
+        return $this->startConditionGroup('xor', false);
     }
 
     public function startNotGroup()
     {
-        $this->common->startGroup('and', true);
+        return $this->startConditionGroup('and', true);
     }
 
+    public function startAndNotGroup()
+    {
+        return $this->startConditionGroup('and', true);
+    }
+    
     public function startOrNotGroup()
     {
-        $this->common->startGroup('or', true);
+        return $this->startConditionGroup('or', true);
     }
 
     public function startXorNotGroup()
     {
-        $this->common->startGroup('xor', true);
+        return $this->startConditionGroup('xor', true);
     }
 
     public function endGroup()
     {
-        $this->common->endGroup();
+        return $this->endConditionGroup();
     }
 }

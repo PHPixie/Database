@@ -197,7 +197,6 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
             $expanded = $this->expanded;
 
         $parsed = $this->parseGroups($expanded->groups());
-        //print_r($parsed);
         $this->assertEquals($expected, $parsed);
     }
 

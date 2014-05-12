@@ -2,9 +2,9 @@
 namespace PHPixieTests\Database\Driver\PDO\Query\Type;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Type\Count;
+ * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Type\Count
  */
-class CountTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemTest
+class CountTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemsTest
 {
     
     protected $queryClass = '\PHPixie\Database\Driver\PDO\Query\Type\Count';

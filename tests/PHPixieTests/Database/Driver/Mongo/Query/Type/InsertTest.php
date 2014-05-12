@@ -4,20 +4,32 @@ namespace PHPixieTests\Database\Driver\Mongo\Query\Type;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Query\Type\Insert
  */
-class InsertTest extends \PHPixie\Database\Driver\Mongo\Query\ItemsTest
+class InsertTest extends \PHPixieTests\Database\Driver\Mongo\Query\ItemsTest
 {
     protected $queryClass = '\PHPixie\Database\Driver\Mongo\Query\Type\Insert';
     protected $type = 'insert';
     
     /**
      * @covers ::data
-     * @covers ::batchData
+     * @covers ::clearData
      * @covers ::getData
      */
     public function testData()
     {
-        $this->testBuilderMethod('data', array(array('test' => 1)), null, 0,$this->query);
-        $this->testBuilderMethod('getData', array(), null, 1,array('test'), array('test'));
-        $this->testBuilderMethod('batchData', array(1, 2), null, 2,$this->query);
+        $this->setClearGetTest('data', array(
+            array(array(array('pixie' => 5))),
+        ));
+    }
+    
+    /**
+     * @covers ::batchData
+     * @covers ::clearBatchData
+     * @covers ::getBatchData
+     */
+    public function testBatchData()
+    {
+        $this->setClearGetTest('batchData', array(
+            array(array(array(5))),
+        ));
     }
 }

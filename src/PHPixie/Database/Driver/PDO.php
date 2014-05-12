@@ -61,16 +61,6 @@ class PDO extends \PHPixie\Database\SQL\Driver
         return new \PHPixie\Database\Driver\PDO\Query($this->database->conditions(), $connection, $parser, $config, $type);
     }
 
-    public function valuesData($data)
-    {
-        return new \PHPixie\Database\Driver\PDO\Query\Data\Values($data);
-    }
-    
-    public function bulkData($data)
-    {
-        return new \PHPixie\Database\Driver\PDO\Query\Data\Bulk($data);
-    }
-    
     public function result($statement)
     {
         return new \PHPixie\Database\Driver\PDO\Result($statement);

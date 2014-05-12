@@ -2,31 +2,35 @@
 namespace PHPixieTests\Database\Driver\PDO\Query\Type;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Type\Select;
+ * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Type\Select
  */
-class SelectTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemTest
+class SelectTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemsTest
 {
     protected $queryClass = '\PHPixie\Database\Driver\PDO\Query\Type\Select';
     protected $type = 'select';
     
     /**
      * @covers ::fields
+     * @covers ::clearFields
      * @covers ::getFields
      */
     public function testFields()
     {
-        $this->testBuilderMethod('fields', array(array('test')), null, 0,$this->query);
-        $this->testBuilderMethod('getFields', array(), null, 1,array('test'), array('test'));
+        $this->setClearGetTest('fields', array(
+            array(array('pixie'), array(array('pixie'))),
+        ), 'array');
     }
     
     /**
      * @covers ::groupBy
+     * @covers ::clearGroupBy
      * @covers ::getGroupBy
      */
     public function testGroupBy()
     {
-        $this->testBuilderMethod('groupBy', array('test'), null, 0,$this->query);
-        $this->testBuilderMethod('getGroupBy', array(), null, 1,array('test'), array('test'));
+        $this->setClearGetTest('groupBy', array(
+            array(array('pixie'), array(array('pixie'))),
+        ), 'array');
     }
     
     /**
@@ -35,9 +39,10 @@ class SelectTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemTest
      */
     public function testUnion()
     {
-        $this->testBuilderMethod('union', array('test'), null, 0,$this->query, null, array('test', false));
-        $this->testBuilderMethod('union', array('test', true), null, 0,$this->query, null, array('test', true));
-        $this->testBuilderMethod('getUnions', array(), null, 1,array('test'), array('test'));
+        $this->setClearGetTest('union', array(
+            array(array('pixie', true)),
+            array(array('pixie'), array('pixie', false)),
+        ), 'array', 'unions');
     }
 
     /**
@@ -45,22 +50,26 @@ class SelectTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemTest
      * @covers ::getHavingBuilder
      * @covers ::getHavingConditions
      * @covers ::having
+     * @covers ::andHaving
      * @covers ::orHaving
      * @covers ::xorHaving
      * @covers ::havingNot
+     * @covers ::andHavingNot 
      * @covers ::orHavingNot
      * @covers ::xorHavingNot
      * @covers ::startHavingGroup
+     * @covers ::startAndHavingGroup
      * @covers ::startOrHavingGroup
      * @covers ::startXorHavingGroup
      * @covers ::startHavingNotGroup
+     * @covers ::startAndHavingNotGroup
      * @covers ::startOrHavingNotGroup
      * @covers ::startXorHavingNotGroup
      * @covers ::endHavingGroup
      */
     public function testHavingMethods()
     {
-        $this->testConditionMethods('having');
+        $this->conditionMethodsTest('having');
     }
     
 

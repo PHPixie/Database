@@ -1,57 +1,82 @@
 <?php
 
-namespace PHPixie\Database\Driver\PDO\Query\Implementation;
+namespace PHPixie\Database\Driver\PDO\Query;
 
-abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation implements \PHPixie\Database\SQL\Query\Items
+abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPixie\Database\SQL\Query\Items
 {
 
     public function limit($limit)
     {
-        $this->builder->limit($limit);
+        $this->builder->setLimit($limit);
         return $this;
     }
 
+    public function clearLimit()
+    {
+        $this->builder->clearValue('limit');
+        return $this;
+    }
+    
     public function getLimit()
     {
-        return $this->builder->getLimit();
+        return $this->builder->getValue('limit');
     }
 
     public function offset($offset)
     {
-        $this->builder->offset($offset);
+        $this->builder->setOffset($offset);
         return $this;
     }
 
+    public function clearOffset()
+    {
+        $this->builder->clearValue('offset');
+        return $this;
+    }
+    
     public function getOffset()
     {
-        return $this->builder->getOffset();
+        return $this->builder->getValue('offset');
     }
 
     public function orderAscendingBy($field)
     {
-		$this->builder->orderAscendingBy($field);
+		$this->builder->addOrderAscendingBy($field);
         return $this;
     }
 
     public function orderDescendingBy($field)
     {
-		$this->builder->orderDescendingBy($field);
+		$this->builder->addOrderDescendingBy($field);
+        return $this;
+    }
+
+    public function clearOrderBy()
+    {
+        $this->builder->clearArray('orderBy');
         return $this;
     }
     
     public function getOrderBy()
     {
-        return $this->builder->getOrderBy();
+        return $this->builder->getArray('orderBy');
     }
 
     public function join($table, $alias = null, $type = 'inner')
     {
-        return $this->builder->join($table, $alias, $type);
+        $this->builder->addJoin($table, $alias, $type);
+        return $this;
     }
 
+    public function clearJoins()
+    {
+        $this->builder->clearArray('joins');
+        return $this;
+    }
+    
     public function getJoins()
     {
-        return $this->builder->getJoins();
+        return $this->builder->getArray('joins');
     }
     
     protected function addCondition($args, $logic = 'and', $negate = false, $builderName = null)
@@ -60,15 +85,15 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
         return $this;
     }
 
-    protected function startConditionGroup($logic = 'and', $builderName = null)
+    protected function startConditionGroup($logic = 'and', $negate = false, $builderName = null)
     {
-        $this->builder->startConditionGroup($logic, $builderName);
+        $this->builder->startConditionGroup($logic, $negate, $builderName);
         return $this;
     }
 
     protected function endConditionGroup($builderName = null)
     {
-        $this->builder->endGroup($builderName);
+        $this->builder->endConditionGroup($builderName);
         return $this;
     }
 
@@ -87,6 +112,11 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
         return $this->addCondition(func_get_args(), 'and', false, 'where');
     }
 
+    public function andWhere()
+    {
+        return $this->addCondition(func_get_args(), 'and', false, 'where');
+    }
+    
     public function orWhere()
     {
         return $this->addCondition(func_get_args(), 'or', false, 'where');
@@ -102,6 +132,11 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
         return $this->addCondition(func_get_args(), 'and', true, 'where');
     }
 
+    public function andWhereNot()
+    {
+        return $this->addCondition(func_get_args(), 'and', true, 'where');
+    }
+    
     public function orWhereNot()
     {
         return $this->addCondition(func_get_args(), 'or', true, 'where');
@@ -117,6 +152,11 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
         return $this->startConditionGroup('and', false, 'where');
     }
 
+    public function startAndWhereGroup()
+    {
+        return $this->startConditionGroup('and', false, 'where');
+    }
+    
     public function startOrWhereGroup()
     {
         return $this->startConditionGroup('or', false, 'where');
@@ -132,6 +172,11 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
         return $this->startConditionGroup('and', true, 'where');
     }
 
+    public function startAndWhereNotGroup()
+    {
+        return $this->startConditionGroup('and', true, 'where');
+    }
+    
     public function startOrWhereNotGroup()
     {
         return $this->startConditionGroup('or', true, 'where');
@@ -163,6 +208,11 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
         return $this->addCondition(func_get_args(), 'xor', false);
     }
 
+    public function _not()
+    {
+        return $this->addCondition(func_get_args(), 'and', true);
+    }
+    
     public function _andNot()
     {
         return $this->addCondition(func_get_args(), 'and', true);
@@ -180,38 +230,48 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
 
     public function startGroup()
     {
-        $this->builder->startGroup('and', false);
+        return $this->startConditionGroup('and', false);
     }
 
+    public function startAndGroup()
+    {
+        return $this->startConditionGroup('and', false);
+    }
+    
     public function startOrGroup()
     {
-        $this->builder->startGroup('or', false);
+        return $this->startConditionGroup('or', false);
     }
 
     public function startXorGroup()
     {
-        $this->builder->startGroup('xor', false);
+        return $this->startConditionGroup('xor', false);
     }
 
     public function startNotGroup()
     {
-        $this->builder->startGroup('and', true);
+        return $this->startConditionGroup('and', true);
     }
 
+    public function startAndNotGroup()
+    {
+        return $this->startConditionGroup('and', true);
+    }
+    
     public function startOrNotGroup()
     {
-        $this->builder->startGroup('or', true);
+        return $this->startConditionGroup('or', true);
     }
 
     public function startXorNotGroup()
     {
-        $this->builder->startGroup('xor', true);
+        return $this->startConditionGroup('xor', true);
     }
 
 
     public function endGroup()
     {
-        $this->builder->endGroup();
+        return $this->endConditionGroup();
     }
     
     protected function addOnCondition($args, $logic = 'and', $negate = false)
@@ -220,9 +280,16 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
         return $this;
     }
     
-    public function startOnConditionGroup($logic = 'and', $negate = false)
+    protected function startOnConditionGroup($logic = 'and', $negate = false)
     {
         $this->builder->startOnConditionGroup($logic, $negate);
+        return $this;
+    }
+    
+    protected function endOnConditionGroup()
+    {
+        $this->builder->endOnConditionGroup();
+        return $this;
     }
 
     public function on()
@@ -230,6 +297,11 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
         return $this->addOnCondition(func_get_args(), 'and', false);
     }
 
+    public function andOn()
+    {
+        return $this->addOnCondition(func_get_args(), 'and', false);
+    }
+    
     public function orOn()
     {
         return $this->addOnCondition(func_get_args(), 'or', false);
@@ -245,6 +317,11 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
         return $this->addOnCondition(func_get_args(), 'and', true);
     }
 
+    public function andOnNot()
+    {
+        return $this->addOnCondition(func_get_args(), 'and', true);
+    }
+    
     public function orOnNot()
     {
         return $this->addOnCondition(func_get_args(), 'or', true);
@@ -260,6 +337,11 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
         return $this->startOnConditionGroup('and', false);
     }
 
+    public function startAndOnGroup()
+    {
+        return $this->startOnConditionGroup('and', false);
+    }
+    
     public function startOrOnGroup()
     {
         return $this->startOnConditionGroup('or', false);
@@ -270,11 +352,16 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
         return $this->startOnConditionGroup('xor', false);
     }
 
-    public function startOrNotGroup()
+    public function startOnNotGroup()
     {
         return $this->startOnConditionGroup('and', true);
     }
 
+    public function startAndOnNotGroup()
+    {
+        return $this->startOnConditionGroup('and', true);
+    }
+    
     public function startOrOnNotGroup()
     {
         return $this->startOnConditionGroup('or', true);
@@ -287,7 +374,7 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query\Implementation i
 
     public function endOnGroup()
     {
-        $this->lastOnBuilder()->endGroup();
+        $this->endOnConditionGroup();
         return $this;
     }
 }

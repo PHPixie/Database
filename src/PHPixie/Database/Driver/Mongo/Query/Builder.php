@@ -4,20 +4,23 @@ namespace PHPixie\Database\Driver\Mongo\Query;
 
 class Builder extends \PHPixie\Database\Query\Implementation\Builder
 {
-    protected $collection;
-    
-    public function collection($collection)
+    public function setCollection($collection)
     {
-        $this->collection = $collection;
-    }
-
-    public function getCollection()
-    {
-        return $this->collection;
+        $this->setValue('collection', $collection);
     }
     
-    public function batchData($documents)
+    public function addUnset($args)
     {
-        $this->data = $this->driver->batchData($documents);
+        $this->addValuesToArray('set', $args, true);
+    }
+    
+    public function addIncrement($args)
+    {
+        $this->builder->addKeyValuesToArray('increment', $args, true);
+    }
+    
+    public function setBatchData($documents)
+    {
+        $this->addValuesToArray('set', $documents);
     }
 }

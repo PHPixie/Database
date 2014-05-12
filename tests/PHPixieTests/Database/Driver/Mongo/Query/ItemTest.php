@@ -27,7 +27,7 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
      */
     public function testWhereMethods()
     {
-        $this->testConditionMethods('where');
+        $this->conditionMethodsTest('where');
     }
     
     /**
@@ -48,6 +48,6 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
      */
     public function testShorthandMethods()
     {
-        $this->testConditionMethods(null, false);
+        $this->conditionMethodsTest(null, false);
     }
 }
