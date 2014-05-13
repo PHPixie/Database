@@ -54,6 +54,10 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
         $this->assertException(function() use($builder){
             $builder->addIncrement('t');
         });
+     
+        $this->assertException(function() use($builder){
+            $builder->addIncrement(array('test', 't'));
+        });
         
         $this->assertEquals(array(
             'test'   => 6,

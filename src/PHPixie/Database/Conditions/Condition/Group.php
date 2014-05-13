@@ -25,7 +25,7 @@ class Group extends \PHPixie\Database\Conditions\Condition
     public function add($condition, $logic = 'and')
     {
         if (!in_array($logic, $this->allowedLogic))
-            throw new \PHPixie\Database\Exception("The '$logic' logic is not supported");
+            throw new \PHPixie\Database\Exception\Builder("The '$logic' logic is not supported");
 
         $condition->logic = $logic;
         $this->conditions[] = $condition;

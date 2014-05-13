@@ -4,7 +4,7 @@ namespace PHPixieTests\Database\Driver\Mongo\Query\Type;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Query\Type\Single
  */
-class SingleTest extends \PHPixieTests\Database\Driver\Mongo\Query\ItemsTest
+class SingleTest extends \PHPixieTests\Database\Driver\Mongo\Query\ItemTest
 {
     protected $queryClass = '\PHPixie\Database\Driver\Mongo\Query\Type\Single';
     protected $type = 'single';
@@ -20,5 +20,29 @@ class SingleTest extends \PHPixieTests\Database\Driver\Mongo\Query\ItemsTest
             array(array('pixie'), array(array('pixie'))),
         ), 'array');
     }
+    
+    /**
+     * @covers ::execute
+     */
+    public function testExecute()
+    {
+        $query = $this->query();
+        $runner = new \PHPixie\Database\Driver\Mongo\Query\Runner();
+        $result = $this->quickMock('\PHPixie\Database\Driver\Mongo\Result', array('current'));
+        $this->expectCalls($result, array(), array('current' => 'test'));
+        $this->parser
+                ->expects($this->any())
+                ->method('parse')
+                ->with ($query)
+                ->will($this->returnValue($runner));
+
+        $this->connection
+                ->expects($this->once())
+                ->method('run')
+                ->will($this->returnValue($result));
+
+        $this->assertEquals('test', $query->execute());
+    }
+    
 
 }

@@ -90,8 +90,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             )
         ));
 
-        $query = $this->getQuery()->collection('fairies')
-                                    ->selectSingle();
+        $query = $this->getQuery('single')->collection('fairies');
 
         $this->assertQuery($query, array (
             array (
@@ -106,8 +105,8 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
         ));
 
         $query = $this->getQuery()->collection('fairies')
-                                    ->orderBy('name', 'asc')
-                                    ->orderBy('id', 'desc')
+                                    ->orderAscendingBy('name')
+                                    ->orderDescendingBy('id')
                                     ->limit(1);
 
         $this->assertQuery($query, array (
@@ -187,7 +186,9 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
     public function testParseUpdate()
     {
         $query = $this->getQuery('update')->collection('fairies')
-                                    ->data(array('id'=>1, 'name'=>"Trixie"));
+                                    ->set(array('id'=>1, 'name'=>"Trixie"))
+                                    ->increment('trees', 1)
+                                    ->unset('test');
 
         $this->assertQuery($query, array (
             array (
@@ -197,13 +198,17 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'update',
-                'args' => array (array(), array('$set' => array('id'=>1, 'name'=>"Trixie")), array('multiple' => true))
+                'args' => array (array(), array(
+                    '$set' => array('id'=>1, 'name'=>"Trixie"),
+                    '$unset' => array('test' => true),
+                    '$inc' => array('trees' => 1)
+                ), array('multiple' => true))
             )
         ));
 
         $query = $this->getQuery('update')->collection('fairies')
                                     ->where('name', 5)
-                                    ->data(array('id'=>1, 'name'=>"Trixie"));
+                                    ->set(array('id'=>1, 'name'=>"Trixie"));
 
         $this->assertQuery($query, array (
             array (
@@ -303,10 +308,14 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
      */
     public function testException()
     {
-        $this->assertException($this->getQuery('pixie'));
+        $pixieQuery = $this->quickMock('\PHPixie\Database\Driver\Mongo\Query', array('type'));
+        $pixieQuery
+            ->expects($this->any())
+            ->method('type')
+            ->will($this->returnValue('pixie'));
+        $this->assertException($pixieQuery);
         $this->assertException($this->getQuery('insert'));
         $this->assertException($this->getQuery('select'));
-        $this->assertException($this->getQuery('select')->collection('fairies')->fields(array('pixie' => 'test')));
         $this->assertException($this->getQuery('insert')->data(array('id'=>1)));
         $this->assertException($this->getQuery('insert')->collection('fairies'));
         $this->assertException($this->getQuery('update')->collection('fairies'));
@@ -332,7 +341,9 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
 
     protected function getQuery($type = 'select')
     {
-        $query = new \PHPixie\Database\Driver\Mongo\Query($this->database, $this->database->conditions(), null, null, null, $type);
+        $class = '\PHPixie\Database\Driver\Mongo\Query\Type\\'.ucfirst($type);
+        $builder = new \PHPixie\Database\Driver\Mongo\Query\Builder($this->database->conditions());
+        $query = new $class(null, null, $builder);
 
         return $query;
     }

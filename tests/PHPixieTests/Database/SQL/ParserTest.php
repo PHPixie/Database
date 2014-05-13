@@ -36,8 +36,8 @@ abstract class ParserTest extends AbstractParserTest
                                                     ->having('b', 1)
                                                     ->limit(7)
                                                     ->offset(9)
-                                                    ->orderBy('id', 'desc')
-                                                    ->orderBy('name', 'asc')
+                                                    ->orderDescendingBy('id')
+                                                    ->orderAscendingBy('name')
                                                     ->groupBy('id')
                                                     ->groupBy('name'),
 
@@ -48,24 +48,39 @@ abstract class ParserTest extends AbstractParserTest
                                 ->union($this->query('select')->table('pixies'), true),
 
             $this->query('select')
-                                ->table($this->database->expr('test1', array(1)), 'b')
-                                ->join($this->database->expr('test2', array(2)), 'c', 'left_outer')
+                                ->table($this->database->sqlExpression('test1', array(1)), 'b')
+                                ->join($this->database->sqlExpression('test2', array(2)), 'c', 'left_outer')
                                 ->on('b.id', 'c.id')
-                                ->union($this->database->expr('test3', array(3))),
+                                ->union($this->database->sqlExpression('test3', array(3))),
 
             $this->query('update')
                                 ->table('fairies')
-                                ->data(array(
+                                ->set(array(
                                     'id'   => 3,
                                     'name' => 'Trixie'
                                 ))
                                 ->join('pixies')
                                 ->on('fairies.id', 'pixies.id')
                                 ->where('id', 7)
-                                ->orderBy('id')
+                                ->orderAscendingBy('id')
                                 ->limit(6)
                                 ->offset(7),
+            
+            $this->query('update')
+                                ->table('fairies')
+                                ->increment(array(
+                                    'trees'   => 3,
+                                    'forests' => -1
+                                )),
 
+            $this->query('update')
+                                ->table('fairies')
+                                ->set('name', 'Trixie')
+                                ->increment(array(
+                                    'trees'   => 3,
+                                    'forests' => -1
+                                )),
+            
             $this->query('insert')
                                 ->table('fairies')
                                 ->data(array(
@@ -76,7 +91,7 @@ abstract class ParserTest extends AbstractParserTest
             $this->query('delete')
                                 ->table('fairies')
                                 ->where('id', 7)
-                                ->orderBy('id')
+                                ->orderAscendingBy('id')
                                 ->limit(6)
                                 ->offset(7),
 
@@ -85,8 +100,8 @@ abstract class ParserTest extends AbstractParserTest
                                 ->where('a', 1)
                                 ->limit(7)
                                 ->offset(9)
-                                ->orderBy('id', 'desc')
-                                ->orderBy('name', 'asc'),
+                                ->orderDescendingBy('id')
+                                ->orderAscendingBy('name'),
 
             $this->query('insert')
                                 ->table('fairies'),
@@ -140,20 +155,16 @@ abstract class ParserTest extends AbstractParserTest
 
     protected function exceptionQueries()
     {
+        $pixieQuery = $this->quickMock('\PHPixie\Database\Driver\PDO\Query', array('type'));
+        $pixieQuery
+            ->expects($this->any())
+            ->method('type')
+            ->will($this->returnValue('pixie'));
         $queries = array(
-            $this->query('pixie')
-                                ->table('fairies'),
-
-            $this->query('count')
-                                ->table('fairies')
-                                ->groupBy('id'),
-
-            $this->query('count')
-                                ->table('fairies')
-                                ->union($this->query('select')->table('fairies')),
+            $pixieQuery,
 
             $this->query('update')
-                                ->data(array('id' => 1)),
+                                ->set(array('id' => 1)),
 
             $this->query('insert')
                                 ->data(array('id' => 1)),

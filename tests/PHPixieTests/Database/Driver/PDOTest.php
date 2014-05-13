@@ -196,4 +196,14 @@ class PDOTest extends \PHPixieTests\Database\DriverTest
         $this->assertAttributeEquals('fragmentParser', 'fragmentParser', $parser);
         $this->assertAttributeEquals('groupParser', 'groupParser', $parser);
     }
+    
+    /**
+     * @covers ::buildQueryBuilder
+     */
+    public function testBuildQueryBuilder()
+    {
+        $builder = $this->driver->buildQueryBuilder('test');
+        $this->assertInstanceOf('\PHPixie\Database\Driver\PDO\Query\Builder', $builder);
+        $this->assertAttributeEquals('test', 'conditions', $builder);
+    }
 }

@@ -19,7 +19,7 @@ class Builder
 	
     public function addFields($args)
     {
-        $this->addKeyValuesToArray('fields', $args, false, false);
+        $this->addValuesToArray('fields', $args, true);
     }
     
     public function setLimit($limit)
@@ -73,7 +73,7 @@ class Builder
         $this->values[$name] = $value;
     }
     
-    public function clearArray()
+    public function clearArray($name)
     {
         if(array_key_exists($name, $this->arrays))
             unset($this->arrays[$name]);
@@ -82,7 +82,7 @@ class Builder
     public function getArray($name)
     {
         if(!array_key_exists($name, $this->arrays))
-            return null;
+            return array();
         
         return $this->arrays[$name];
     }
@@ -112,7 +112,7 @@ class Builder
                 $this->arrays[$name][]= $value;
     }
     
-    protected function addKeyValuesToArray($name, $args, $requireKeys = false, $firstParameterIsKey = true)
+    protected function addKeyValuesToArray($name, $args, $requireKeys = false, $firstParameterIsKey = true, $assertIsNumeric = false)
     {
         $array = $args[0];
         
@@ -134,6 +134,8 @@ class Builder
         
         $this->ensureArray($name);
         foreach($array as $key => $value) {
+            if($assertIsNumeric)
+                $this->assert(is_numeric($value), "Value must be a number");
             if(!is_string($key)) {
                 $this->assert(!$requireKeys, "A key must be specified.");
                 $this->arrays[$name][]= $value;

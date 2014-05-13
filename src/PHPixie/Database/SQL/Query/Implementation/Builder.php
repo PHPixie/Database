@@ -6,6 +6,11 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder{
 
     protected $joins = array();
 
+    public function addFields($args)
+    {
+        $this->addKeyValuesToArray('fields', $args, false, false);
+    }
+    
     public function setTable($table, $alias)
     {
         $this->setValue('table', array(
@@ -36,7 +41,7 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder{
 
     public function addIncrement($args)
     {
-        $this->addKeyValuesToArray('increment', $args, true);
+        $this->addKeyValuesToArray('increment', $args, true, true, true);
     }
     
     public function setBatchData($columns, $rows)

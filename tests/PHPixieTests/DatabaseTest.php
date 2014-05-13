@@ -17,7 +17,7 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
     }
 
     /**
-     * @covers ::expr
+     * @covers ::sqlExpression
      */
     public function testSQLExpression()
     {

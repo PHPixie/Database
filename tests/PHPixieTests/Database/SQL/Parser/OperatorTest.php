@@ -50,8 +50,8 @@ abstract class OperatorTest extends \PHPixieTests\Database\Parser\OperatorTest
     {
         $conditions = array(
             $this->operator('a', '=', array(1)),
-            $this->operator('a', '=', array($this->database->expr('la'))),
-            $this->operator('a', '=*', array($this->database->expr('la'))),
+            $this->operator('a', '=', array($this->database->sqlExpression('la'))),
+            $this->operator('a', '=*', array($this->database->sqlExpression('la'))),
             $this->operator('a', '=*', array('b')),
             $this->operator('a', '=', array(null)),
             $this->operator('a', '!=', array(null)),
@@ -62,12 +62,12 @@ abstract class OperatorTest extends \PHPixieTests\Database\Parser\OperatorTest
             $this->operator('a', 'like', array('hello')),
             $this->operator('a', 'regexp', array('hello')),
             $this->operator('a', 'in', array(array(1, 2))),
-            $this->operator('a', 'in', array($this->database->expr('la'))),
+            $this->operator('a', 'in', array($this->database->sqlExpression('la'))),
             $this->operator('a', 'in', array($this->queryStub('fairy',array(1)))),
             $this->operator('a', 'between', array(1, 2)),
             $this->operator('a', 'not between', array(1, 2)),
-            $this->operator('a.b', '=', array($this->database->expr('b', array(1)))),
-            $this->operator($this->database->expr('a + b'), '=', array(1))
+            $this->operator('a.b', '=', array($this->database->sqlExpression('b', array(1)))),
+            $this->operator($this->database->sqlExpression('a + b'), '=', array(1))
         );
 
         return $conditions;
@@ -80,11 +80,11 @@ abstract class OperatorTest extends \PHPixieTests\Database\Parser\OperatorTest
 
     protected function queryStub($sql, $params = array())
     {
-        $query = $this->getMock('\PHPixie\Database\Driver\PDO\Query', array('parse'), array(), '', false);
+        $query = $this->getMock('\PHPixie\Database\Driver\PDO\Query\Type\Select', array('parse'), array(), '', false);
         $query
             ->expects($this->any())
             ->method('parse')
-            ->will($this->returnValue($this->database->expr($sql, $params)));
+            ->will($this->returnValue($this->database->sqlExpression($sql, $params)));
 
         return $query;
     }

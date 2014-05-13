@@ -18,38 +18,57 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
 
     /**
      * @covers ::__construct
+     * @covers ::__call
      * @covers ::_and
      * @covers ::_or
      * @covers ::_xor
-     * @covers ::_andNot
-     * @covers ::_orNot
-     * @covers ::_xorNot
+     * @covers ::_not
+     * @covers ::andNot
+     * @covers ::orNot
+     * @covers ::xorNot
+     * @covers ::startGroup
+     * @covers ::startAndGroup
+     * @covers ::startOrGroup
+     * @covers ::startXorGroup
+     * @covers ::startNotGroup
+     * @covers ::startAndNotGroup
+     * @covers ::startOrNotGroup
+     * @covers ::startXorNotGroup
      * @covers ::addCondition
      * @covers ::getConditions
-     * @covers ::addSubgroup
      * @covers ::addToCurrent
      * @covers ::pushGroup
      */
     public function testConditions()
     {
         $this->builder
-                    ->_and('a', 1)
-                    ->_or('a', '>', 1)
-                    ->_xor('a', 1)
-                    ->_andNot('a', 1)
-                    ->_orNot('a', 1)
-                    ->_xorNot('a', 1)
-                    ->_or(function ($builder) {
+                    ->and('a', 1)
+                    ->or('a', '>', 1)
+                    ->xor('a', 1)
+                    ->not('a', 1)
+                    ->andNot('a', 1)
+                    ->orNot('a', 1)
+                    ->xorNot('a', 1)
+                    ->or(function ($builder) {
                         $builder->_or('a', 1);
                     })
-                    ->_andNot(function ($builder) {
-                        $builder->_andNot('a', 1);
-                    });
+                    ->andNot(function ($builder) {
+                        $builder->andNot('a', 1);
+                    })
+                    ->startGroup()->endGroup()
+                    ->startAndGroup()->endGroup()
+                    ->startOrGroup()->endGroup()
+                    ->startXorGroup()->endGroup()
+                    ->startNotGroup()->endGroup()
+                    ->startAndNotGroup()->endGroup()
+                    ->startOrNotGroup()->endGroup()
+                    ->startXorNotGroup()->endGroup();
 
         $this->assertConditions(array(
             array('and', false, 'a', '=', array(1)),
             array('or', false, 'a', '>', array(1)),
             array('xor', false, 'a', '=', array(1)),
+            array('and', true, 'a', '=', array(1)),
             array('and', true, 'a', '=', array(1)),
             array('or', true, 'a', '=', array(1)),
             array('xor', true, 'a', '=', array(1)),
@@ -60,14 +79,31 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
             array('and', true, array(
                     array('and', true, 'a', '=', array(1))
                 )
-            )
+            ),
+            array('and', false, array()),
+            array('and', false, array()),
+            array('or',  false, array()),
+            array('xor', false, array()),
+            array('and', true, array()),
+            array('and', true, array()),
+            array('or',  true, array()),
+            array('xor', true, array()),
+    
         ));
     }
 
     /**
+     * @covers ::__call
+     */
+    public function testMethodException()
+    {
+        $this->setExpectedException('\PHPixie\Database\Exception\Builder');
+        $this->builder->test();
+    }
+    
+    /**
      * @covers ::addCondition
      * @covers ::getConditions
-     * @covers ::addSubgroup
      * @covers ::addToCurrent
      */
     public function testAddCondition()
@@ -82,7 +118,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
                     ->addCondition('or', false, array(function ($builder) {
                         $builder->_or('a', 1);
                     }))
-                    ->startGroup('andNot')
+                    ->startConditionGroup('and', true)
                         ->addCondition('and', true, array('a', 1))
                     ->endGroup();
 
@@ -116,7 +152,6 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     /**
      * @covers ::addOperatorCondition
      * @covers ::getConditions
-     * @covers ::addSubgroup
      * @covers ::addToCurrent
      */
     public function testAddOperatorCondition()
@@ -129,10 +164,9 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
 
     /**
      * @covers ::addOperatorCondition
-     * @covers ::startGroup
+     * @covers ::startConditionGroup
      * @covers ::endGroup
      * @covers ::getConditions
-     * @covers ::addSubgroup
      * @covers ::addToCurrent
      * @covers ::pushGroup
      */
@@ -146,7 +180,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
                             ->_or(function ($builder) {
                                 $builder
                                     ->_and('a', 3)
-                                    ->startGroup('xorNot')
+                                    ->startXorNotGroup()
                                         ->_and('a', 4)
                                     ->endGroup();
                             });
@@ -183,13 +217,12 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     }
 
     /**
-     * @covers ::startGroup
-     * @covers ::addSubgroup
+     * @covers ::startConditionGroup
      */
-    public function testStartGroupException()
+    public function testStartConditionGroupException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->builder->startGroup('test');
+        $this->builder->startConditionGroup('test');
     }
 
     /**

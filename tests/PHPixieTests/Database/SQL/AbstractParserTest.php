@@ -11,11 +11,11 @@ abstract class AbstractParserTest extends \PHPixieTests\AbstractDatabaseTest
 
     protected function queryStub($sql, $params = array())
     {
-        $query = $this->getMock('\PHPixie\Database\Driver\PDO\Query', array('parse'), array(), '', false);
+        $query = $this->quickMock('\PHPixie\Database\Driver\PDO\Query\Type\Select', array('parse'));
         $query
             ->expects($this->any())
             ->method('parse')
-            ->will($this->returnValue($this->database->expr($sql, $params)));
+            ->will($this->returnValue($this->database->sqlExpression($sql, $params)));
 
         return $query;
     }

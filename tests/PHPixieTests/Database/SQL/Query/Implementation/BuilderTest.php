@@ -12,6 +12,30 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
     
     /**
      * @covers ::<protected>
+     * @covers ::addFields
+     */
+    public function testAddFields()
+    {
+        $builder = $this->builder;
+        $builder->addFields(array('test'));
+        $builder->addFields(array('test', 'alias'));
+        $builder->addFields(array(array('pixie', 'fairy' => 'trixie')));
+        
+        $this->assertException(function() use($builder){
+            $builder->addFields(array('test', 'alias', 'test'));
+        });
+        
+        $this->assertEquals(array(
+            'test',
+            'alias' => 'test',
+            'pixie',
+            'fairy' => 'trixie'
+        ), $builder->getArray('fields'));
+    }
+
+    
+    /**
+     * @covers ::<protected>
      * @covers ::setTable
      */
     public function testSetTable()
@@ -89,6 +113,10 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
         
         $this->assertException(function() use($builder){
             $builder->addIncrement('t');
+        });
+        
+        $this->assertException(function() use($builder){
+            $builder->addIncrement(array('test', 't'));
         });
         
         $this->assertEquals(array(

@@ -15,7 +15,7 @@ abstract class Group
 
     public function parse($group)
     {
-        $expr = $this->database->expr();
+        $expr = $this->database->sqlExpression();
         $this->appendGroup($group, $expr);
 
         return $expr;

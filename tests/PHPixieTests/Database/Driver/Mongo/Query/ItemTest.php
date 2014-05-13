@@ -12,15 +12,19 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
      * @covers ::getWhereBuilder
      * @covers ::getWhereConditions
      * @covers ::where
+     * @covers ::andWhere
      * @covers ::orWhere
      * @covers ::xorWhere
      * @covers ::whereNot
+     * @covers ::andWhereNot
      * @covers ::orWhereNot
      * @covers ::xorWhereNot
      * @covers ::startWhereGroup
+     * @covers ::startAndWhereGroup
      * @covers ::startOrWhereGroup
      * @covers ::startXorWhereGroup
      * @covers ::startWhereNotGroup
+     * @covers ::startAndWhereNotGroup
      * @covers ::startOrWhereNotGroup
      * @covers ::startXorWhereNotGroup
      * @covers ::endWhereGroup
@@ -56,9 +60,6 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
     
     /**
      * @covers ::__call
-     * @covers ::and
-     * @covers ::or
-     * @covers ::xor
      */
     public function testAliasedConditionMethods()
     {

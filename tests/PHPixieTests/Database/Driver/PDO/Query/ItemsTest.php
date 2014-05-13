@@ -5,7 +5,7 @@ namespace PHPixieTests\Database\Driver\PDO\Query;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Items
  */
-class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
+abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
 {
     /**
      * @covers ::limit
@@ -110,9 +110,6 @@ class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
     
     /**
      * @covers ::__call
-     * @covers ::and
-     * @covers ::or
-     * @covers ::xor
      */
     public function testAliasedConditionMethods()
     {

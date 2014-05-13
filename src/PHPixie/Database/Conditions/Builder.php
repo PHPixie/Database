@@ -8,7 +8,13 @@ class Builder
     protected $groupStack = array();
     protected $currentGroup;
     protected $defaultOperator;
-
+    protected $aliases = array(
+        'and' => '_and',
+        'or'  => '_or',
+        'xor' => '_xor',
+        'not' => '_not',
+    );
+    
     public function __construct($conditions, $defaultOperator = '=')
     {
         $this->conditions = $conditions;
@@ -16,7 +22,6 @@ class Builder
         $this->pushGroup($this->conditions->group());
 
     }
-
     
     public function startConditionGroup($logic = 'and', $negate = false)
     {
@@ -66,7 +71,7 @@ class Builder
 
         if ($count === 1)
             if (is_callable($callback = $args[0])) {
-                $this->startGroup($logic, $negate);
+                $this->startConditionGroup($logic, $negate);
                 $callback($this);
                 $this->endGroup();
 
@@ -104,6 +109,13 @@ class Builder
         $this->currentGroup->add($condition, $logic);
     }
 
+    public function __call($method, $args)
+    {
+        if(!array_key_exists($method, $this->aliases))
+            throw new \PHPixie\Database\Exception\Builder("Method $method does not exist.");
+        return call_user_func_array(array($this, $this->aliases[$method]), $args);
+    }
+    
     public function _and()
     {
         return $this->addCondition('and', false, func_get_args());
@@ -119,22 +131,32 @@ class Builder
         return $this->addCondition('xor', false, func_get_args());
     }
 
-    public function _andNot()
+    public function _not()
+    {
+        return $this->addCondition('and', true, func_get_args());
+    }
+    
+    public function andNot()
     {
         return $this->addCondition('and', true, func_get_args());
     }
 
-    public function _orNot()
+    public function orNot()
     {
         return $this->addCondition('or', true, func_get_args());
     }
 
-    public function _xorNot()
+    public function xorNot()
     {
         return $this->addCondition('xor', true, func_get_args());
     }
     
     public function startGroup()
+    {
+        return $this->startConditionGroup('and', false);
+    }
+    
+    public function startAndGroup()
     {
         return $this->startConditionGroup('and', false);
     }
@@ -150,6 +172,11 @@ class Builder
     }
     
     public function startNotGroup()
+    {
+        return $this->startConditionGroup('and', true);
+    }
+    
+    public function startAndNotGroup()
     {
         return $this->startConditionGroup('and', true);
     }

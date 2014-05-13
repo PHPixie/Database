@@ -147,4 +147,15 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
         $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Connection', $connection);
 
     }
+    
+    /**
+     * @covers ::buildQueryBuilder
+     */
+    public function testBuildQueryBuilder()
+    {
+        $builder = $this->driver->buildQueryBuilder('test');
+        $this->assertInstanceOf('\PHPixie\Database\Driver\Mongo\Query\Builder', $builder);
+        $this->assertAttributeEquals('test', 'conditions', $builder);
+    }
+
 }

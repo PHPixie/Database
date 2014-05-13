@@ -22,7 +22,7 @@ abstract class GroupTest extends \PHPixieTests\Database\SQL\AbstractParserTest
                         ->_and('a', 1);
 
         $placeholder = $placeholderBuilder->addPlaceholder('or')->builder();
-        $placeholderBuilder->_xorNot(function ($builder) {
+        $placeholderBuilder->xorNot(function ($builder) {
                             $builder
                                 ->_and('d', 1)
                                 ->_and('e', 1);
@@ -36,7 +36,7 @@ abstract class GroupTest extends \PHPixieTests\Database\SQL\AbstractParserTest
             $this->builder()
                         ->_and('a', 1)
                         ->_or('b', 1)
-                        ->_xorNot('c', 1)
+                        ->xorNot('c', 1)
                         ->getConditions(),
                         $placeholderBuilder->getConditions(),
         );

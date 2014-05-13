@@ -35,7 +35,6 @@ class UpdateTest extends \PHPixieTests\Database\Driver\Mongo\Query\ItemsTest
     
     /**
      * @covers ::_unset
-     * @covers ::unset
      * @covers ::clearUnset
      * @covers ::getUnset
      */

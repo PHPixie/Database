@@ -43,7 +43,7 @@ abstract class FragmentTest extends \PHPixieTests\Database\SQL\AbstractParserTes
     public function testAppendColumn()
     {
         foreach ($this->columns() as $key => $column) {
-            $expr = $this->database->expr();
+            $expr = $this->database->sqlExpression();
             $expr = $this->fragmentParser->appendColumn($column, $expr);
             $this->assertExpression($expr, $this->expectedColumns[$key]);
         }
@@ -54,7 +54,7 @@ abstract class FragmentTest extends \PHPixieTests\Database\SQL\AbstractParserTes
         $tables = array(
             array('a', null),
             array('a', 'b'),
-            array($this->database->expr('la', array(1)), 'b'),
+            array($this->database->sqlExpression('la', array(1)), 'b'),
             array($this->queryStub('fairy', array(1)), 'b')
         );
 
@@ -67,7 +67,7 @@ abstract class FragmentTest extends \PHPixieTests\Database\SQL\AbstractParserTes
     public function testAppendTable()
     {
         foreach ($this->tables() as $key => $table) {
-            $expr = $this->database->expr();
+            $expr = $this->database->sqlExpression();
             $expr = $this->fragmentParser->appendTable($table[0], $expr, $table[1]);
             $this->assertExpression($expr, $this->expectedTables[$key]);
         }
@@ -86,7 +86,7 @@ abstract class FragmentTest extends \PHPixieTests\Database\SQL\AbstractParserTes
     {
         $values = array(
             'a',
-            $this->database->expr('la', array(1)),
+            $this->database->sqlExpression('la', array(1)),
             $this->queryStub('fairy', array(1))
         );
 
@@ -99,7 +99,7 @@ abstract class FragmentTest extends \PHPixieTests\Database\SQL\AbstractParserTes
     public function testAppendValue()
     {
         foreach ($this->values() as $key => $value) {
-            $expr = $this->database->expr();
+            $expr = $this->database->sqlExpression();
             $expr = $this->fragmentParser->appendValue($value, $expr);
             $this->assertExpression($expr, $this->expectedValues[$key]);
         }

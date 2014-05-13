@@ -7,7 +7,7 @@ namespace PHPixieTests\Database\Driver\PDO;
 abstract class ParserTest extends \PHPixieTests\Database\SQL\ParserTest
 {
     protected $adapter;
-
+    
     protected function setUp()
     {
         parent::setUp();
@@ -26,7 +26,8 @@ abstract class ParserTest extends \PHPixieTests\Database\SQL\ParserTest
 
     protected function query($type)
     {
-        $query = $this->getMock('\PHPixie\Database\Driver\PDO\Query', array('parse'), array($this->database,$this->database->conditions(), null, null, null, $type));
+        $builder = new \PHPixie\Database\Driver\PDO\Query\Builder($this->database->conditions());
+        $query = $this->getMock('\PHPixie\Database\Driver\PDO\Query\Type\\'.ucfirst($type), array('parse'), array(null, null, $builder));
         $query
             ->expects($this->any())
             ->method('parse')

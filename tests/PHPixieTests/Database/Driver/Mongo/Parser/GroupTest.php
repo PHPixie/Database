@@ -76,7 +76,7 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
                                     ->_and('b', '>', 2)
                                     ->_and('a', 2)
                                     ->_and('a', '<', 3)
-                                    ->_andNot('a', '>', 4);
+                                    ->andNot('a', '>', 4);
 
         $this->assertGroup($builder, array(
             '$and' => array(
@@ -96,7 +96,7 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
 
         $builder = $this->getBuilder()
                                     ->_and('b', 1)
-                                    ->_xorNot('a', '>', 4);
+                                    ->xorNot('a', '>', 4);
 
         $this->assertGroup($builder, array(
             '$or' => array(
@@ -134,7 +134,7 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $builder = $this->getBuilder()
                                     ->_and('a', 1)
-                                    ->_andNot('c',2);
+                                    ->andNot('c',2);
         $this->assertGroup($builder, array(
             'a' => 1,
             'c' => array('$ne'=>2)

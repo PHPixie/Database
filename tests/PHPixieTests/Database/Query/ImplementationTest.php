@@ -21,6 +21,15 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
     }
 
     /**
+     * @covers ::__construct
+     * @covers \PHPixie\Database\Query\Implementation::__construct
+     */
+    public function testConstruct()
+    {
+        
+    }
+    
+    /**
      * @covers ::type
      */
     public function testType()
@@ -62,6 +71,15 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         
         $result = call_user_func_array(array($this->query, $method), $with);
         $this->assertEquals($will, $result);
+    }
+    
+    /**
+     * @covers ::__call
+     */
+    public function testMethodException()
+    {
+        $this->setExpectedException('\PHPixie\Database\Exception\Builder');
+        $this->query->test();
     }
     
     protected function conditionMethodsTest($name, $testConditionBuilder= true, $operatorMethod = 'addCondition', $startGroupMethod = 'startConditionGroup', $endGroupMethod = 'endConditionGroup', $passBuilderName = true)
@@ -160,7 +178,7 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         $this->builderMethodTest('clear'.$uname, array(), $this->query, null, array($name), 'clear'.$utype);
         $this->builderMethodTest('get'.$uname, array(), 5, 5, array($name), 'get'.$utype);
     }
-        
+    
     abstract public function testExecute();
     abstract protected function getConnection();
     abstract protected function getParser();

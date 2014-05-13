@@ -35,6 +35,7 @@ class SelectTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemsTest
     
     /**
      * @covers ::union
+     * @covers ::clearUnions
      * @covers ::getUnions
      */
     public function testUnion()

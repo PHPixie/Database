@@ -28,6 +28,6 @@ class Single extends \PHPixie\Database\Driver\Mongo\Query\Item
     
     public function execute()
     {
-        return parent::execute();
+        return parent::execute()->current();
     }
 }

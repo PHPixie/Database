@@ -23,7 +23,7 @@ abstract class Operator extends \PHPixie\Database\Parser\Operator
 
     protected function prefix($field, $operator)
     {
-        $expr = $this->database->expr();
+        $expr = $this->database->sqlExpression();
         $this->fragmentParser->appendColumn($field, $expr);
         $expr->sql .= ' '.strtoupper($operator).' ';
 

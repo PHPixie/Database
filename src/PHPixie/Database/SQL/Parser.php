@@ -17,8 +17,8 @@ abstract class Parser extends \PHPixie\Database\Parser
 
     public function parse($query)
     {
-        $expr = $this->database->sqlExpression;
-        $type = $query->getType();
+        $expr = $this->database->sqlExpression();
+        $type = $query->type();
 
         switch ($type) {
             case 'select':
@@ -99,12 +99,6 @@ abstract class Parser extends \PHPixie\Database\Parser
 
     protected function countQuery($query, $expr)
     {
-        $unions = $query->getUnions();
-        $groupBy = $query->getGroupBy();
-
-        if (!empty($unions) || !empty($groupBy))
-            throw new \PHPixie\Database\Exception\Parser("COUNT queries don't support GROUP BY and UNION statements. Try using them in a subquery");
-
         $expr->sql .= "SELECT COUNT (1) AS ";
         $this->fragmentParser->appendColumn('count', $expr);
         $expr->sql .= " FROM ";
@@ -118,7 +112,7 @@ abstract class Parser extends \PHPixie\Database\Parser
         $table = $query->getTable();
 
         if ($required && $table === null) {
-            $type = strtoupper($query->getType());
+            $type = strtoupper($query->type());
             throw new \PHPixie\Database\Exception\Parser("Table not specified for $type query");
         }
 
@@ -127,30 +121,19 @@ abstract class Parser extends \PHPixie\Database\Parser
 
     protected function appendInsertValues($query, $expr)
     {
-        $data = $query->getData();
-        
-        if($data === null){
+         if (($insertData = $query->getBatchData()) === null) {
+
+            if (($data = $query->getData()) === null)
+                $data = array();
+
             $insertData = array(
-                'columns' => array(),
-                'rows' => array()
-            );
-        
-        }elseif($data instanceof \PHPixie\Database\SQL\Query\Data\Bulk) {
-            $insertData = array(
-                'columns' => $data->columns(),
-                'rows' => $data->rows()
-            );
-        
-        }else{
-            $values = $data->values();
-            $insertData = array(
-                'columns' => array_keys($values),
-                'rows' => array(array_values($values))
+                'columns' => array_keys($data),
+                'rows' => array(array_values($data))
             );
         }
 
         if (empty($insertData['columns']))
-            
+            return $this->appendEmptyInsertValues($expr);
 
         $expr->sql .= "(";
 
@@ -182,6 +165,7 @@ abstract class Parser extends \PHPixie\Database\Parser
             $expr->sql.= ')';
         }
 
+
     }
 
     protected function appendEmptyInsertValues($expr)
@@ -192,19 +176,15 @@ abstract class Parser extends \PHPixie\Database\Parser
     protected function appendUpdateValues($query, $expr)
     {
         $expr->sql .= " SET ";
-        $data = $query->getData();
-
-        if ($data === null){
-            $values = array();
-        }else{
-            $values = $data->values();
-        }
+        $set = $query->getSet();
+        $increment = $query->getIncrement();
         
-        if(empty($values))
+        
+        if(empty($set) && empty($increment))
             throw new \PHPixie\Database\Exception\Parser("Empty data passed to the UPDATE query");
 
         $first = true;
-        foreach ($data as $column => $value) {
+        foreach ($set as $column => $value) {
             if (!$first) {
                 $expr->sql.= ', ';
             } else {
@@ -213,6 +193,25 @@ abstract class Parser extends \PHPixie\Database\Parser
             $this->fragmentParser->appendColumn($column, $expr);
             $expr->sql.= " = ";
             $this->fragmentParser->appendValue($value, $expr);
+        }
+        
+        foreach ($increment as $column => $amount) {
+            if (!$first) {
+                $expr->sql.= ', ';
+            } else {
+                $first = false;
+            }
+            $this->fragmentParser->appendColumn($column, $expr);
+            $expr->sql.= " = ";
+            $this->fragmentParser->appendColumn($column, $expr);
+            if($amount >= 0) {
+                $expr->sql.=' + ';
+            }else{
+                $expr->sql.=' - ';
+                $amount = 0 - $amount;
+            }
+        
+            $this->fragmentParser->appendValue($amount, $expr);
         }
     }
 
@@ -264,7 +263,8 @@ abstract class Parser extends \PHPixie\Database\Parser
 
         $expr->sql.= " ORDER BY ";
         foreach ($orderBy as $key => $order) {
-            list($column, $dir) = $order;
+            $field = $order['field'];
+            $dir = $order['dir'];
 
             if ($key > 0)
                 $expr->sql.= ', ';
@@ -272,7 +272,7 @@ abstract class Parser extends \PHPixie\Database\Parser
             if ($dir !== 'asc' && $dir !== 'desc')
                 throw new \PHPixie\Database\Exception\Parser("Order direction must be either 'asc' or  'desc'");
 
-            $this->fragmentParser->appendColumn($column, $expr);
+            $this->fragmentParser->appendColumn($field, $expr);
             $expr->sql.= ' '.strtoupper($dir);
         }
     }
@@ -292,19 +292,20 @@ abstract class Parser extends \PHPixie\Database\Parser
     protected function appendUnion($query, $expr)
     {
         foreach ($query->getUnions() as $union) {
-            list($subselect, $all) = $union;
+            $query = $union['query'];
+            $all = $union['all'];
             $expr->sql.= " UNION ";
             if ($all)
                 $expr->sql.= "ALL ";
 
-            if ($subselect instanceof \PHPixie\Database\SQL\Query) {
-                $expr->append($subselect->parse());
+            if ($query instanceof \PHPixie\Database\SQL\Query && $query->type() === 'select') {
+                $expr->append($query->parse());
 
-            } elseif ($subselect instanceof \PHPixie\Database\SQL\Expression) {
-                $expr->append($subselect);
+            } elseif ($query instanceof \PHPixie\Database\SQL\Expression) {
+                $expr->append($query);
 
             } else {
-                throw new \PHPixie\Database\Exception\Parser("Union parameter must be either a Query object or SQL expression object");
+                throw new \PHPixie\Database\Exception\Parser("Union parameter must be either a SELECT Query object or SQL expression object");
             }
         }
     }

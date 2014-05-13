@@ -38,18 +38,10 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $builder = $this->builder;
         $builder->addFields(array('test'));
-        $builder->addFields(array('test', 'alias'));
-        $builder->addFields(array(array('pixie', 'fairy' => 'trixie')));
-        
-        $this->assertException(function() use($builder){
-            $builder->addFields(array('test', 'alias', 'test'));
-        });
-        
+        $builder->addFields(array(array('pixie', 'fairy' => 'test')));
         $this->assertEquals(array(
             'test',
-            'alias' => 'test',
             'pixie',
-            'fairy' => 'trixie'
         ), $builder->getArray('fields'));
     }
     
@@ -173,11 +165,11 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testGetClearArray()
     {
-        $this->assertEquals(null, $this->builder->getArray('fields'));
+        $this->assertEquals(array(), $this->builder->getArray('fields'));
         $this->builder->addFields(array('test'));
         $this->assertEquals(array('test'), $this->builder->getArray('fields'));
-        $this->builder->clearValue('limit');
-        $this->assertEquals(null, $this->builder->getValue('fields'));
+        $this->builder->clearArray('fields');
+        $this->assertEquals(array(), $this->builder->getArray('fields'));
     }
     
     /**
