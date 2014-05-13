@@ -44,7 +44,8 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
         $this->pdoProperty = $reflection->getProperty('pdo');
         $this->pdoProperty->setAccessible(true);
 
-        $this->connection = new PDOConnectionTestStub($this->database->driver('PDO'), 'test', $this->config);
+        $this->driver = $this->getMock('\PHPixie\Database\Driver\PDO', array('query'), array($this->database));
+        $this->connection = new PDOConnectionTestStub($this->driver, 'test', $this->config);
         $this->connection->execute("CREATE TABLE fairies(id INT PRIMARY_KEY,name VARCHAR(255))");
         $this->database
                 ->expects($this->any())
@@ -66,7 +67,7 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
     {
         $this->connection->execute("INSERT INTO fairies(id,name) VALUES (1,'Tinkerbell')");
         $result = $this->connection->execute("Select * from fairies where id = ?", array(1));
-        $this->assertEquals(array((object) array('id'=>1, 'name'=>'Tinkerbell')),$result->asArray());
+        $this->assertEquals(array((object) array('id'=>1, 'name'=>'Tinkerbell')), $result->asArray());
     }
 
     /**

@@ -1,106 +1,181 @@
 <?php
 
-namespace PHPixieTests\SQL\Query\Implementation;
+namespace PHPixieTests\Database\SQL\Query\Implementation;
 
 /**
  * @coversDefaultClass \PHPixie\Database\SQL\Query\Implementation\Builder
  */
-class BuilderTest extends \PHPixieTests\Query\Implementation\BuilderTest
+class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTest
 {
     
     protected $builderClass = '\PHPixie\Database\SQL\Query\Implementation\Builder';
     
-    //doooooooooo
-    public function table($table, $alias = null)
+    /**
+     * @covers ::<protected>
+     * @covers ::setTable
+     */
+    public function testSetTable()
     {
-        $this->table = array(
-            'table' => $table,
-            'alias' => $alias
-        );
+        $this->builder->setTable('pixie', 'test');
+        $this->assertEquals(array(
+            'table' => 'pixie',
+            'alias' => 'test'
+        ), $this->builder->getValue('table'));
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::addJoin
+     */
+    public function testAddJoin()
+    {
+        $builder = $this->builder;
+        $this->prepareJoinBuilders();
+        
+        $builder->addJoin('test', 'pixie', 'inner');
+        $builder->addJoin('test', 'pixie', 'left');
+        
+        $this->assertEquals(array(
+            array('builder' => $this->builders[0], 'table' => 'test', 'alias' => 'pixie', 'type' => 'inner'),
+            array('builder' => $this->builders[1], 'table' => 'test', 'alias' => 'pixie', 'type' => 'left'),
+        ), $builder->getArray('joins'));
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::addGroupBy
+     */
+    public function testAddGroupBy()
+    {
+        $builder = $this->builder;
+        $builder->addGroupBy(array('test'));
+        $builder->addGroupBy(array(array('pixie', 'test')));
+        $this->assertEquals(array('test', 'pixie', 'test'), $builder->getArray('groupBy'));
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::addUnion
+     */
+    public function testAddUnion()
+    {
+        $builder = $this->builder;
+        $builder->addUnion('test', true);
+        $builder->addUnion('pixie', false);
+        $this->assertEquals(array(
+            array('query' => 'test', 'all' => true),
+            array('query' => 'pixie', 'all' => false),
+        ), $builder->getArray('unions'));
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::addIncrement
+     */
+    public function testAddIncrement()
+    {
+        $builder = $this->builder;
+        $builder->addIncrement(array('test', 6));
+        $builder->addIncrement(array(array('trixie' => 4, 'test2' => 5)));
+        $builder->addIncrement(array('test2', 6));
+        
+        $this->assertException(function() use($builder){
+            $builder->addIncrement(array('t'));
+        });
+        
+        $this->assertException(function() use($builder){
+            $builder->addIncrement(array(array('t')));
+        });
+        
+        $this->assertException(function() use($builder){
+            $builder->addIncrement('t');
+        });
+        
+        $this->assertEquals(array(
+            'test'   => 6,
+            'trixie' => 4,
+            'test2'  => 6
+        ), $builder->getArray('increment'));
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::setBatchData
+     */
+    public function testSetBatchData()
+    {
+        $this->builder->setBatchData(array('r'), array(array(1), array(2)));
+        $this->assertEquals(array(
+            'columns' => array('r'),
+            'rows'    => array(array(1), array(2))
+        ), $this->builder->getValue('batchData'));
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::addOnCondition
+     */
+    public function testAddOnCondition()
+    {
+        $builder = $this->builder;
+        $this->assertException(function() use($builder) {
+            $builder->addOnCondition(array(5), 'or', true);
+        });
+        
 
-        return $this;
-    }
-
-    public function getTable()
-    {
-        return $this->table;
-    }
-    
-    public function valuesData($data){
-        $this->data = $this->driver->valuesData($data);    
+        $this->prepareJoinBuilders();
+        for($i=0;$i<2;$i++){
+            $builder->addJoin('test', 'pixie', 'inner');
+            $this->expectCalls($this->builders[$i], array('addCondition' => array('or', true, array(5))));
+            $builder->addOnCondition(array(5), 'or', true);
+        }
     }
     
-    public function batchData($rows, $columns){
-        $this->data = $this->driver->batchData($data);    
+    /**
+     * @covers ::<protected>
+     * @covers ::startOnConditionGroup
+     */
+    public function testStartOnConditionGroup()
+    {
+        $builder = $this->builder;
+        $this->assertException(function() use($builder) {
+            $builder->startOnConditionGroup('or', true);
+        });
+        $this->prepareJoinBuilders();
+        for($i=0;$i<2;$i++){
+            $builder->addJoin('test', 'pixie', 'inner');
+            $this->expectCalls($this->builders[$i], array('startConditionGroup' => array('or', true)));
+            $builder->startOnConditionGroup('or', true);
+        }
     }
     
-    public function join($table, $alias, $type)
+    /**
+     * @covers ::<protected>
+     * @covers ::endOnConditionGroup
+     */
+    public function testEndOnConditionGroup()
     {
-        $this->joins[] = array(
-            'builder' => $this->builder->conditionBuilder('=*'),
-            'table' => $table,
-            'alias' => $alias,
-            'type'  => $type
-        );
-    }
-
-    public function getJoins()
-    {
-        return $this->joins;
-    }
-    
-    protected function lastOnBuilder()
-    {
-        if (empty($this->joins))
-            throw new \PHPixie\Database\Exception\Builder("Cannot add join conditions as no joins have been added to the query.");
-
-        $join = end($this->joins);
-
-        $builder = $join['builder'];
-        $this->defaultBuilder = $builder;
-
-        return $builder;
-    }
-
-    protected function addOnCondition($args, $logic, $negate)
-    {
-        $this->lastOnBuilder()->addCondition($logic, $negate, $args);
+        $builder = $this->builder;
+        $this->assertException(function() use($builder) {
+            $builder->endOnConditionGroup();
+        });
+        
+        $this->prepareJoinBuilders();
+        for($i=0;$i<2;$i++){
+            $builder->addJoin('test', 'pixie', 'inner');
+            $this->expectCalls($this->builders[$i], array('endGroup' => array()));
+            $builder->endOnConditionGroup();
+        }
     }
     
-    public function startOnConditionGroup($logic, $negate)
+    protected function prepareJoinBuilders()
     {
-        $this->lastOnBuilder()->startConditionGroup($logic, $negate);
-    }
-    
-    public function endOnConditionGroup()
-    {
-        $this->lastOnBuilder()->startConditionGroup();
-    }
-    
-    public function groupBy($field)
-    {
-        $this->groupBy[] = $field;
-    }
-
-    public function getGroupBy()
-    {
-        return $this->groupBy;
-    }
-    
-    public function union($query)
-    {
-        $this->unions[] = array($query, $all);
-    }
-    
-    public function getUnions()
-    {
-        return $this->unions;
-    }
-    
-    
-    
-    protected function getDriver()
-    {
-        return $this->quickMock('\PHPixie\Database\SQL\Driver', array('valuesData'));
+        for($i=0;$i<2;$i++){
+            $this->conditionsMock
+                ->expects($this->at($i))
+                ->method('builder')
+                ->with('=*')
+                ->will($this->returnValue($this->builders[$i]));
+        }
     }
 }

@@ -4,22 +4,20 @@ namespace PHPixie\Database\SQL;
 
 abstract class Parser extends \PHPixie\Database\Parser
 {
-    protected $sql;
     protected $fragmentParser;
     protected $groupParser;
     protected $supportedJoins;
 
-    public function __construct($database, $driver, $config, $sql, $fragmentParser, $groupParser)
+    public function __construct($database, $driver, $config, $fragmentParser, $groupParser)
     {
         parent::__construct($database, $driver, $config);
-        $this->sql = $sql;
         $this->fragmentParser = $fragmentParser;
         $this->groupParser = $groupParser;
     }
 
     public function parse($query)
     {
-        $expr = $this->sql->expression();
+        $expr = $this->database->sqlExpression;
         $type = $query->getType();
 
         switch ($type) {

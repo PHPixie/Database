@@ -9,6 +9,9 @@ abstract class DriverTest extends \PHPixieTests\AbstractDatabaseTest
     protected $driver;
     protected $connectionStub;
     protected $database;
+    protected $queryClass;
+    protected $parserClass;
+    protected $builderClass;
 
     public function setUp()
     {
@@ -33,18 +36,8 @@ abstract class DriverTest extends \PHPixieTests\AbstractDatabaseTest
         $query = $this->driver->query('delete', 'test');
         $this->assertInstanceOf($this->queryClass, $query);
         $this->assertAttributeEquals($this->connectionStub, 'connection', $query);
-        $this->assertAttributeEquals('config', 'config', $query);
         $this->assertAttributeInstanceOf($this->parserClass, 'parser', $query);
+        $this->assertAttributeInstanceOf($this->builderClass, 'builder', $query);
     }
     
-    /**
-     * @covers ::valuesData
-     */
-    public function testValuesData()
-    {
-        $valuesData = $this->driver->valuesData(array('test'));
-        $this->assertInstanceOf('\PHPixie\Database\Query\Data\Values', $valuesData);
-        $this->assertEquals(array('test'), $valuesData->values());
-    }
-
 }

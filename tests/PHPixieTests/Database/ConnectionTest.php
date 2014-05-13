@@ -11,17 +11,17 @@ abstract class ConnectionTest extends \PHPixieTests\AbstractDatabaseTest
     protected $queryClass;
     protected $config;
     protected $driver;
-
+    
     /**
-     * @covers ::query
+     * @covers ::select
+     * @covers ::update
+     * @covers ::delete
+     * @covers ::insert
+     * @covers ::count
      */
-    public function testQuery()
+    public function testDefaultQueries()
     {
-        $query = $this->connection->query();
-        $this->assertEquals('select', $query->getType());
-        $this->assertEquals($this->queryClass, get_class($query));
-        $query = $this->connection->query('insert');
-        $this->assertEquals('insert', $query->getType());
+        $this->queryTest(array('select','update','delete','insert','count'));
     }
 
     /**
@@ -30,5 +30,17 @@ abstract class ConnectionTest extends \PHPixieTests\AbstractDatabaseTest
     public function testConfig()
     {
         $this->assertEquals($this->config, $this->connection->config());
+    }
+    
+    protected function queryTest($types)
+    {
+        foreach($types as $type) {
+            $this->driver
+                    ->expects($this->at(0))
+                    ->method('query')
+                    ->with($type, 'test')
+                    ->will($this->returnValue('query'));
+            $this->assertEquals('query', $this->connection->$type());
+        }
     }
 }

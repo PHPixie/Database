@@ -57,7 +57,7 @@ class Database
 
     public function sqlExpression($sql = '', $params = array())
     {
-        return new SQL\Expression($sql, $params);
+        return new \PHPixie\Database\SQL\Expression($sql, $params);
     }
     
     protected function buildConditions()

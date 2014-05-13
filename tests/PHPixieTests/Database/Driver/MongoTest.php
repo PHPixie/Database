@@ -8,6 +8,7 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
 {
     protected $parserClass = 'PHPixie\Database\Driver\Mongo\Parser';
     protected $queryClass = 'PHPixie\Database\Driver\Mongo\Query';
+    protected $builderClass = '\PHPixie\Database\Driver\Mongo\Query\Builder';
 
     public function setUp()
     {
@@ -65,12 +66,12 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
      */
     public function testBuildQuery()
     {
-        $query = $this->driver->buildQuery('connection', 'parser', 'config', 'delete');
-        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Query', $query);
+        $query = $this->driver->buildQuery('delete', 'connection', 'parser', 'builder');
+        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Query\Type\Delete', $query);
         $this->assertAttributeEquals('connection', 'connection', $query);
         $this->assertAttributeEquals('parser', 'parser', $query);
-        $this->assertAttributeEquals('config', 'config', $query);
-        $this->assertEquals('delete', $query->getType());
+        $this->assertAttributeEquals('builder', 'builder', $query);
+        $this->assertEquals('delete', $query->type());
     }
 
     /**

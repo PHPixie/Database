@@ -26,6 +26,10 @@ class Connection extends \PHPixie\Database\Connection
         $this->client = $this->connect($config->get('connection'), $options);
     }
 
+    public function single(){
+        return $this->driver->query('single', $this->name);
+    }
+    
     public function insertId()
     {
         return $this->lastInsertId;

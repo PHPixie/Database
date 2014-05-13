@@ -23,7 +23,7 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
                 'connect'    =>  false
             )
         ));
-        $this->driver = $this->getMock('\PHPixie\Database\Driver\Mongo', array('result'), array($this->database));
+        $this->driver = $this->getMock('\PHPixie\Database\Driver\Mongo', array('result', 'query'), array($this->database));
         $this->connection = new \PHPixie\Database\Driver\Mongo\Connection($this->driver, 'test', $this->config);
         $this->database
                         ->expects($this->any())
@@ -32,6 +32,14 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
                         ->will($this->returnValue($this->connection));
     }
 
+    /**
+     * @covers ::single
+     */
+    public function testDefaultQueries()
+    {
+        $this->queryTest(array('single'));
+    }
+    
     /**
      * @covers ::run
      * @covers ::connect

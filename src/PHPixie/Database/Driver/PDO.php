@@ -56,9 +56,15 @@ class PDO extends \PHPixie\Database\SQL\Driver
         return new $class($this->database, $operatorParser);
     }
 
-    public function buildQuery($connection, $parser, $config, $type)
+    public function buildQueryBuilder($conditions)
     {
-        return new \PHPixie\Database\Driver\PDO\Query($this->database->conditions(), $connection, $parser, $config, $type);
+        return new \PHPixie\Database\Driver\PDO\Query\Builder($conditions);
+    }
+    
+    public function buildQuery($type, $connection, $parser, $builder)
+    {
+        $class = '\PHPixie\Database\Driver\PDO\Query\Type\\'.ucfirst($type);
+        return new $class($connection, $parser, $builder);
     }
 
     public function result($statement)

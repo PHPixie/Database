@@ -33,13 +33,12 @@ abstract class Driver
         $config     = $connection->config();
         $parser     = $this->parser($connectionName);
         $builder    = $this->queryBuilder();
-        return $this->buildQuery($connection, $parser, $builder, $config, $type);
+        return $this->buildQuery($type, $connection, $parser, $builder);
     }
 
     abstract public function buildConnection($name, $config);
     abstract public function buildParserInstance($connectionName);
-    abstract public function buildQueryBuilder($driver, $conditions);
-    abstract public function buildQuery($connection, $parser, $config, $type);
+    abstract public function buildQueryBuilder($conditions);
+    abstract public function buildQuery($type, $connection, $parser, $builder);
     abstract public function result($cursor);
-
 }

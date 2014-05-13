@@ -9,6 +9,7 @@ class PDOTest extends \PHPixieTests\Database\DriverTest
     protected $adapterList = array('mysql', 'pgsql', 'sqlite');
     protected $parserClass = '\PHPixie\Database\Driver\PDO\Adapter\Sqlite\Parser';
     protected $queryClass = '\PHPixie\Database\Driver\PDO\Query';
+    protected $builderClass = '\PHPixie\Database\Driver\PDO\Query\Builder';
     public function setUp()
     {
         parent::setUp();
@@ -133,12 +134,12 @@ class PDOTest extends \PHPixieTests\Database\DriverTest
      */
     public function testBuildQuery()
     {
-        $query = $this->driver->buildQuery('connection', 'parser', 'config', 'delete');
-        $this->assertInstanceOf('PHPixie\Database\Driver\PDO\Query', $query);
+        $query = $this->driver->buildQuery('delete', 'connection', 'parser', 'builder');
+        $this->assertInstanceOf('PHPixie\Database\Driver\PDO\Query\Type\Delete', $query);
         $this->assertAttributeEquals('connection', 'connection', $query);
         $this->assertAttributeEquals('parser', 'parser', $query);
-        $this->assertAttributeEquals('config', 'config', $query);
-        $this->assertEquals('delete', $query->getType());
+        $this->assertAttributeEquals('builder', 'builder', $query);
+        $this->assertEquals('delete', $query->type());
     }
 
     /**
