@@ -13,4 +13,9 @@ script:
  - phpunit --coverage-clover build/logs/clover.xml .
 
 after_script:
- - php vendor/bin/coveralls -v
+ - mkdir -p build/coverage
+ - echo '"require-dev": {"satooshi/php-coveralls": "dev-master"}"' > build/coverage/composer.json
+ - cd build/coverage
+ - php ../../composer-phar install --dev --no-interaction
+ - cd ../../
+ - php build/coverage/vendor/bin/coveralls -v

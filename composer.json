@@ -19,8 +19,5 @@
         "branch-alias": {
             "dev-master": "3.x-dev"
         }
-    },
-    "require-dev": {
-        "satooshi/php-coveralls": "dev-master"
     }
 }
