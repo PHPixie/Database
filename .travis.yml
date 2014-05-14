@@ -18,6 +18,7 @@ after_script:
 - "echo '{\"require-dev\": {\"satooshi/php-coveralls\": \"dev-master\"}}' > build/coverage/composer.json"
 - "echo 'src_dir: ../../src/' >> build/coverage/.coveralls.yml"
 - "echo 'coverage_clover: ../../build/logs/clover.xml' >> build/coverage/.coveralls.yml"
+- "echo 'json_path: ../../build/logs/coveralls-upload.json' >> build/coverage/.coveralls.yml"
 - "cd build/coverage"
 - "php ../../composer.phar install --dev --no-interaction"
 - "cd ../../"
