@@ -15,8 +15,8 @@ script:
 
 after_script: 
 - "mkdir -p build/coverage"
-- "echo '\"require-dev\": {\"satooshi/php-coveralls\": \"dev-master\"}\"' > build/coverage/composer.json > build/coverage/composer.json"
+- "echo '\"require-dev\": {\"satooshi/php-coveralls\": \"dev-master\"}\"' > build/coverage/composer.json"
 - "cd build/coverage"
-- "php ../../composer-phar install --dev --no-interaction"
+- "php ../../composer.phar install --dev --no-interaction"
 - "cd ../../"
 - "php build/coverage/vendor/bin/coveralls -v"
