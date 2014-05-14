@@ -165,7 +165,6 @@ abstract class Parser extends \PHPixie\Database\Parser
             $expr->sql.= ')';
         }
 
-
     }
 
     protected function appendEmptyInsertValues($expr)
@@ -178,8 +177,7 @@ abstract class Parser extends \PHPixie\Database\Parser
         $expr->sql .= " SET ";
         $set = $query->getSet();
         $increment = $query->getIncrement();
-        
-        
+
         if(empty($set) && empty($increment))
             throw new \PHPixie\Database\Exception\Parser("Empty data passed to the UPDATE query");
 
@@ -194,7 +192,7 @@ abstract class Parser extends \PHPixie\Database\Parser
             $expr->sql.= " = ";
             $this->fragmentParser->appendValue($value, $expr);
         }
-        
+
         foreach ($increment as $column => $amount) {
             if (!$first) {
                 $expr->sql.= ', ';
@@ -204,13 +202,13 @@ abstract class Parser extends \PHPixie\Database\Parser
             $this->fragmentParser->appendColumn($column, $expr);
             $expr->sql.= " = ";
             $this->fragmentParser->appendColumn($column, $expr);
-            if($amount >= 0) {
+            if ($amount >= 0) {
                 $expr->sql.=' + ';
-            }else{
+            } else {
                 $expr->sql.=' - ';
                 $amount = 0 - $amount;
             }
-        
+
             $this->fragmentParser->appendValue($amount, $expr);
         }
     }

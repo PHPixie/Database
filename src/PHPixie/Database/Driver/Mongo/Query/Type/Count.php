@@ -8,7 +8,7 @@ class Count extends \PHPixie\Database\Driver\Mongo\Query\Items implements \PHPix
     {
         return 'count';
     }
-    
+
     public function execute()
     {
         return parent::execute();

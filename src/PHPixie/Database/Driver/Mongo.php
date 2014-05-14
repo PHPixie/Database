@@ -38,10 +38,11 @@ class Mongo extends \PHPixie\Database\Driver
     {
         return new \PHPixie\Database\Driver\Mongo\Query\Builder($conditions);
     }
-    
+
     public function buildQuery($type, $connection, $parser, $builder)
     {
         $class = '\PHPixie\Database\Driver\Mongo\Query\Type\\'.ucfirst($type);
+
         return new $class($connection, $parser, $builder);
     }
 

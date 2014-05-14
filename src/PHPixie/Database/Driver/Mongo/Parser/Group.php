@@ -75,7 +75,7 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
 
         if (empty($expanded))
             return array();
-        
+
         $andGroups = array();
         foreach ($expanded->groups() as $group) {
             $andGroup = array();

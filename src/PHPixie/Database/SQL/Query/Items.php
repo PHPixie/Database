@@ -7,7 +7,7 @@ interface Items extends \PHPixie\Database\SQL\Query, \PHPixie\Database\Query\Ite
     public function join($table, $alias = null, $type = 'inner');
     public function clearJoins();
     public function getJoins();
-    
+
     public function on();
     public function andOn();
     public function orOn();

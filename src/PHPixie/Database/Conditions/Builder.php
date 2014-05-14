@@ -14,7 +14,7 @@ class Builder
         'xor' => '_xor',
         'not' => '_not',
     );
-    
+
     public function __construct($conditions, $defaultOperator = '=')
     {
         $this->conditions = $conditions;
@@ -22,7 +22,7 @@ class Builder
         $this->pushGroup($this->conditions->group());
 
     }
-    
+
     public function startConditionGroup($logic = 'and', $negate = false)
     {
         $group = $this->conditions->group();
@@ -30,13 +30,14 @@ class Builder
             $group->negate();
         $this->currentGroup->add($group, $logic);
         $this->pushGroup($group);
+
         return $this;
     }
 
     protected function pushGroup($group)
     {
         $this->groupStack[]=$group;
-        $this->currentGroup = $group; 
+        $this->currentGroup = $group;
     }
 
     public function endGroup()
@@ -113,9 +114,10 @@ class Builder
     {
         if(!array_key_exists($method, $this->aliases))
             throw new \PHPixie\Database\Exception\Builder("Method $method does not exist.");
+
         return call_user_func_array(array($this, $this->aliases[$method]), $args);
     }
-    
+
     public function _and()
     {
         return $this->addCondition('and', false, func_get_args());
@@ -135,7 +137,7 @@ class Builder
     {
         return $this->addCondition('and', true, func_get_args());
     }
-    
+
     public function andNot()
     {
         return $this->addCondition('and', true, func_get_args());
@@ -150,42 +152,42 @@ class Builder
     {
         return $this->addCondition('xor', true, func_get_args());
     }
-    
+
     public function startGroup()
     {
         return $this->startConditionGroup('and', false);
     }
-    
+
     public function startAndGroup()
     {
         return $this->startConditionGroup('and', false);
     }
-    
+
     public function startOrGroup()
     {
         return $this->startConditionGroup('or', false);
     }
-    
+
     public function startXorGroup()
     {
         return $this->startConditionGroup('xor', false);
     }
-    
+
     public function startNotGroup()
     {
         return $this->startConditionGroup('and', true);
     }
-    
+
     public function startAndNotGroup()
     {
         return $this->startConditionGroup('and', true);
     }
-    
+
     public function startOrNotGroup()
     {
         return $this->startConditionGroup('or', true);
     }
-    
+
     public function startXorNotGroup()
     {
         return $this->startConditionGroup('xor', true);

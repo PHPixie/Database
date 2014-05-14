@@ -4,7 +4,7 @@ namespace PHPixie;
 
 class Database
 {
-    
+
     protected $config;
     protected $conditions;
     protected $sql;
@@ -59,10 +59,10 @@ class Database
     {
         return new \PHPixie\Database\SQL\Expression($sql, $params);
     }
-    
+
     protected function buildConditions()
     {
         return new \PHPixie\Database\Conditions();
     }
-        
+
 }

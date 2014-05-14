@@ -22,9 +22,10 @@ abstract class Implementation implements \PHPixie\Database\Query
     {
         if(!array_key_exists($method, $this->aliases))
             throw new \PHPixie\Database\Exception\Builder("Method $method does not exist.");
+
         return call_user_func_array(array($this, $this->aliases[$method]), $args);
     }
-    
+
     abstract public function type();
     abstract public function execute();
     abstract public function parse();

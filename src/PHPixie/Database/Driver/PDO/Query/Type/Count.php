@@ -8,7 +8,7 @@ class Count extends \PHPixie\Database\Driver\PDO\Query\Items implements \PHPixie
     {
         return 'count';
     }
-    
+
     public function execute()
     {
         return parent::execute()->get('count');

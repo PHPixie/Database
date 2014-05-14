@@ -24,15 +24,17 @@ abstract class Driver
     public function queryBuilder()
     {
         $conditions = $this->database->conditions();
+
         return $this->buildQueryBuilder($conditions);
     }
-    
+
     public function query($type = 'select', $connectionName = 'default')
     {
         $connection = $this->database->get($connectionName);
         $config     = $connection->config();
         $parser     = $this->parser($connectionName);
         $builder    = $this->queryBuilder();
+
         return $this->buildQuery($type, $connection, $parser, $builder);
     }
 

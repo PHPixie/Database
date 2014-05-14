@@ -7,16 +7,16 @@ interface Items extends \PHPixie\Database\Query
     public function limit($limit);
     public function clearLimit();
     public function getLimit();
-    
+
     public function offset($offset);
     public function clearOffset();
     public function getOffset();
-    
+
     public function orderAscendingBy($field);
     public function orderDescendingBy($field);
     public function clearOrderBy();
     public function getOrderBy();
-    
+
     public function getWhereBuilder();
     public function getWhereConditions();
     public function where();
@@ -36,7 +36,7 @@ interface Items extends \PHPixie\Database\Query
     public function startOrWhereNotGroup();
     public function startXorWhereNotGroup();
     public function endWhereGroup();
-    
+
     public function _and();
     public function _or();
     public function _xor();

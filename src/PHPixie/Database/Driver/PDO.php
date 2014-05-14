@@ -60,10 +60,11 @@ class PDO extends \PHPixie\Database\SQL\Driver
     {
         return new \PHPixie\Database\Driver\PDO\Query\Builder($conditions);
     }
-    
+
     public function buildQuery($type, $connection, $parser, $builder)
     {
         $class = '\PHPixie\Database\Driver\PDO\Query\Type\\'.ucfirst($type);
+
         return new $class($connection, $parser, $builder);
     }
 

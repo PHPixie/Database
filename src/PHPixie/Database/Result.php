@@ -48,6 +48,7 @@ abstract class Result implements \Iterator
     protected function firstColumnName($row)
     {
         $data = get_object_vars($row);
+
         return key($data);
     }
 

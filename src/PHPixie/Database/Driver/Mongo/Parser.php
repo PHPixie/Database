@@ -56,26 +56,27 @@ class Parser extends \PHPixie\Database\Parser
              $runner->chainMethod('limit', array($limit));
         if ($offset !== null)
             $runner->chainMethod('skip', array($offset));
-        
+
         return $runner;
     }
-    
+
     protected function fieldKeys($fields)
     {
         return array_fill_keys($fields, 1);
     }
-    
+
     protected function singleQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
         $fields = $query->getFields();
         $conditions = $this->groupParser->parse($query->getWhereConditions());
         $fieldKeys = $this->fieldKeys($fields);
-        
+
         $runner->chainMethod('findOne', array($conditions, $fieldKeys));
+
         return $runner;
     }
-    
+
     protected function insertQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
@@ -93,19 +94,19 @@ class Parser extends \PHPixie\Database\Parser
     protected function updateQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
-        
+
         $modifiers = array(
             '$set' => $query->getSet(),
             '$unset' => $this->fieldKeys($query->getUnset()),
             '$inc' => $query->getIncrement()
         );
-        
+
         $data = array();
-        foreach($modifiers as $key=>$value) {
+        foreach ($modifiers as $key=>$value) {
             if(!empty($value))
                 $data[$key] = $value;
         }
-        
+
         if (empty($data))
             throw new \PHPixie\Database\Exception\Parser("No modifiers specified for update");
 

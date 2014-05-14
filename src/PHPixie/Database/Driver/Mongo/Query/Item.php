@@ -7,7 +7,7 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     public function __construct($connection, $parser, $builder)
     {
         parent::__construct($connection, $parser, $builder);
-        
+
         $this->aliases = array_merge($this->aliases, array(
             'and' => '_and',
             'or'  => '_or',
@@ -15,22 +15,25 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
             'not' => '_not',
         ));
     }
-    
+
     protected function addCondition($args, $logic = 'and', $negate = false, $builderName = null)
     {
         $this->builder->addCondition($args, $logic, $negate, $builderName);
+
         return $this;
     }
 
     protected function startConditionGroup($logic = 'and', $negate = false, $builderName = null)
     {
         $this->builder->startConditionGroup($logic, $negate, $builderName);
+
         return $this;
     }
 
     protected function endConditionGroup($builderName = null)
     {
         $this->builder->endConditionGroup($builderName);
+
         return $this;
     }
 
@@ -53,7 +56,7 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     {
         return $this->addCondition(func_get_args(), 'and', false, 'where');
     }
-    
+
     public function orWhere()
     {
         return $this->addCondition(func_get_args(), 'or', false, 'where');
@@ -73,7 +76,7 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     {
         return $this->addCondition(func_get_args(), 'and', true, 'where');
     }
-    
+
     public function orWhereNot()
     {
         return $this->addCondition(func_get_args(), 'or', true, 'where');
@@ -93,7 +96,7 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     {
         return $this->startConditionGroup('and', false, 'where');
     }
-    
+
     public function startOrWhereGroup()
     {
         return $this->startConditionGroup('or', false, 'where');
@@ -113,7 +116,7 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     {
         return $this->startConditionGroup('and', true, 'where');
     }
-    
+
     public function startOrWhereNotGroup()
     {
         return $this->startConditionGroup('or', true, 'where');
@@ -123,7 +126,6 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     {
         return $this->startConditionGroup('xor', true, 'where');
     }
-
 
     public function endWhereGroup()
     {
@@ -149,7 +151,7 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     {
         return $this->addCondition(func_get_args(), 'and', true);
     }
-    
+
     public function andNot()
     {
         return $this->addCondition(func_get_args(), 'and', true);
@@ -174,7 +176,7 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     {
         return $this->startConditionGroup('and', false);
     }
-    
+
     public function startOrGroup()
     {
         return $this->startConditionGroup('or', false);
@@ -194,7 +196,7 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     {
         return $this->startConditionGroup('and', true);
     }
-    
+
     public function startOrNotGroup()
     {
         return $this->startConditionGroup('or', true);

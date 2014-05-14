@@ -2,15 +2,15 @@
 
 namespace PHPixie\Database\SQL\Query\Implementation;
 
-class Builder extends \PHPixie\Database\Query\Implementation\Builder{
-
+class Builder extends \PHPixie\Database\Query\Implementation\Builder
+{
     protected $joins = array();
 
     public function addFields($args)
     {
         $this->addKeyValuesToArray('fields', $args, false, false);
     }
-    
+
     public function setTable($table, $alias)
     {
         $this->setValue('table', array(
@@ -18,7 +18,7 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder{
             'alias' => $alias
         ));
     }
-    
+
     public function addJoin($table, $alias, $type)
     {
         $this->addToArray('joins', array(
@@ -43,12 +43,12 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder{
     {
         $this->addKeyValuesToArray('increment', $args, true, true, true);
     }
-    
+
     public function setBatchData($columns, $rows)
     {
         $this->setValue('batchData', array('columns' => $columns, 'rows' => $rows));
     }
-    
+
     protected function lastOnBuilder()
     {
         $joins = $this->getArray('joins');
@@ -64,15 +64,15 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder{
     {
         $this->lastOnBuilder()->addCondition($logic, $negate, $args);
     }
-    
+
     public function startOnConditionGroup($logic, $negate)
     {
         $this->lastOnBuilder()->startConditionGroup($logic, $negate);
     }
-    
+
     public function endOnConditionGroup()
     {
         $this->lastOnBuilder()->endGroup();
     }
-    
+
 }
