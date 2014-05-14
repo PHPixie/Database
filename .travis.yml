@@ -1,21 +1,22 @@
-language: php
-php:
-  - 5.4
-  - 5.5
-  - hhvm
+language: "php"
 
-before_script:
- - wget http://getcomposer.org/composer.phar
- - php composer.phar install --dev --no-interaction
+php: 
+- 5.4
+- 5.5
+- "hhvm"
 
-script:
- - mkdir -p build/logs
- - phpunit --coverage-clover build/logs/clover.xml .
+before_script: 
+- "wget http://getcomposer.org/composer.phar"
+- "php composer.phar install --dev --no-interaction"
 
-after_script:
- - mkdir -p build/coverage
- - echo \'\"require-dev\": {\"satooshi/php-coveralls\": \"dev-master\"}\"\' > build/coverage/composer.json
- - cd build/coverage
- - php ../../composer-phar install --dev --no-interaction
- - cd ../../
- - php build/coverage/vendor/bin/coveralls -v
+script: 
+- "mkdir -p build/logs"
+- "phpunit --coverage-clover build/logs/clover.xml ."
+
+after_script: 
+- "mkdir -p build/coverage"
+- "echo '\"require-dev\": {\"satooshi/php-coveralls\": \"dev-master\"}\"' > build/coverage/composer.json > build/coverage/composer.json"
+- "cd build/coverage"
+- "php ../../composer-phar install --dev --no-interaction"
+- "cd ../../"
+- "php build/coverage/vendor/bin/coveralls -v"
