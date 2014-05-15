@@ -35,7 +35,7 @@ class ResultTest extends \PHPixieTests\Database\ResultTest
         $this->testAsArray();
         $this->result->next();
         $this->result->next();
-        $this->testGetColumn();
+        $this->testGetField();
     }
 
     /**
@@ -44,6 +44,27 @@ class ResultTest extends \PHPixieTests\Database\ResultTest
     public function testCursor()
     {
         $this->assertEquals($this->cursorStub, $this->result->cursor());
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::get
+     */
+    public function testDeepGet()
+    {
+        $cursorStub = new \ArrayObject(array(
+            (object) array('nested' => (object) array(
+                    'deep' => (object) array(
+                        'deeper' => 1
+                    )
+                )
+            ),
+        ));
+        $this->cursorStub = $cursorStub->getIterator();
+        $this->result = new \PHPixie\Database\Driver\Mongo\Result($this->cursorStub);
+        
+        $this->assertEquals(1, $this->result->get('nested.deep.deeper'));
+        $this->assertEquals(null, $this->result->get('nested.deep.nope'));
     }
 
 }

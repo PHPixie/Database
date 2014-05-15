@@ -86,11 +86,13 @@ abstract class ResultTest extends \PHPixieTests\AbstractDatabaseTest
     }
 
     /**
+     * @covers ::<protected>
      * @covers ::get
      */
     public function testGet()
     {
         $this->assertEquals(1, $this->result->get('id'));
+        $this->assertEquals(null, $this->result->get('not'));
         $this->result->next();
         $this->assertEquals(null, $this->result->get('id'));
         $this->result->next();
@@ -102,37 +104,37 @@ abstract class ResultTest extends \PHPixieTests\AbstractDatabaseTest
     }
 
     /**
-     * @covers ::getColumn
+     * @covers ::getField
      */
-    public function testGetColumn()
+    public function testGetField()
     {
-        $this->assertEquals(array('Tinkerbell', null, 'Trixie'), $this->result->getColumn('name'));
+        $this->assertEquals(array('Tinkerbell', null, 'Trixie'), $this->result->getField('name'));
     }
 
     /**
-     * @covers ::getColumn
+     * @covers ::getField
      */
-    public function testGetColumnNoNulls()
+    public function testGetFieldNoNulls()
     {
-        $this->assertEquals(array('Tinkerbell',  'Trixie'), $this->result->getColumn('name', true));
+        $this->assertEquals(array('Tinkerbell',  'Trixie'), $this->result->getField('name', true));
     }
 
     /**
-     * @covers ::getColumn
-     * @covers ::firstColumnName
+     * @covers ::getField
+     * @covers ::firstFieldName
      */
-    public function testGetFirstColumn()
+    public function testGetFirstField()
     {
-        $this->assertEquals(array(1, null, 3), $this->result->getColumn());
+        $this->assertEquals(array(1, null, 3), $this->result->getField());
     }
 
     /**
-     * @covers ::getColumn
-     * @covers ::firstColumnName
+     * @covers ::getField
+     * @covers ::firstFieldName
      */
-    public function testGetFirstColumnNulls()
+    public function testGetFirstFieldNulls()
     {
-        $this->assertEquals(array(1, 3), $this->result->getColumn(null, true));
+        $this->assertEquals(array(1, 3), $this->result->getField(null, true));
     }
 
     protected function assertRewindException()

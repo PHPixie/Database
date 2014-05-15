@@ -14,30 +14,29 @@ abstract class Result implements \Iterator
         return $arr;
     }
 
-    public function get($column = null)
+    public function get($field = null)
     {
         if (!$this->valid())
-            return;
+            return null;
 
-        $current = $this->current();
-
-        if ($column === null)
-            $column = $this->firstColumnName($current);
-
-        if (isset($current->$column))
-            return $current->$column;
+        if ($field === null) {
+            $current = $this->current();
+            $field = $this->firstFieldName($current);
+        }
+        
+        return $this->getCurrentField($field);
     }
 
-    public function getColumn($column = null, $skipNulls = false)
+    public function getField($field = null, $skipNulls = false)
     {
         $this->rewind();
         $values = array();
         foreach ($this as $row) {
-            if ($column === null)
-                $column = $this->firstColumnName($row);
+            if ($field === null)
+                $field = $this->firstFieldName($row);
 
-            if (isset($row->$column)) {
-                $values[] = $row->$column;
+            if (isset($row->$field)) {
+                $values[] = $row->$field;
             }elseif(!$skipNulls)
                 $values[] = null;
         }
@@ -45,7 +44,16 @@ abstract class Result implements \Iterator
         return $values;
     }
 
-    protected function firstColumnName($row)
+    protected function getCurrentField($field)
+    {
+        $current = $this->current();
+        if(!property_exists($current, $field))
+            return null;
+        
+        return $current->$field;
+    }
+    
+    protected function firstFieldName($row)
     {
         $data = get_object_vars($row);
 

@@ -47,4 +47,19 @@ class Result extends \PHPixie\Database\Result
     {
         return $this->cursor;
     }
+    
+    protected function getCurrentField($field)
+    {
+        $path = explode('.', $field);
+        $last = count($path) - 1;
+        $current = $this->current();
+        
+        foreach($path as $key => $step) {
+            if(!property_exists($current, $step))
+                return null;
+            $current=$current->$step;
+        }
+        
+        return $current;
+    }
 }
