@@ -66,5 +66,20 @@ class ResultTest extends \PHPixieTests\Database\ResultTest
         $this->assertEquals(1, $this->result->get('nested.deep.deeper'));
         $this->assertEquals(null, $this->result->get('nested.deep.nope'));
     }
-
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::getItemField
+     */
+    public function testDeepGetItemField()
+    {
+        $item = (object) array('nested' => (object) array(
+                    'deep' => (object) array(
+                        'deeper' => 1
+                    )
+                )
+            );
+        $this->assertEquals(1, $this->result->getItemField($item, 'nested.deep.deeper'));
+        $this->assertEquals(null, $this->result->getItemField($item, 'nested.deep.nope'));
+    }
 }

@@ -12,6 +12,6 @@ class Mysql extends \PHPixie\Database\Driver\PDO\Adapter
 
     public function listColumns($table)
     {
-        return $this->connection->execute("DESCRIBE `$table`")->getColumn('Field');
+        return $this->connection->execute("DESCRIBE `$table`")->getField('Field');
     }
 }

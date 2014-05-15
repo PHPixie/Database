@@ -96,13 +96,22 @@ abstract class ResultTest extends \PHPixieTests\AbstractDatabaseTest
         $this->result->next();
         $this->assertEquals(null, $this->result->get('id'));
         $this->result->next();
-        $this->assertEquals(3, $this->result->get());
+        $this->assertEquals(3, $this->result->get('id'));
         $this->result->next();
         $this->assertEquals(null, $this->result->get('id'));
         $this->result->next();
         $this->assertEquals(null, $this->result->get('id'));
     }
 
+    /**
+     * @covers ::<protected>
+     * @covers ::getItemField
+     */
+    public function testGetItemField()
+    {
+        $this->assertEquals(2, $this->result->getItemField((object)array('a'=>1,'b'=>2), 'b'));
+    }
+    
     /**
      * @covers ::getField
      */
@@ -117,24 +126,6 @@ abstract class ResultTest extends \PHPixieTests\AbstractDatabaseTest
     public function testGetFieldNoNulls()
     {
         $this->assertEquals(array('Tinkerbell',  'Trixie'), $this->result->getField('name', true));
-    }
-
-    /**
-     * @covers ::getField
-     * @covers ::firstFieldName
-     */
-    public function testGetFirstField()
-    {
-        $this->assertEquals(array(1, null, 3), $this->result->getField());
-    }
-
-    /**
-     * @covers ::getField
-     * @covers ::firstFieldName
-     */
-    public function testGetFirstFieldNulls()
-    {
-        $this->assertEquals(array(1, 3), $this->result->getField(null, true));
     }
 
     protected function assertRewindException()

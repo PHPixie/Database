@@ -47,4 +47,43 @@ class ResultTest extends \PHPixieTests\Database\ResultTest
     {
         $this->assertEquals($this->statement, $this->result->statement());
     }
+
+    /**
+     * @covers ::<protected>
+     * @covers ::get
+     */
+    public function testGetFirst()
+    {
+        $this->assertEquals(1, $this->result->get());
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::getItemField
+     * @covers \PHPixie\Database\Result::getItemField
+     */
+    public function testGetFirstItemField()
+    {
+        $this->assertEquals(1, $this->result->getItemField((object)array('a'=>1,'b'=>2)));
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::getField
+     * @covers \PHPixie\Database\Result::getField
+     */
+    public function testGetFirstField()
+    {
+        $this->assertEquals(array(1, null, 3), $this->result->getField());
+    }
+
+    /**
+     * @covers ::<protected>
+     * @covers ::getField
+     * @covers \PHPixie\Database\Result::getField
+     */
+    public function testGetFirstFieldNulls()
+    {
+        $this->assertEquals(array(1, 3), $this->result->getField(null, true));
+    }
 }
