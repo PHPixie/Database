@@ -23,6 +23,6 @@ class Pgsql extends \PHPixie\Database\Driver\PDO\Adapter
     {
         return $this->connection
                             ->execute("select column_name from information_schema.columns where table_name = '{$table}' and table_catalog = current_database()")
-                            ->getColumn('column_name');
+                            ->getField('column_name');
     }
 }

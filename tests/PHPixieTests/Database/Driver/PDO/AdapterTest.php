@@ -18,7 +18,7 @@ abstract class AdapterTest extends \PHPixieTests\AbstractDatabaseTest
     public function setUp()
     {
         $this->connection = $this->getMock('\PHPixie\Database\Driver\PDO\Connection', array('execute', 'pdo'), array(), '', false);
-        $this->result = $this->getMock('\PHPixie\Database\Driver\PDO\Result', array('getColumn', 'get'), array(), '', false);
+        $this->result = $this->getMock('\PHPixie\Database\Driver\PDO\Result', array('getField', 'get'), array(), '', false);
         $this->pdoStub = $this->getMock('Stub', array('lastInsertId'), array(), '', false );
     }
 
@@ -28,7 +28,7 @@ abstract class AdapterTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testListColumns()
     {
-        $this->prepareQueryColumnAssertion($this->listColumnsQuery, 'getColumn', $this->listColumnsColumn, array('id', 'name'));
+        $this->prepareQueryColumnAssertion($this->listColumnsQuery, 'getField', $this->listColumnsColumn, array('id', 'name'));
         $this->adapter->listColumns('fairies');
     }
 

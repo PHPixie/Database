@@ -6,6 +6,6 @@ class Sqlite extends \PHPixie\Database\Driver\PDO\Adapter
 {
     public function listColumns($table)
     {
-        return $this->connection->execute("PRAGMA table_info('$table')")->getColumn('name');
+        return $this->connection->execute("PRAGMA table_info('$table')")->getField('name');
     }
 }

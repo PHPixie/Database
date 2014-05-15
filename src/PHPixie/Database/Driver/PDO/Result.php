@@ -78,4 +78,32 @@ class Result extends \PHPixie\Database\Result
             $this->statement->closeCursor();
         }
     }
+
+    public function get($field = null)
+    {
+        return parent::get($field);
+    }
+
+    public function getItemField($item, $field = null)
+    {
+        if($field === null)
+            $field = $this->getFirstFieldName($item);
+
+        return parent::getItemField($item, $field);
+    }
+
+    public function getField($field = null, $skipNulls = false)
+    {
+        if ($field === null) {
+            $this->rewind();
+            $field = $this->getFirstFieldName($this->current());
+        }
+
+        return parent::getField($field, $skipNulls);
+    }
+
+    protected function getFirstFieldName($item)
+    {
+        return key(get_object_vars($item));
+    }
 }

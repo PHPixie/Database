@@ -7,57 +7,42 @@ abstract class Result implements \Iterator
     public function asArray()
     {
         $this->rewind();
-        $arr = array();
-        foreach ($this as $row)
-            $arr[] = $row;
+        $array = array();
+        foreach ($this as $item)
+            $array[] = $item;
 
-        return $arr;
+        return $array;
     }
 
-    public function get($field = null)
+    public function get($field)
     {
         if (!$this->valid())
             return null;
 
-        if ($field === null) {
-            $current = $this->current();
-            $field = $this->firstFieldName($current);
-        }
-        
-        return $this->getCurrentField($field);
+        return $this->getItemField($this->current(), $field);
     }
 
-    public function getField($field = null, $skipNulls = false)
+    public function getField($field, $skipNulls = false)
     {
         $this->rewind();
         $values = array();
-        foreach ($this as $row) {
-            if ($field === null)
-                $field = $this->firstFieldName($row);
-
-            if (isset($row->$field)) {
-                $values[] = $row->$field;
-            }elseif(!$skipNulls)
-                $values[] = null;
+        foreach ($this as $item) {
+            $value = $this->getItemField($item, $field);
+            if ($value !== null || !$skipNulls)
+                $values[] = $value;
         }
 
         return $values;
     }
 
-    protected function getCurrentField($field)
+    public function getItemField($item, $field)
     {
-        $current = $this->current();
+        $current = $item;
         if(!property_exists($current, $field))
-            return null;
-        
-        return $current->$field;
-    }
-    
-    protected function firstFieldName($row)
-    {
-        $data = get_object_vars($row);
 
-        return key($data);
+            return null;
+
+        return $current->$field;
     }
 
     abstract public function current();
