@@ -35,6 +35,19 @@ abstract class Result implements \Iterator
         return $values;
     }
 
+    public function getFields($fields)
+    {
+        $data = array();
+        foreach($this as $item){
+            $values = array();
+            foreach($fields as $field)
+                $vales[$field] = $this->getItemField($item, $field);
+            $data[]=$values;
+        }
+        
+        return $data;
+    }
+    
     public function getItemField($item, $field)
     {
         $current = $item;
