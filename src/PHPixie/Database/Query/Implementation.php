@@ -26,6 +26,11 @@ abstract class Implementation implements \PHPixie\Database\Query
         return call_user_func_array(array($this, $this->aliases[$method]), $args);
     }
 
+    public function connection()
+    {
+        return $this->connection;
+    }
+    
     abstract public function type();
     abstract public function execute();
     abstract public function parse();
