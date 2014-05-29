@@ -22,6 +22,21 @@ abstract class Adapter
         return $id;
     }
 
+    public function beginTransaction()
+    {
+        $this->connection->execute('BEGIN TRANSACTION');
+    }
+    
+    public function commitTransaction()
+    {
+        $this->connection->execute('COMMIT');
+    }
+    
+    public function rollbackTransaction()
+    {
+        $this->connection->execute('ROLLBACK');
+    }
+    
     abstract public function listColumns($table);
 
 }

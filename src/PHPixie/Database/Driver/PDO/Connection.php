@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver\PDO;
 
-class Connection extends \PHPixie\Database\Connection
+class Connection extends \PHPixie\Database\Connection\Transactable
 {
     protected $adapter;
     protected $adapterName;
@@ -58,5 +58,20 @@ class Connection extends \PHPixie\Database\Connection
     protected function connect($connection, $user, $password, $connectionOptions)
     {
         return new \PDO($connection, $user, $password, $connectionOptions);
+    }
+    
+    public function beginTransaction()
+    {
+        $this->adapter->beginTransaction();
+    }
+    
+    public function commitTransaction()
+    {
+        $this->adapter->commitTransaction();
+    }
+    
+    public function rollbackTransaction()
+    {
+        $this->adapter->rollbackTransaction();
     }
 }
