@@ -56,9 +56,26 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
      */
     public function testGroupParser()
     {
-        $groupParser = $this->driver->groupParser('operatorParser');
+        $groupParser = $this->driver->groupParser();
+        $this->assertSame($groupParser, $this->driver->groupParser());
+    }
+
+    /**
+     * @covers ::buildGroupParserInstance
+     */
+    public function testBuildGroupParserInstance()
+    {
+        $groupParser = $this->driver->groupParser();
         $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Parser\Group', $groupParser);
-        $this->assertAttributeEquals('operatorParser', 'operatorParser', $groupParser);
+    }
+
+    /**
+     * @covers ::subdocumentCondition
+     */
+    public function testSubdocumentCondition()
+    {
+        $sbdocument = $this->driver->subdocumentCondition();
+        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Conditions\Subdocument', $sbdocument);
     }
 
     /**
@@ -147,7 +164,7 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
         $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Connection', $connection);
 
     }
-    
+
     /**
      * @covers ::buildQueryBuilder
      */
