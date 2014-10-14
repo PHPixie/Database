@@ -68,9 +68,9 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
 
     }
 
-    public function parse($group)
+    public function parse($conditions)
     {
-        $expanded = $this->parseLogic($group);
+        $expanded = $this->parseLogic($conditions);
         $expanded = $this->normalize($expanded);
 
         if (empty($expanded))
