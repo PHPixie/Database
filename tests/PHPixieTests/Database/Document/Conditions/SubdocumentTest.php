@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPixieTests\Database\Driver\Mongo\Conditions;
+namespace PHPixieTests\Database\Document\Conditions;
 
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Conditions\Subdocument
@@ -15,26 +15,4 @@ class SubdocumentTest extends \PHPixieTests\Database\Conditions\BuilderTest
         $this->conditions = new \PHPixie\Database\Conditions;
         $this->builder = new \PHPixie\Database\Driver\Mongo\Conditions\Subdocument($this->conditions, $groupParser);
     }
-
-    /**
-     * @covers ::parse
-     * @covers ::<protected>
-     */
-    public function testParse()
-    {
-        $this->builder
-                    ->and('a', 1)
-                    ->or('a', '>', 1);
-        
-        $this->assertEquals(array(
-            '$or' => array(
-                array( 'a' => 1 ),
-                array(
-                    'a' => array(
-                        '$gt' => 1
-                    )
-                )
-            )), $this->builder->parse());
-    }
-
 }

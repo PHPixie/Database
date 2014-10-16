@@ -124,6 +124,26 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
                     });
         });
         $this->assertGroup($builder, array('a' => 1));
+
+        $subdocument = $this->database->subdocumentCondition();
+        $subdocument
+                    ->and('a', 1)
+                    ->or('a', '>', 1);
+        $builder = $this->getBuilder()->_and('p', 'elemMatch', $subdocument);
+        $this->assertGroup($builder, array(
+            'p' => array(
+                '$elemMatch' => array(
+                    '$or' => array(
+                        array( 'a' => 1 ),
+                        array(
+                            'a' => array(
+                                '$gt' => 1
+                            )
+                        )
+                    )
+                )
+            )
+        ));
     }
 
     /**
