@@ -115,12 +115,12 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
         return $andGroups;
 
     }
-    
+
     protected function parseConditionSubdocuments($condition)
     {
-        foreach ($conditions->values as $key=>$value) {
+        foreach ($condition->values as $key=>$value) {
             if ($value instanceof \PHPixie\Database\Document\Conditions\Subdocument)
-                $conditions->values[0] = $this->parse($value->getConditions());
+                $condition->values[0] = $this->parse($value->getConditions());
         }
     }
 
