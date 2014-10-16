@@ -67,13 +67,6 @@ class Mongo extends \PHPixie\Database\Driver
         return new \PHPixie\Database\Driver\Mongo\Conditions\Condition\Expanded($condition);
     }
 
-    public function subdocumentCondition()
-    {
-        $conditions = $this->database->conditions();
-        $groupParser = $this->groupParser();
-        return new \PHPixie\Database\Driver\Mongo\Conditions\Subdocument($conditions, $groupParser);
-    }
-
     public function runner()
     {
         return new \PHPixie\Database\Driver\Mongo\Query\Runner;

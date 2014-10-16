@@ -69,8 +69,6 @@ class Operator extends \PHPixie\Database\Parser\Operator
         }
 
         $value = $value[0];
-        if ( $value instanceof \PHPixie\Database\Driver\Mongo\Conditions\Subdocument)
-            $value = $value->parse();
 
         if ($operator === '=') {
             $condition = $value;
