@@ -59,6 +59,12 @@ class Database
     {
         return new \PHPixie\Database\SQL\Expression($sql, $params);
     }
+    
+    public function subdocumentCondition()
+    {
+        $conditions = $this->conditions();
+        return new \PHPixie\Database\Driver\Mongo\Conditions\Subdocument($conditions);
+    }
 
     protected function buildConditions()
     {
