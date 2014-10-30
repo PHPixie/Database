@@ -23,7 +23,7 @@ class Connection extends \PHPixie\Database\Connection\Transactable
         );
 
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $this->adapterName = ucfirst(strtolower(str_replace('PDO_', '', $this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME))));
+        $this->adapterName = strtolower(str_replace('PDO_', '', $this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME)));
         $this->adapter = $driver->adapter($this->adapterName, $config, $this);
     }
 
