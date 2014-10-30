@@ -110,7 +110,7 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
      */
     public function testAdapterName()
     {
-        $this->assertEquals('Sqlite', $this->connection->adapterName());
+        $this->assertEquals('sqlite', $this->connection->adapterName());
     }
 
     /**
@@ -129,13 +129,20 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
      */
     public function testTransaction()
     {
+        $config = $this->sliceStub(array(
+            'connection' => 'sqlite:'.$this->databaseFile,
+            'user'       => 'test',
+            'password'   =>  5,
+            'driver'     => 'PDO'
+        ));
+                                         
         $driver = $this->quickMock('\PHPixie\Database\Driver\PDO', array());
         $adapter = $this->quickMock('\PHPixie\Database\Driver\PDO\Adapter\Sqlite', array());
         $driver
             ->expects($this->once())
             ->method('adapter')
             ->will($this->returnValue($adapter));
-        $connection = new \PHPixie\Database\Driver\PDO\Connection($driver, 'test', $this->config);
+        $connection = new \PHPixie\Database\Driver\PDO\Connection($driver, 'test', $config);
         
         $types = array('begin', 'commit', 'rollback');
         foreach($types as $type) {

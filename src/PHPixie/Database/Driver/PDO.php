@@ -23,7 +23,7 @@ class PDO extends \PHPixie\Database\SQL\Driver
 
     public function adapter($name, $config, $connection)
     {
-        $class = '\PHPixie\Database\Driver\PDO\Adapter\\'.$name;
+        $class = '\PHPixie\Database\Driver\PDO\Adapter\\'.ucfirst($name);
 
         return new $class($config, $connection);
     }
