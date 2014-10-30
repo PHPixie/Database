@@ -90,7 +90,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             )
         ));
 
-        $query = $this->getQuery('single')->collection('fairies');
+        $query = $this->getQuery('selectSingle')->collection('fairies');
 
         $this->assertQuery($query, array (
             array (

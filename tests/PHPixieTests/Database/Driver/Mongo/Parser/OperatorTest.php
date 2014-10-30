@@ -62,24 +62,6 @@ class OperatorTest extends \PHPixieTests\AbstractDatabaseTest
             ),
             'not between', false, array(3,4)
         );
-
-        $subdocument = $this->quickMock('\PHPixie\Database\Driver\Mongo\Conditions\Subdocument', array('parse'));
-        $this->expectCalls($subdocument, array('parse' => array()), array(
-            'parse' => array(
-                    'a' => 5
-                )
-        ));
-
-        $this->assertOperator(
-            array(
-                'p' => array(
-                    '$elemMatch' => array (
-                        'a' => 5
-                    )
-                )
-            ),
-            'elemMatch', false, array($subdocument)
-        );
     }
 
     /**

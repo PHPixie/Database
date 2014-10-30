@@ -15,12 +15,10 @@ class Builder
         'not' => '_not',
     );
 
-    public function __construct($conditions, $defaultOperator = '=')
-    {
+    public function __construct($conditions, $defaultOperator = '=') {
         $this->conditions = $conditions;
         $this->defaultOperator = $defaultOperator;
         $this->pushGroup($this->conditions->group());
-
     }
 
     public function startConditionGroup($logic = 'and', $negate = false)

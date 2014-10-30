@@ -20,6 +20,15 @@ class ResultTest extends \PHPixieTests\Database\ResultTest
     }
 
     /**
+     * @covers ::__construct
+     * @covers ::<protected>
+     */
+    public function testConstruct()
+    {
+    
+    }
+    
+    /**
      * @covers ::rewind
      * @covers ::__construct
      */

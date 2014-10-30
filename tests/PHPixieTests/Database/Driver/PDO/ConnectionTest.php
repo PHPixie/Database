@@ -59,7 +59,17 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
         $this->pdoProperty->setValue($this->connection, null);
         unlink($this->databaseFile);
     }
-
+    
+    /**
+     * @covers ::__construct
+     * @covers \PHPixie\Database\Connection::__construct
+     * @covers ::<protected>
+     */
+    public function testConstruct()
+    {
+    
+    }
+    
     /**
      * @covers ::execute
      */
@@ -111,7 +121,36 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
         $this->setExpectedException('\Exception');
         $this->connection->execute('pixie');
     }
+    
+    /**
+     * @covers ::beginTransaction
+     * @covers ::commitTransaction
+     * @covers ::rollbackTransaction
+     */
+    public function testTransaction()
+    {
+        $driver = $this->quickMock('\PHPixie\Database\Driver\PDO', array());
+        $adapter = $this->quickMock('\PHPixie\Database\Driver\PDO\Adapter\Sqlite', array());
+        $driver
+            ->expects($this->once())
+            ->method('adapter')
+            ->will($this->returnValue($adapter));
+        $connection = new \PHPixie\Database\Driver\PDO\Connection($driver, 'test', $this->config);
+        
+        $types = array('begin', 'commit', 'rollback');
+        foreach($types as $type) {
+            $method = $type.'Transaction';
+            $adapter
+                ->expects($this->once())
+                ->method($method);
+            
+            $connection->$method();
+        }
+    }
 
+    /**
+     * @covers ::__construct
+     */
     public function testWrongOptionsException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception');
@@ -121,7 +160,7 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
             'password' => 5,
             'connectionOptions' => 5
         ));
-        $connection = new \PHPixie\Database\Driver\Mongo\Connection($this->database->driver('PDO'), 'test', $config);
+        $connection = new \PHPixie\Database\Driver\PDO\Connection($this->database->driver('PDO'), 'test', $config);
     }
 
 }

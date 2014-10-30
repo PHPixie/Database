@@ -20,7 +20,16 @@ class ResultTest extends \PHPixieTests\Database\ResultTest
         $this->statement->execute();
         $this->result = new \PHPixie\Database\Driver\PDO\Result($this->statement);
     }
-
+    
+    /**
+     * @covers ::__construct
+     * @covers ::<protected>
+     */
+    public function testConstruct()
+    {
+    
+    }
+    
     /**
      * @covers ::rewind
      */

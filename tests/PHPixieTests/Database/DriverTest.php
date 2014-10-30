@@ -17,6 +17,15 @@ abstract class DriverTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->database = $this->getMock('\PHPixie\Database', array('get', 'parser'), array(null));
     }
+    
+    /**
+     * @covers ::__construct
+     */
+    public function testConstruct()
+    {
+        
+    }
+
 
     /**
      * @covers ::parser

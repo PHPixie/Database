@@ -11,13 +11,22 @@ abstract class ConnectionTest extends \PHPixieTests\AbstractDatabaseTest
     protected $queryClass;
     protected $config;
     protected $driver;
+
+    /**
+     * @covers ::__construct
+     * @covers ::<protected>
+     */
+    public function testConstruct()
+    {
+        
+    }
     
     /**
-     * @covers ::select
-     * @covers ::update
-     * @covers ::delete
-     * @covers ::insert
-     * @covers ::count
+     * @covers ::selectQuery
+     * @covers ::updateQuery
+     * @covers ::deleteQuery
+     * @covers ::insertQuery
+     * @covers ::countQuery
      */
     public function testDefaultQueries()
     {
@@ -40,7 +49,8 @@ abstract class ConnectionTest extends \PHPixieTests\AbstractDatabaseTest
                     ->method('query')
                     ->with($type, 'test')
                     ->will($this->returnValue('query'));
-            $this->assertEquals('query', $this->connection->$type());
+            $method = $type.'Query';
+            $this->assertEquals('query', $this->connection->$method());
         }
     }
 }

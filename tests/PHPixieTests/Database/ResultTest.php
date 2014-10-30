@@ -119,6 +119,18 @@ abstract class ResultTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->assertEquals(array('Tinkerbell', null, 'Trixie'), $this->result->getField('name'));
     }
+    
+    /**
+     * @covers ::getFields
+     */
+    public function testGetFields()
+    {
+        $this->assertEquals(array(
+            array('name' => 'Tinkerbell', 'id' => 1),
+            array('name' => null, 'id' => null),
+            array('name' => 'Trixie', 'id' => 3),
+        ), $this->result->getFields(array('name', 'id')));
+    }
 
     /**
      * @covers ::getField

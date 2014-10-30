@@ -15,27 +15,27 @@ abstract class Connection
         $this->config = $config;
     }
 
-    public function select()
+    public function selectQuery()
     {
         return $this->driver->query('select', $this->name);
     }
 
-    public function update()
+    public function updateQuery()
     {
         return $this->driver->query('update', $this->name);
     }
 
-    public function delete()
+    public function deleteQuery()
     {
         return $this->driver->query('delete', $this->name);
     }
 
-    public function insert()
+    public function insertQuery()
     {
         return $this->driver->query('insert', $this->name);
     }
 
-    public function count()
+    public function countQuery()
     {
         return $this->driver->query('count', $this->name);
     }

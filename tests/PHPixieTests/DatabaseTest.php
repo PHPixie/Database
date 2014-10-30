@@ -15,7 +15,16 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
         $this->config = $this->sliceStub();
         $this->database = new \PHPixie\Database($this->config);
     }
-
+    
+    /**
+     * @covers ::__construct
+     * @covers ::<protected>
+     */
+    public function testConstruct()
+    {
+    
+    }
+    
     /**
      * @covers ::sqlExpression
      */
@@ -31,6 +40,15 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
         $expr = $this->database->sqlExpression('pixie', array('test'));
         $this->assertEquals('pixie', $expr->sql);
         $this->assertEquals(array('test'), $expr->params);
+    }
+    
+    /**
+     * @covers ::subdocumentCondition
+     */
+    public function testSubdocumentCondition()
+    {
+        $subdocument = $this->database->subdocumentCondition();
+        $this->assertInstanceOf('\PHPixie\Database\Document\Conditions\Subdocument', $subdocument);
     }
 
     /**

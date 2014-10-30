@@ -41,7 +41,7 @@ abstract class Result implements \Iterator
         foreach($this as $item){
             $values = array();
             foreach($fields as $field)
-                $vales[$field] = $this->getItemField($item, $field);
+                $values[$field] = $this->getItemField($item, $field);
             $data[]=$values;
         }
         
