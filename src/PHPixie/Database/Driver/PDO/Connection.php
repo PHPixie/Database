@@ -7,6 +7,7 @@ class Connection extends \PHPixie\Database\Connection\Transactable
     protected $adapter;
     protected $adapterName;
     protected $pdo;
+    
     public function __construct($driver, $name, $config)
     {
         parent::__construct($driver, $name, $config);
@@ -62,16 +63,33 @@ class Connection extends \PHPixie\Database\Connection\Transactable
     
     public function beginTransaction()
     {
-        $this->adapter->beginTransaction();
+        $this->pdo->beginTransaction();
     }
     
     public function commitTransaction()
     {
-        $this->adapter->commitTransaction();
+        $this->pdo->commit();
     }
     
     public function rollbackTransaction()
     {
-        $this->adapter->rollbackTransaction();
+        $this->pdo->rollBack();
     }
+    
+    public function inTransaction()
+    {
+        return $this->pdo->inTransaction();
+    }
+    
+    public function rollbackTransactionTo($savepoint)
+    {
+        $this->adapter->rollbackTransactionTo($savepoint);
+    }
+    
+    protected function createTransactionSavepoint($name)
+    {
+        $this->adapter->createTransactionSavepoint($name);
+    }
+    
+
 }
