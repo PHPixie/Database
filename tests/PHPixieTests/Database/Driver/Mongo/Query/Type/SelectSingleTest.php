@@ -2,12 +2,12 @@
 namespace PHPixieTests\Database\Driver\Mongo\Query\Type;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Query\Type\Single
+ * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Query\Type\SelectSingle
  */
 class SingleTest extends \PHPixieTests\Database\Driver\Mongo\Query\ItemTest
 {
-    protected $queryClass = '\PHPixie\Database\Driver\Mongo\Query\Type\Single';
-    protected $type = 'single';
+    protected $queryClass = '\PHPixie\Database\Driver\Mongo\Query\Type\SelectSingle';
+    protected $type = 'selectSingle';
 
     /**
      * @covers ::fields

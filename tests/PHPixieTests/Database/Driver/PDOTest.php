@@ -10,6 +10,7 @@ class PDOTest extends \PHPixieTests\Database\DriverTest
     protected $parserClass = '\PHPixie\Database\Driver\PDO\Adapter\Sqlite\Parser';
     protected $queryClass = '\PHPixie\Database\Driver\PDO\Query';
     protected $builderClass = '\PHPixie\Database\Driver\PDO\Query\Builder';
+    
     public function setUp()
     {
         parent::setUp();
@@ -38,6 +39,7 @@ class PDOTest extends \PHPixieTests\Database\DriverTest
         $this->driver = new \PHPixie\Database\Driver\PDO($this->database);
     }
 
+    
     /**
      * @covers ::adapter
      */

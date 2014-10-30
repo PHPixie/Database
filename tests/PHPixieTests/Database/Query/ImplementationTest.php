@@ -36,6 +36,14 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->assertEquals($this->type, $this->query->type());
     }
+    
+    /**
+     * @covers ::connection
+     */
+    public function testConnection()
+    {
+        $this->assertEquals($this->connection, $this->query->connection());
+    }
 
  
     protected function parserTest()

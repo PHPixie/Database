@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver\Mongo\Query\Type;
 
-class Single extends \PHPixie\Database\Driver\Mongo\Query\Item
+class SelectSingle extends \PHPixie\Database\Driver\Mongo\Query\Item
 {
     public function fields($fields)
     {
@@ -25,7 +25,7 @@ class Single extends \PHPixie\Database\Driver\Mongo\Query\Item
 
     public function type()
     {
-        return 'single';
+        return 'selectSingle';
     }
 
     public function execute()

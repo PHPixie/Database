@@ -11,6 +11,7 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
 {
     protected $pixie;
     protected $queryClass = 'PHPixie\Database\Driver\Mongo\Query';
+    
     public function setUp()
     {
         $this->database = $this->getMock('\PHPixie\Database', array('get'), array(null));
@@ -31,13 +32,23 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
                         ->with ('test')
                         ->will($this->returnValue($this->connection));
     }
+    
+    /**
+     * @covers ::__construct
+     * @covers \PHPixie\Database\Connection::__construct
+     * @covers ::<protected>
+     */
+    public function testConstruct()
+    {
+    
+    }
 
     /**
-     * @covers ::single
+     * @covers ::selectSingleQuery
      */
     public function testDefaultQueries()
     {
-        $this->queryTest(array('single'));
+        $this->queryTest(array('selectSingle'));
     }
     
     /**

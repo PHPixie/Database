@@ -70,15 +70,6 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
     }
 
     /**
-     * @covers ::subdocumentCondition
-     */
-    public function testSubdocumentCondition()
-    {
-        $sbdocument = $this->driver->subdocumentCondition();
-        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Conditions\Subdocument', $sbdocument);
-    }
-
-    /**
      * @covers ::buildQuery
      */
     public function testBuildQuery()

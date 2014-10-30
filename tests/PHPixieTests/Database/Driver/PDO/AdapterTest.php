@@ -14,10 +14,16 @@ abstract class AdapterTest extends \PHPixieTests\AbstractDatabaseTest
     protected $listColumnsQuery;
     protected $listColumnsColumn;
     protected $connectionValueMap = array();
+    
+    protected $transactionQueries = array(
+        'begin'    => 'BEGIN TRANSACTION',
+        'commit'   => 'COMMIT',
+        'rollback' => 'ROLLBACK',
+    );
 
     public function setUp()
     {
-        $this->connection = $this->getMock('\PHPixie\Database\Driver\PDO\Connection', array('execute', 'pdo'), array(), '', false);
+        $this->connection = $this->getMock('\PHPixie\Database\Driver\PDO\Connection', array(), array(), '', false);
         $this->result = $this->getMock('\PHPixie\Database\Driver\PDO\Result', array('getField', 'get'), array(), '', false);
         $this->pdoStub = $this->getMock('Stub', array('lastInsertId'), array(), '', false );
     }
@@ -72,6 +78,25 @@ abstract class AdapterTest extends \PHPixieTests\AbstractDatabaseTest
         $this->setExpectedException('\PHPixie\Database\Exception');
         $this->adapter->insertId();
     }
+    
+    /**
+     * @covers ::beginTransaction
+     * @covers ::commitTransaction
+     * @covers ::rollbackTransaction
+     * @covers ::<protected>
+     */
+    public function testTransaction()
+    {
+        foreach($this->transactionQueries as $type => $query) {
+            $method = $type.'Transaction';
+            $this->connection
+                ->expects($this->at(0))
+                ->method('execute')
+                ->with($query);
+            $this->adapter->$method();
+        }
+    }
+     
 
     protected function prepareQueryColumnAssertion($query, $method,  $column, $result)
     {

@@ -18,8 +18,8 @@ class Parser extends \PHPixie\Database\Parser
         switch ($query->type()) {
             case 'select':
                 return $this->selectQuery($query, $runner);
-            case 'single':
-                return $this->singleQuery($query, $runner);
+            case 'selectSingle':
+                return $this->selectSingleQuery($query, $runner);
             case 'insert':
                 return $this->insertQuery($query, $runner);
             case 'update':
@@ -65,7 +65,7 @@ class Parser extends \PHPixie\Database\Parser
         return array_fill_keys($fields, 1);
     }
 
-    protected function singleQuery($query, $runner)
+    protected function selectSingleQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
         $fields = $query->getFields();

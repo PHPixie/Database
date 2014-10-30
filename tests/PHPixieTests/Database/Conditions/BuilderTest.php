@@ -9,11 +9,20 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $builder;
     protected $conditions;
+    
 
     public function setUp()
     {
         $this->conditions = new \PHPixie\Database\Conditions;
         $this->builder = new \PHPixie\Database\Conditions\Builder($this->conditions, '=');
+    }
+    
+    /**
+     * @covers ::__construct
+     */
+    public function testConstruct()
+    {
+    
     }
 
     /**
