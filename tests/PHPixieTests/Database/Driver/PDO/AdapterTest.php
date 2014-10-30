@@ -80,21 +80,31 @@ abstract class AdapterTest extends \PHPixieTests\AbstractDatabaseTest
     }
     
     /**
-     * @covers ::beginTransaction
-     * @covers ::commitTransaction
-     * @covers ::rollbackTransaction
+     * @covers ::createTransactionSavepoint
      * @covers ::<protected>
      */
-    public function testTransaction()
+    public function testCreateTransactionSavepoint()
     {
-        foreach($this->transactionQueries as $type => $query) {
-            $method = $type.'Transaction';
-            $this->connection
-                ->expects($this->at(0))
-                ->method('execute')
-                ->with($query);
-            $this->adapter->$method();
-        }
+        $this->connection
+            ->expects($this->at(0))
+            ->method('execute')
+            ->with('SAVEPOINT test');
+        
+        $this->adapter->createTransactionSavepoint('test');
+    }
+    
+    /**
+     * @covers ::rollbackTransactionTo
+     * @covers ::<protected>
+     */
+    public function testRollbackTransactionTo()
+    {
+        $this->connection
+            ->expects($this->at(0))
+            ->method('execute')
+            ->with('ROLLBACK TO test');
+        
+        $this->adapter->rollbackTransactionTo('test');
     }
      
 

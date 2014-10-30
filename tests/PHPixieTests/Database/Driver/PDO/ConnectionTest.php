@@ -15,12 +15,17 @@ class PDOConnectionTestStub extends \PHPixie\Database\Driver\PDO\Connection
     {
         $this->pdo = $pdo;
     }
+    
+    public function setAdapter($adapter)
+    {
+        $this->adapter = $adapter;
+    }
 }
 
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Connection
  */
-class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
+class ConnectionTest extends \PHPixieTests\Database\Connection\TransactableTest
 {
     protected $databaseFile;
     protected $config;
@@ -126,33 +131,74 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
      * @covers ::beginTransaction
      * @covers ::commitTransaction
      * @covers ::rollbackTransaction
+     * @covers ::<protected>
      */
     public function testTransaction()
     {
-        $config = $this->sliceStub(array(
-            'connection' => 'sqlite:'.$this->databaseFile,
-            'user'       => 'test',
-            'password'   =>  5,
-            'driver'     => 'PDO'
-        ));
-                                         
-        $driver = $this->quickMock('\PHPixie\Database\Driver\PDO', array());
-        $adapter = $this->quickMock('\PHPixie\Database\Driver\PDO\Adapter\Sqlite', array());
-        $driver
-            ->expects($this->once())
-            ->method('adapter')
-            ->will($this->returnValue($adapter));
-        $connection = new \PHPixie\Database\Driver\PDO\Connection($driver, 'test', $config);
+        $map = array(
+            'beginTransaction' => 'beginTransaction',
+            'commitTransaction' => 'commit',
+            'rollbackTransaction' => 'rollBack',
+        );
+        $pdo = $this->quickMock('\stdClass', array_values($map));
         
-        $types = array('begin', 'commit', 'rollback');
-        foreach($types as $type) {
-            $method = $type.'Transaction';
-            $adapter
-                ->expects($this->once())
-                ->method($method);
-            
-            $connection->$method();
+        $this->connection->setPdo($pdo);
+        
+        foreach($map as $method => $pdoMethod) {
+            $pdo
+                ->expects($this->at(0))
+                ->method($pdoMethod)
+                ->with();
+            $this->connection->$method();
         }
+    }
+    
+    /**
+     * @covers ::inTransaction
+     * @covers ::<protected>
+     */
+    public function testInTransaction()
+    {
+        $pdo = $this->quickMock('\stdClass', array('intransaction'));
+        $this->connection->setPdo($pdo);
+        foreach(array(true, false) as $result) {
+            $pdo
+                ->expects($this->at(0))
+                ->method('inTransaction')
+                ->with()
+                ->will($this->returnValue($result));
+            $this->assertSame($result, $this->connection->inTransaction());
+        }
+    }
+    
+    /**
+     * @covers ::rollbackTransactionTo
+     * @covers ::<protected>
+     */
+    public function testRollbackTransactionTo()
+    {
+        $adapter = $this->prepareAdapter();
+        $adapter
+            ->expects($this->at(0))
+            ->method('rollbackTransactionTo')
+            ->with('test');
+        $this->connection->rollbackTransactionTo('test');
+    }
+    
+    protected function prepareSavepoint($name)
+    {
+        $adapter = $this->prepareAdapter();
+        $adapter
+            ->expects($this->at(0))
+            ->method('createTransactionSavepoint')
+            ->with($name);
+    }
+    
+    protected function prepareAdapter()
+    {
+        $adapter = $this->quickMock('\PHPixie\Database\Driver\PDO\Adapter\Sqlite', array());
+        $this->connection->setAdapter($adapter);
+        return $adapter;
     }
 
     /**

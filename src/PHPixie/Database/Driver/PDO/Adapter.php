@@ -25,44 +25,14 @@ abstract class Adapter
         return $id;
     }
 
-    public function beginTransaction()
+    public function rollbackTransactionTo($savepoint)
     {
-        $this->connection->execute('BEGIN TRANSACTION');
-        $this->isTransactionActive = true;
+        $this->connection->execute('ROLLBACK TO '.$savepoint);
     }
     
-    public function commitTransaction()
+    public function createTransactionSavepoint($name)
     {
-        $this->connection->execute('COMMIT');
-        $this->isTransactionActive = false;
-    }
-    
-    public function rollbackTransaction($savepoint = null)
-    {
-        if($savepoint === null) {
-            $this->connection->execute('ROLLBACK');
-            $this->isTransactionActive = false;
-        }else{
-            $this->connection->execute('ROLLBACK TO '.$savepoint);
-            $this->isTransactionActive = true;
-        }
-    }
-    
-    public function savepointTransaction($name = null)
-    {
-        if($name == null) {
-            $this->savepoint++;
-            $name = 'savepoint_'.$this->savepoint;
-        }
-        
         $this->connection->execute('SAVEPOINT '.$name);
-        $this->isTransactionActive = true;
-        return $name;
-    }
-    
-    public function isTransactionActive()
-    {
-        return $this->isTransactionActive;
     }
     
     abstract public function listColumns($table);
