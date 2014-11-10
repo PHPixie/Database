@@ -40,14 +40,14 @@ class Parser extends \PHPixie\Database\Parser
         $conditions = $this->groupParser->parse($query->getWhereConditions());
         $limit = $query->getLimit();
         $offset = $query->getOffset();
-        $orderBy = $query->getOrderBy();
+        $order  = $query->getOrderBy();
         $fieldKeys = $this->fieldKeys($fields);
 
         $runner->chainMethod('find', array($conditions, $fieldKeys));
-        if (!empty($orderBy)) {
+        if (!empty($order)) {
             $ordering =  array();
-            foreach ($orderBy as $order) {
-                $ordering[$order['field']] = $order['dir'] === 'asc' ? 1 : -1;
+            foreach ($order as $orderBy) {
+                $ordering[$orderBy->field()] = $orderBy->direction() === 'asc' ? 1 : -1;
             }
             $runner->chainMethod('sort', array($ordering));
         }

@@ -57,6 +57,7 @@ abstract class DriverTest extends \PHPixieTests\AbstractDatabaseTest
         $builder = $this->driver->queryBuilder();
         $this->assertInstanceOf($this->builderClass, $builder);
         $this->assertAttributeEquals($this->database->conditions(), 'conditions', $builder);
+        $this->assertAttributeEquals($this->database->values(), 'valueBuilder', $builder);
     }
     
     abstract public function testBuildQueryBuilder();

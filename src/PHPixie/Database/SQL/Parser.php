@@ -254,21 +254,18 @@ abstract class Parser extends \PHPixie\Database\Parser
 
     protected function appendOrderBy($query, $expr)
     {
-        $orderBy = $query->getOrderBy();
+        $order = $query->getOrderBy();
 
-        if (empty($orderBy))
+        if (empty($order))
             return;
 
         $expr->sql.= " ORDER BY ";
-        foreach ($orderBy as $key => $order) {
-            $field = $order['field'];
-            $dir = $order['dir'];
+        foreach ($order as $key => $orderBy) {
+            $field = $orderBy->field();
+            $dir   = $orderBy->direction();
 
             if ($key > 0)
                 $expr->sql.= ', ';
-
-            if ($dir !== 'asc' && $dir !== 'desc')
-                throw new \PHPixie\Database\Exception\Parser("Order direction must be either 'asc' or  'desc'");
 
             $this->fragmentParser->appendColumn($field, $expr);
             $expr->sql.= ' '.strtoupper($dir);

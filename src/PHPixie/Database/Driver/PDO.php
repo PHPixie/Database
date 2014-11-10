@@ -56,9 +56,9 @@ class PDO extends \PHPixie\Database\SQL\Driver
         return new $class($this->database, $operatorParser);
     }
 
-    public function buildQueryBuilder($conditions)
+    public function buildQueryBuilder($conditions, $values)
     {
-        return new \PHPixie\Database\Driver\PDO\Query\Builder($conditions);
+        return new \PHPixie\Database\Driver\PDO\Query\Builder($conditions, $values);
     }
 
     public function buildQuery($type, $connection, $parser, $builder)

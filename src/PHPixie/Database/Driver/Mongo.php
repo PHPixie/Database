@@ -45,9 +45,9 @@ class Mongo extends \PHPixie\Database\Driver
         return new \PHPixie\Database\Driver\Mongo\Parser\Group($this, $operatorParser);
     }
 
-    public function buildQueryBuilder($conditions)
+    public function buildQueryBuilder($conditions, $values)
     {
-        return new \PHPixie\Database\Driver\Mongo\Query\Builder($conditions);
+        return new \PHPixie\Database\Driver\Mongo\Query\Builder($conditions, $values);
     }
 
     public function buildQuery($type, $connection, $parser, $builder)

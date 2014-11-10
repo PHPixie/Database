@@ -342,7 +342,10 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
     protected function getQuery($type = 'select')
     {
         $class = '\PHPixie\Database\Driver\Mongo\Query\Type\\'.ucfirst($type);
-        $builder = new \PHPixie\Database\Driver\Mongo\Query\Builder($this->database->conditions());
+        $builder = new \PHPixie\Database\Driver\Mongo\Query\Builder(
+                                                                    $this->database->conditions(),
+                                                                    $this->database->values()
+                                                                    );
         $query = new $class(null, null, $builder);
 
         return $query;

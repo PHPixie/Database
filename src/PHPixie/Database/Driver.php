@@ -24,8 +24,9 @@ abstract class Driver
     public function queryBuilder()
     {
         $conditions = $this->database->conditions();
+        $values = $this->database->values();
 
-        return $this->buildQueryBuilder($conditions);
+        return $this->buildQueryBuilder($conditions, $values);
     }
 
     public function query($type = 'select', $connectionName = 'default')
@@ -40,7 +41,7 @@ abstract class Driver
 
     abstract public function buildConnection($name, $config);
     abstract public function buildParserInstance($connectionName);
-    abstract public function buildQueryBuilder($conditions);
+    abstract public function buildQueryBuilder($conditions, $values);
     abstract public function buildQuery($type, $connection, $parser, $builder);
     abstract public function result($cursor);
 }

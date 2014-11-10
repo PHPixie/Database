@@ -162,5 +162,16 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertInstanceOf('\PHPixie\Database\Conditions', $conditions);
         $this->assertEquals($conditions, $this->database->conditions());
     }
+    
+    /**
+     * @covers ::values
+     * @covers ::buildvalues
+     */
+    public function testValues()
+    {
+        $values = $this->database->values();
+        $this->assertInstanceOf('\PHPixie\Database\Values', $values);
+        $this->assertEquals($values, $this->database->values());
+    }
 
 }

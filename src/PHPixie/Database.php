@@ -7,6 +7,7 @@ class Database
 
     protected $config;
     protected $conditions;
+    protected $values;
     protected $sql;
     protected $drivers = array();
     protected $connections =  array();
@@ -54,6 +55,14 @@ class Database
 
         return $this->conditions;
     }
+    
+    public function values()
+    {
+        if ($this->values === null)
+            $this->values = $this->buildValues();
+
+        return $this->values;
+    }
 
     public function sqlExpression($sql = '', $params = array())
     {
@@ -69,6 +78,11 @@ class Database
     protected function buildConditions()
     {
         return new \PHPixie\Database\Conditions();
+    }
+    
+    protected function buildValues()
+    {
+        return new \PHPixie\Database\Values();
     }
 
 }

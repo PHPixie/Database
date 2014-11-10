@@ -7,6 +7,8 @@ namespace PHPixieTests\Database\Query\Implementation;
 class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $conditionsMock;
+    protected $valuesMock;
+    
     protected $builders;
     protected $builder;
     protected $builderClass = '\PHPixie\Database\Query\Implementation\Builder';
@@ -19,6 +21,8 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
         );
         
         $this->conditionsMock = $this->quickMock('\PHPixie\Database\Conditions', array('builder'));
+        $this->valuesMock = $this->quickMock('\PHPixie\Database\Values', array());
+        
         $this->builder = $this->builder();
     }
     
@@ -84,18 +88,14 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testOrderBy()
     {
-        $builder = $this->builder;
-        $builder->addOrderAscendingBy('test');
-        $builder->addOrderAscendingBy('pixie');
-        $builder->addOrderDescendingBy('trixie');
-        $builder->addOrderDescendingBy('test');
+        $expected = array(
+            $this->addOrderBy('test', 'asc'),
+            $this->addOrderBy('pixie', 'asc'),
+            $this->addOrderBy('trixie', 'desc'),
+            $this->addOrderBy('test', 'desc'),
+        );
         
-        $this->assertEquals(array(
-            array('field' => 'test', 'dir' => 'asc'),
-            array('field' => 'pixie', 'dir' => 'asc'),
-            array('field' => 'trixie', 'dir' => 'desc'),
-            array('field' => 'test', 'dir' => 'desc'),
-        ), $builder->getArray('orderBy'));
+        $this->assertEquals($expected, $this->builder->getArray('orderBy'));
     }
     
     /**
@@ -271,6 +271,25 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
         }
     }
     
+    protected function addOrderBy($field, $dir)
+    {
+        $groupBy = $this->quickMock('\PHPixie\database\Values\GroupBy', array());
+        
+        $this->valuesMock
+                ->expects($this->at(0))
+                ->method('orderBy')
+                ->with($field, $dir)
+                ->will($this->returnValue($groupBy));
+        
+        if($dir === 'asc') {
+            $this->builder->addOrderAscendingBy($field);
+        }else{
+            $this->builder->addOrderDescendingBy($field);
+        }
+        
+        return $groupBy;
+    }
+    
     protected function assertException($callback)
     {
         $except = false;
@@ -294,7 +313,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     protected function builder()
     {
         $class = $this->builderClass;
-        return new $class($this->conditionsMock);
+        return new $class($this->conditionsMock, $this->valuesMock);
     }
     
     protected function getDriver()

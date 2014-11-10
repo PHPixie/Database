@@ -4,16 +4,17 @@ namespace PHPixie\Database\Query\Implementation;
 
 class Builder
 {
-    protected $driver;
     protected $conditions;
+    protected $valueBuilder;
     protected $values = array();
     protected $arrays = array();
     protected $conditionBuilders = array();
     protected $defaultBuilder;
 
-    public function __construct($conditions)
+    public function __construct($conditions, $valueBuilder)
     {
         $this->conditions = $conditions;
+        $this->valueBuilder = $valueBuilder;
     }
 
     public function addFields($args)
@@ -35,12 +36,12 @@ class Builder
 
     public function addOrderAscendingBy($field)
     {
-        $this->addToArray('orderBy', array('field' => $field, 'dir' => 'asc'));
+        $this->addToArray('orderBy', $this->valueBuilder->orderBy($field, 'asc'));
     }
 
     public function addOrderDescendingBy($field)
     {
-        $this->addToArray('orderBy', array('field' => $field, 'dir' => 'desc'));
+        $this->addToArray('orderBy', $this->valueBuilder->orderBy($field, 'desc'));
     }
 
     public function addSet($args)
