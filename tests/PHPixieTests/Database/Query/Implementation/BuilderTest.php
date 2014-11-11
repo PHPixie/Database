@@ -273,7 +273,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     
     protected function addOrderBy($field, $dir)
     {
-        $groupBy = $this->quickMock('\PHPixie\database\Values\GroupBy', array());
+        $groupBy = $this->quickMock('\PHPixie\Database\Values\OrderBy', array());
         
         $this->valuesMock
                 ->expects($this->at(0))
