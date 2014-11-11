@@ -273,13 +273,13 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     
     protected function addOrderBy($field, $dir)
     {
-        $groupBy = $this->quickMock('\PHPixie\Database\Values\OrderBy', array());
+        $orderBy = $this->quickMock('\PHPixie\Database\Values\OrderBy', array());
         
         $this->valuesMock
                 ->expects($this->at(0))
                 ->method('orderBy')
                 ->with($field, $dir)
-                ->will($this->returnValue($groupBy));
+                ->will($this->returnValue($orderBy));
         
         if($dir === 'asc') {
             $this->builder->addOrderAscendingBy($field);
@@ -287,7 +287,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
             $this->builder->addOrderDescendingBy($field);
         }
         
-        return $groupBy;
+        return $orderBy;
     }
     
     protected function assertException($callback)
