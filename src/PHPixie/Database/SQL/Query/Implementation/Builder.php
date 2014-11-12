@@ -77,12 +77,12 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder
     
     public function addOnOperatorCondition($logic, $negate, $field, $operator, $values)
     {
-        $this->lastOnContainer()->addCondition($logic, $negate, $field, $operator, $values);
+        $this->lastOnContainer()->addOperatorCondition($logic, $negate, $field, $operator, $values);
     }
     
     public function addOnPlaceholder($logic = 'and', $negate = false, $allowEmpty = true)
     {
-        $this->lastOnContainer()->addCondition($logic, $negate, $allowEmpty);
+        $this->lastOnContainer()->addPlaceholder($logic, $negate, $allowEmpty);
     }
     
 

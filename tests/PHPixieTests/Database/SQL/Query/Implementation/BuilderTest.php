@@ -196,6 +196,46 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
         }
     }
     
+    /**
+     * @covers ::<protected>
+     * @covers ::addOnOperatorCondition
+     */
+    public function testAddOnOperatorCondition()
+    {
+        $builder = $this->builder;
+        $this->assertException(function() use($builder) {
+            $builder->endOnConditionGroup();
+        });
+
+        $params = array('or', true, 'age', '>', array(5));
+        $this->prepareJoinContainers();
+        for($i=0;$i<2;$i++){
+            $builder->addJoin('test', 'pixie', 'inner');
+            $this->expectCalls($this->containers[$i], array('addOperatorCondition' => $params ));
+            call_user_func_array(array($builder, 'addOnOperatorCondition'), $params);
+        }
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::addOnPlaceholder
+     */
+    public function testAddOnPlaceholder()
+    {
+        $builder = $this->builder;
+        $this->assertException(function() use($builder) {
+            $builder->endOnConditionGroup();
+        });
+
+        $params = array('or', true, false);
+        $this->prepareJoinContainers();
+        for($i=0;$i<2;$i++){
+            $builder->addJoin('test', 'pixie', 'inner');
+            $this->expectCalls($this->containers[$i], array('addPlaceholder' => $params ));
+            call_user_func_array(array($builder, 'addOnPlaceholder'), $params);
+        }
+    }
+    
     protected function prepareJoinContainers()
     {
         for($i=0;$i<2;$i++){

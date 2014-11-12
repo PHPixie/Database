@@ -239,6 +239,26 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     }
     
     /**
+     * @covers ::addOperatorCondition
+     */
+    public function testAddOperatorCondition()
+    {
+        $this->prepareContainer();
+        $this->expectCalls($this->containers[0], array('addOperatorCondition' => array('or', true, 'age', '>', array(5))));
+        $this->builder->addOperatorCondition('or', true, 'age', '>', array(5), 'first');
+    }
+    
+    /**
+     * @covers ::addPlaceholder
+     */
+    public function testAddPlaceholder()
+    {
+        $this->prepareContainer();
+        $this->expectCalls($this->containers[0], array('addPlaceholder' => array('or', true, false)));
+        $this->builder->addPlaceholder('or', true, false, 'first');
+    }
+    
+    /**
      * @covers ::startConditionGroup
      */
     public function testStartConditionGroup()

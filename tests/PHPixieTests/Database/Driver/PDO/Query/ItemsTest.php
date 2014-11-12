@@ -59,7 +59,7 @@ abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
 
     /**
      * @covers ::<protected>
-     * @covers ::getWhereBuilder
+     * @covers ::getWhereContainer
      * @covers ::getWhereConditions
      * @covers ::where
      * @covers ::andWhere
@@ -78,6 +78,9 @@ abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
      * @covers ::startOrWhereNotGroup
      * @covers ::startXorWhereNotGroup
      * @covers ::endWhereGroup
+     * @covers ::addWhereOperatorCondition
+     * @covers ::startWhereConditionGroup
+     * @covers ::addWherePlaceholder
      */
     public function testWhereMethods()
     {
@@ -102,6 +105,9 @@ abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
      * @covers ::startOrNotGroup
      * @covers ::startXorNotGroup
      * @covers ::endGroup
+     * @covers ::addOperatorCondition
+     * @covers ::startConditionGroup
+     * @covers ::addPlaceholder
      */
     public function testShorthandMethods()
     {
@@ -135,9 +141,19 @@ abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
      * @covers ::startOrOnNotGroup
      * @covers ::startXorOnNotGroup
      * @covers ::endOnGroup
+     * @covers ::addOnOperatorCondition
+     * @covers ::startOnConditionGroup
+     * @covers ::addOnPlaceholder
      */
     public function testOnMethods()
     {
-        $this->conditionMethodsTest('on', false, 'addOnCondition', 'startOnConditionGroup', 'endOnConditionGroup', false);
+        $methods = array(
+            'addCondition' => 'addOnCondition',
+            'startConditionGroup' => 'startOnConditionGroup',
+            'endConditionGroup' => 'endOnConditionGroup',
+            'addOperatorCondition' => 'addOnOperatorCondition',
+            'addPlaceholder' => 'addOnPlaceholder',
+        );
+        $this->conditionMethodsTest('on', false, $methods, false);
     }
 }

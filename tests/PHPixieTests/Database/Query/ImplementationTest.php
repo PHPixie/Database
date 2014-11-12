@@ -90,19 +90,20 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         $this->query->test();
     }
     
-    protected function conditionMethodsTest($name, $testContainer= true, $methodOverrides = array(), $passBuilderName = true)
+    protected function conditionMethodsTest($name, $testContainer = true, $methodOverrides = array(), $passBuilderName = true)
     {
         $methods = array(
             'addCondition',
             'startConditionGroup',
             'endConditionGroup',
-            'addOperatorCondition'
+            'addOperatorCondition',
+            'addPlaceholder',
         );
         
         $methodMap = array();
         foreach($methods as $method) {
             $methodName = $method;
-            if(array_key_exist($method, $methodOverrides)) {
+            if(array_key_exists($method, $methodOverrides)) {
                 $methodName = $methodOverrides[$method];
             }
             $methodMap[$method] = $methodName;
@@ -143,13 +144,13 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
                     $with = array(array('test', 1, 2), $logic, $negate);
                     if($passBuilderName)
                         $with[]=$name;
-                    $this->builderMethodTest($method, array('test', 1, 2), $this->query,  null, $with, $operatorMethod);
+                    $this->builderMethodTest($method, array('test', 1, 2), $this->query,  null, $with, $methodMap['addCondition']);
                 }
                 
                 $with = array($logic, $negate);
                 if($passBuilderName)
                     $with[]=$name;
-                $this->builderMethodTest($groupMethod, array(), $this->query, null, $with, $startGroupMethod);
+                $this->builderMethodTest($groupMethod, array(), $this->query, null, $with, $methodMap['startConditionGroup']);
                 
             }
         }
@@ -158,33 +159,24 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         
         $uName = ucfirst($name);
         
-        $this->builderMethodTest('end'.$uName.'Group', array(), $this->query, null, $with, $endGroupMethod);
-
-        $this->builderMethodTest('add'.$uName.'OperatorCondition', 
-                                 array('or', true, 'test', '>', array(5)),
-                                 $this->query,
-                                 null,
-                                 array('or', true, 'test', '>', array(5), $name),
-                                 'addOperatorCondition'
-                                );
+        $this->builderMethodTest('end'.$uName.'Group', array(), $this->query, null, $with, $methodMap['endConditionGroup']);
         
-        $this->builderMethodTest('add'.$uName.'Placeholder', 
-                                 array('or', true, false),
-                                 $this->query,
-                                 null,
-                                 array('or', true, false, $name),
-                                 'addPlaceholder'
-                                );
+        $methods = array(
+            'add'.$uName.'OperatorCondition' => array('or', true, 'test', '>', array(5)),
+            'add'.$uName.'Placeholder' => array('or', true, false),
+            'start'.$uName.'ConditionGroup' => array('or', true)
+        );
         
-        $this->builderMethodTest('start'.$uName.'ConditionGroup', 
-                                 array('or', true),
-                                 $this->query,
-                                 null,
-                                 array('or', true, $name),
-                                 'startConditionGroup'
-                                );
-
-        if($testConditionContainer){
+        foreach($methods as $method => $params) {
+            $builderParams = $params;
+            if($passBuilderName)
+                $builderParams[]=$name;
+            
+            $builderMethod = str_replace($uName, '', $method);
+            $this->builderMethodTest($method, $params, $this->query, null, $builderParams, $methodMap[$builderMethod]);
+        }
+        
+        if($testContainer){
             $this->builderMethodTest('get'.$uName.'Container', array(), $this->builder, $this->builder, $with, 'conditionContainer');
             $this->builderMethodTest('get'.$uName.'Conditions', array(), array('test'), array('test'), $with, 'getConditions');
         }

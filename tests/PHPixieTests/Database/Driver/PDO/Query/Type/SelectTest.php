@@ -48,7 +48,7 @@ class SelectTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemsTest
 
     /**
      * @covers ::<protected>
-     * @covers ::getHavingBuilder
+     * @covers ::getHavingContainer
      * @covers ::getHavingConditions
      * @covers ::having
      * @covers ::andHaving
@@ -67,6 +67,9 @@ class SelectTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemsTest
      * @covers ::startOrHavingNotGroup
      * @covers ::startXorHavingNotGroup
      * @covers ::endHavingGroup
+     * @covers ::addHavingOperatorCondition
+     * @covers ::startHavingConditionGroup
+     * @covers ::addHavingPlaceholder
      */
     public function testHavingMethods()
     {

@@ -153,7 +153,12 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
         return $this->addContainerPlaceholder($logic, $negate, $allowEmpty);
     }
     
-    
+    protected function endOnConditionGroup()
+    {
+        $this->builder->endOnConditionGroup();
+
+        return $this;
+    }
     
     
     protected function addOnCondition($args, $logic = 'and', $negate = false)
@@ -184,13 +189,6 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
         return $this;
     }
 
-    public function endOnConditionGroup()
-    {
-        $this->builder->endOnConditionGroup();
-
-        return $this;
-    }
-    
     public function getWhereContainer()
     {
         return $this->builder->conditionContainer('where');
