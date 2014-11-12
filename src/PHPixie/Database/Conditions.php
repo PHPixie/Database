@@ -19,8 +19,8 @@ class Conditions
         return new Conditions\Condition\Group();
     }
 
-    public function builder($defaultOperator = '=')
+    public function container($defaultOperator = '=')
     {
-        return new Conditions\Builder($this, $defaultOperator);
+        return new Conditions\Builder\Container($this, $defaultOperator);
     }
 }

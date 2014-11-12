@@ -8,6 +8,10 @@ interface Items extends \PHPixie\Database\SQL\Query, \PHPixie\Database\Query\Ite
     public function clearJoins();
     public function getJoins();
 
+    public function addOnOperatorCondition($logic, $negate, $field, $operator, $values);
+    public function addOnPlaceholder($logic = 'and', $negate = false, $allowEmpty = true);
+    public function startOnConditionGroup($logic = 'and', $negate = false);
+    
     public function on();
     public function andOn();
     public function orOn();

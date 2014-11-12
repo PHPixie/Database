@@ -18,12 +18,12 @@ abstract class GroupTest extends \PHPixieTests\Database\SQL\AbstractParserTest
     protected function groups()
     {
 
-        $placeholderBuilder = $this->builder()
+        $placeholderBuilder = $this->container()
                         ->_and('a', 1);
 
-        $placeholder = $placeholderBuilder->addPlaceholder('or')->builder();
-        $placeholderBuilder->xorNot(function ($builder) {
-                            $builder
+        $placeholder = $placeholderBuilder->addPlaceholder('or')->container();
+        $placeholderBuilder->xorNot(function ($container) {
+                            $container
                                 ->_and('d', 1)
                                 ->_and('e', 1);
                         });
@@ -32,8 +32,8 @@ abstract class GroupTest extends \PHPixieTests\Database\SQL\AbstractParserTest
                 ->_or('c', 1);
 
         $groups = array(
-            $this->builder()->_and('a',1)->getConditions(),
-            $this->builder()
+            $this->container()->_and('a',1)->getConditions(),
+            $this->container()
                         ->_and('a', 1)
                         ->_or('b', 1)
                         ->xorNot('c', 1)
@@ -83,9 +83,9 @@ abstract class GroupTest extends \PHPixieTests\Database\SQL\AbstractParserTest
         return $conditions;
     }
 
-    protected function builder()
+    protected function container()
     {
-        return new \PHPixie\Database\Conditions\Builder($this->database->conditions());
+        return new \PHPixie\Database\Conditions\Builder\Container($this->database->conditions());
     }
 
 }

@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Query;
 
-interface Items extends \PHPixie\Database\Query
+interface Items extends \PHPixie\Database\Query, \PHPixie\Database\Conditions\Builder
 {
     public function limit($limit);
     public function clearLimit();
@@ -17,8 +17,15 @@ interface Items extends \PHPixie\Database\Query
     public function clearOrderBy();
     public function getOrderBy();
 
-    public function getWhereBuilder();
+    
+    
+    public function getWhereContainer();
     public function getWhereConditions();
+    
+    public function addWhereOperatorCondition($logic, $negate, $field, $operator, $values);
+    public function addWherePlaceholder($logic = 'and', $negate = false, $allowEmpty = true);
+    public function startWhereConditionGroup($logic = 'and', $negate = false);
+    
     public function where();
     public function andWhere();
     public function orWhere();
@@ -36,22 +43,5 @@ interface Items extends \PHPixie\Database\Query
     public function startOrWhereNotGroup();
     public function startXorWhereNotGroup();
     public function endWhereGroup();
-
-    public function _and();
-    public function _or();
-    public function _xor();
-    public function _not();
-    public function andNot();
-    public function orNot();
-    public function xorNot();
-    public function startGroup();
-    public function startAndGroup();
-    public function startOrGroup();
-    public function startXorGroup();
-    public function startNotGroup();
-    public function startAndNotGroup();
-    public function startOrNotGroup();
-    public function startXorNotGroup();
-    public function endGroup();
 
 }

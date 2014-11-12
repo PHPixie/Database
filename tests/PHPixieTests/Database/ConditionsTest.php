@@ -42,21 +42,21 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $placeholder = $this->conditions->placeholder();
         $this->assertInstanceOf('PHPixie\Database\Conditions\Condition\Placeholder', $placeholder);
-        $this->assertAttributeEquals('=', 'defaultOperator', $placeholder->builder());
+        $this->assertAttributeEquals('=', 'defaultOperator', $placeholder->container());
 
         $placeholder = $this->conditions->placeholder('>');
-        $this->assertAttributeEquals('>', 'defaultOperator', $placeholder->builder());
+        $this->assertAttributeEquals('>', 'defaultOperator', $placeholder->container());
     }
 
     /**
-     * @covers ::builder
+     * @covers ::container
      */
-    public function testBuilder()
+    public function testContainer()
     {
-        $builder = $this->conditions->builder();
+        $builder = $this->conditions->container();
         $this->assertInstanceOf('PHPixie\Database\Conditions\Builder', $builder);
         $this->assertAttributeEquals('=', 'defaultOperator', $builder);
-        $builder = $this->conditions->builder('>');
+        $builder = $this->conditions->container('>');
         $this->assertAttributeEquals('>','defaultOperator',$builder);
     }
 

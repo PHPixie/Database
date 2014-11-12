@@ -90,8 +90,24 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         $this->query->test();
     }
     
-    protected function conditionMethodsTest($name, $testConditionBuilder= true, $operatorMethod = 'addCondition', $startGroupMethod = 'startConditionGroup', $endGroupMethod = 'endConditionGroup', $passBuilderName = true)
+    protected function conditionMethodsTest($name, $testContainer= true, $methodOverrides = array(), $passBuilderName = true)
     {
+        $methods = array(
+            'addCondition',
+            'startConditionGroup',
+            'endConditionGroup',
+            'addOperatorCondition'
+        );
+        
+        $methodMap = array();
+        foreach($methods as $method) {
+            $methodName = $method;
+            if(array_key_exist($method, $methodOverrides)) {
+                $methodName = $methodOverrides[$method];
+            }
+            $methodMap[$method] = $methodName;
+        }
+        
         foreach(array(false, true) as $negate) {
             foreach(array('and', 'or', 'xor', 'short_and') as $logic) {
                 
@@ -139,11 +155,38 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         }
         
         $with = $passBuilderName ? array($name) : array();
-        $this->builderMethodTest('end'.ucfirst($name).'Group', array(), $this->query, null, $with, $endGroupMethod);
         
-        if($testConditionBuilder){
-            $this->builderMethodTest('get'.ucfirst($name).'Builder', array(), $this->builder, $this->builder, $with, 'conditionBuilder');
-            $this->builderMethodTest('get'.ucfirst($name).'Conditions', array(), array('test'), array('test'), $with, 'getConditions');
+        $uName = ucfirst($name);
+        
+        $this->builderMethodTest('end'.$uName.'Group', array(), $this->query, null, $with, $endGroupMethod);
+
+        $this->builderMethodTest('add'.$uName.'OperatorCondition', 
+                                 array('or', true, 'test', '>', array(5)),
+                                 $this->query,
+                                 null,
+                                 array('or', true, 'test', '>', array(5), $name),
+                                 'addOperatorCondition'
+                                );
+        
+        $this->builderMethodTest('add'.$uName.'Placeholder', 
+                                 array('or', true, false),
+                                 $this->query,
+                                 null,
+                                 array('or', true, false, $name),
+                                 'addPlaceholder'
+                                );
+        
+        $this->builderMethodTest('start'.$uName.'ConditionGroup', 
+                                 array('or', true),
+                                 $this->query,
+                                 null,
+                                 array('or', true, $name),
+                                 'startConditionGroup'
+                                );
+
+        if($testConditionContainer){
+            $this->builderMethodTest('get'.$uName.'Container', array(), $this->builder, $this->builder, $with, 'conditionContainer');
+            $this->builderMethodTest('get'.$uName.'Conditions', array(), array('test'), array('test'), $with, 'getConditions');
         }
         
     }

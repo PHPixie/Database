@@ -100,155 +100,241 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
         return $this->builder->getArray('joins');
     }
 
-    protected function addCondition($args, $logic = 'and', $negate = false, $builderName = null)
+    
+    
+    
+    protected function addContainerOperatorCondition($logic, $negate, $field, $operator, $values, $containerName = null)
     {
-        $this->builder->addCondition($args, $logic, $negate, $builderName);
+        $this->builder->addOperatorCondition($logic, $negate, $field, $operator, $values, $containerName);
+        
+        return $this;
+    }
+    
+    protected function addContainerCondition($args, $logic = 'and', $negate = false, $containerName = null)
+    {
+        $this->builder->addCondition($args, $logic, $negate, $containerName);
 
         return $this;
     }
 
-    protected function startConditionGroup($logic = 'and', $negate = false, $builderName = null)
+    protected function startContainerConditionGroup($logic = 'and', $negate = false, $containerName = null)
     {
-        $this->builder->startConditionGroup($logic, $negate, $builderName);
+        $this->builder->startConditionGroup($logic, $negate, $containerName);
 
         return $this;
     }
 
-    protected function endConditionGroup($builderName = null)
+    protected function endContainerConditionGroup($containerName = null)
     {
-        $this->builder->endConditionGroup($builderName);
+        $this->builder->endConditionGroup($containerName);
+
+        return $this;
+    }
+    
+    protected function addContainerPlaceholder($logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
+    {
+        $this->builder->addPlaceholder($logic, $negate, $allowEmpty, $containerName);
+        
+        return $this;
+    }
+    
+    public function addOperatorCondition($logic, $negate, $field, $operator, $values)
+    {
+        return $this->addContainerOperatorCondition($logic, $negate, $field, $operator, $values);
+    }
+    
+    public function startConditionGroup($logic = 'and', $negate = false)
+    {
+        return $this->startContainerConditionGroup($logic, $negate);
+    }
+    
+    public function addPlaceholder($logic = 'and', $negate = false, $allowEmpty = true)
+    {
+        return $this->addContainerPlaceholder($logic, $negate, $allowEmpty);
+    }
+    
+    
+    
+    
+    protected function addOnCondition($args, $logic = 'and', $negate = false)
+    {
+        $this->builder->addOnCondition($args, $logic, $negate);
+
+        return $this;
+    }
+    
+    public function addOnOperatorCondition($logic, $negate, $field, $operator, $values)
+    {
+        $this->builder->addOnOperatorCondition($logic, $negate, $field, $operator, $values);
+        
+        return $this;
+    }
+    
+    public function addOnPlaceholder($logic = 'and', $negate = false, $allowEmpty = true)
+    {
+        $this->builder->addOnPlaceholder($logic, $negate, $allowEmpty);
+        
+        return $this;
+    }
+
+    public function startOnConditionGroup($logic = 'and', $negate = false)
+    {
+        $this->builder->startOnConditionGroup($logic, $negate);
 
         return $this;
     }
 
-    public function getWhereBuilder()
+    public function endOnConditionGroup()
     {
-        return $this->builder->conditionBuilder('where');
+        $this->builder->endOnConditionGroup();
+
+        return $this;
+    }
+    
+    public function getWhereContainer()
+    {
+        return $this->builder->conditionContainer('where');
     }
 
     public function getWhereConditions()
     {
         return $this->builder->getConditions('where');
     }
+    
+    public function addWhereOperatorCondition($logic, $negate, $field, $operator, $values)
+    {
+        return $this->addContainerOperatorCondition($logic, $negate, $field, $operator, $values, 'where');
+    }
+
+    public function startWhereConditionGroup($logic = 'and', $negate = false)
+    {
+        return $this->startContainerConditionGroup($logic, $negate, 'where');
+    }
+
+    public function addWherePlaceholder($logic = 'and', $negate = false, $allowEmpty = true)
+    {
+        return $this->addContainerPlaceholder($logic, $negate, $allowEmpty, 'where');
+    }
 
     public function where()
     {
-        return $this->addCondition(func_get_args(), 'and', false, 'where');
+        return $this->addContainerCondition(func_get_args(), 'and', false, 'where');
     }
 
     public function andWhere()
     {
-        return $this->addCondition(func_get_args(), 'and', false, 'where');
+        return $this->addContainerCondition(func_get_args(), 'and', false, 'where');
     }
 
     public function orWhere()
     {
-        return $this->addCondition(func_get_args(), 'or', false, 'where');
+        return $this->addContainerCondition(func_get_args(), 'or', false, 'where');
     }
 
     public function xorWhere()
     {
-        return $this->addCondition(func_get_args(), 'xor', false, 'where');
+        return $this->addContainerCondition(func_get_args(), 'xor', false, 'where');
     }
 
     public function whereNot()
     {
-        return $this->addCondition(func_get_args(), 'and', true, 'where');
+        return $this->addContainerCondition(func_get_args(), 'and', true, 'where');
     }
 
     public function andWhereNot()
     {
-        return $this->addCondition(func_get_args(), 'and', true, 'where');
+        return $this->addContainerCondition(func_get_args(), 'and', true, 'where');
     }
 
     public function orWhereNot()
     {
-        return $this->addCondition(func_get_args(), 'or', true, 'where');
+        return $this->addContainerCondition(func_get_args(), 'or', true, 'where');
     }
 
     public function xorWhereNot()
     {
-        return $this->addCondition(func_get_args(), 'xor', true, 'where');
+        return $this->addContainerCondition(func_get_args(), 'xor', true, 'where');
     }
 
     public function startWhereGroup()
     {
-        return $this->startConditionGroup('and', false, 'where');
+        return $this->startContainerConditionGroup('and', false, 'where');
     }
 
     public function startAndWhereGroup()
     {
-        return $this->startConditionGroup('and', false, 'where');
+        return $this->startContainerConditionGroup('and', false, 'where');
     }
 
     public function startOrWhereGroup()
     {
-        return $this->startConditionGroup('or', false, 'where');
+        return $this->startContainerConditionGroup('or', false, 'where');
     }
 
     public function startXorWhereGroup()
     {
-        return $this->startConditionGroup('xor', false, 'where');
+        return $this->startContainerConditionGroup('xor', false, 'where');
     }
 
     public function startWhereNotGroup()
     {
-        return $this->startConditionGroup('and', true, 'where');
+        return $this->startContainerConditionGroup('and', true, 'where');
     }
 
     public function startAndWhereNotGroup()
     {
-        return $this->startConditionGroup('and', true, 'where');
+        return $this->startContainerConditionGroup('and', true, 'where');
     }
 
     public function startOrWhereNotGroup()
     {
-        return $this->startConditionGroup('or', true, 'where');
+        return $this->startContainerConditionGroup('or', true, 'where');
     }
 
     public function startXorWhereNotGroup()
     {
-        return $this->startConditionGroup('xor', true, 'where');
+        return $this->startContainerConditionGroup('xor', true, 'where');
     }
 
     public function endWhereGroup()
     {
-        return $this->endConditionGroup('where');
+        return $this->endContainerConditionGroup('where');
     }
-
+    
+    
     public function _and()
     {
-        return $this->addCondition(func_get_args(), 'and', false);
+        return $this->addContainerCondition(func_get_args(), 'and', false);
     }
 
     public function _or()
     {
-        return $this->addCondition(func_get_args(), 'or', false);
+        return $this->addContainerCondition(func_get_args(), 'or', false);
     }
 
     public function _xor()
     {
-        return $this->addCondition(func_get_args(), 'xor', false);
+        return $this->addContainerCondition(func_get_args(), 'xor', false);
     }
 
     public function _not()
     {
-        return $this->addCondition(func_get_args(), 'and', true);
+        return $this->addContainerCondition(func_get_args(), 'and', true);
     }
 
     public function andNot()
     {
-        return $this->addCondition(func_get_args(), 'and', true);
+        return $this->addContainerCondition(func_get_args(), 'and', true);
     }
 
     public function orNot()
     {
-        return $this->addCondition(func_get_args(), 'or', true);
+        return $this->addContainerCondition(func_get_args(), 'or', true);
     }
 
     public function xorNot()
     {
-        return $this->addCondition(func_get_args(), 'xor', true);
+        return $this->addContainerCondition(func_get_args(), 'xor', true);
     }
 
     public function startGroup()
@@ -293,30 +379,11 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
 
     public function endGroup()
     {
-        return $this->endConditionGroup();
+        return $this->endContainerConditionGroup();
     }
-
-    protected function addOnCondition($args, $logic = 'and', $negate = false)
-    {
-        $this->builder->addOnCondition($args, $logic, $negate);
-
-        return $this;
-    }
-
-    protected function startOnConditionGroup($logic = 'and', $negate = false)
-    {
-        $this->builder->startOnConditionGroup($logic, $negate);
-
-        return $this;
-    }
-
-    protected function endOnConditionGroup()
-    {
-        $this->builder->endOnConditionGroup();
-
-        return $this;
-    }
-
+    
+    
+    
     public function on()
     {
         return $this->addOnCondition(func_get_args(), 'and', false);
@@ -399,8 +466,6 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
 
     public function endOnGroup()
     {
-        $this->endOnConditionGroup();
-
-        return $this;
+        return $this->endOnConditionGroup();
     }
 }

@@ -8,24 +8,24 @@ namespace PHPixieTests\Database\Conditions\Condition;
 class PlaceholderTest extends \PHPixieTests\Database\Conditions\ConditionTest
 {
     protected $conditionsMock;
-    protected $builderMock;
+    protected $containerMock;
 
     protected function setUp()
     {
-        $this->builderMock = $this->quickMock('\PHPixie\Database\Conditions\Builder', array('getConditions'));
-        $this->conditionsMock = $this->quickMock('\PHPixie\Database\Conditions', array('builder', 'group'));
+        $this->containerMock = $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array('getConditions'));
+        $this->conditionsMock = $this->quickMock('\PHPixie\Database\Conditions', array('container', 'group'));
         $this->condition = new \PHPixie\Database\Conditions\Condition\Placeholder($this->conditionsMock, '=');
     }
 
     /**
-     * @covers ::builder
+     * @covers ::container
      * @covers ::__construct
      */
-    public function testBuilder()
+    public function testContainer()
     {
-        $this->expectBuilder();
-        $this->assertEquals($this->builderMock, $this->condition->builder());
-        $this->assertEquals($this->builderMock, $this->condition->builder());
+        $this->expectContainer();
+        $this->assertEquals($this->containerMock, $this->condition->container());
+        $this->assertEquals($this->containerMock, $this->condition->container());
     }
 
     /**
@@ -43,10 +43,10 @@ class PlaceholderTest extends \PHPixieTests\Database\Conditions\ConditionTest
      */
     public function testConditionsEmptyException()
     {
-        $this->expectCalls($this->builderMock, array(), array('getConditions' => array()));
+        $this->expectCalls($this->containerMock, array(), array('getConditions' => array()));
         $placeholder = new \PHPixie\Database\Conditions\Condition\Placeholder($this->conditionsMock, '>', false);
-        $this->expectBuilder('>');
-        $placeholder->builder();
+        $this->expectContainer('>');
+        $placeholder->container();
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
         $placeholder->conditions();
     }
@@ -65,18 +65,18 @@ class PlaceholderTest extends \PHPixieTests\Database\Conditions\ConditionTest
      */
     public function testConditions()
     {
-        $this->expectCalls($this->builderMock, array(), array('getConditions' => array('test')));
-        $this->expectBuilder();
-        $this->condition->builder();
+        $this->expectCalls($this->containerMock, array(), array('getConditions' => array('test')));
+        $this->expectContainer();
+        $this->condition->container();
         $this->assertEquals(array('test'), $this->condition->conditions());
     }
 
-    protected function expectBuilder($operator = '=')
+    protected function expectContainer($operator = '=')
     {
         $this->conditionsMock
                 ->expects($this->once())
-                ->method('builder')
+                ->method('container')
                 ->with($operator)
-                ->will($this->returnValue($this->builderMock));
+                ->will($this->returnValue($this->containerMock));
     }
 }

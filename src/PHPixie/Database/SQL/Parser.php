@@ -222,7 +222,7 @@ abstract class Parser extends \PHPixie\Database\Parser
 
             $expr->sql.= ' '.$this->supportedJoins[$join['type']]." JOIN ";
             $this->fragmentParser->appendTable($join['table'], $expr, $join['alias']);
-            $this->appendConditions('on', $join['builder']->getConditions(), $expr);
+            $this->appendConditions('on', $join['container']->getConditions(), $expr);
         }
     }
 

@@ -9,18 +9,18 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     protected $conditionsMock;
     protected $valuesMock;
     
-    protected $builders;
+    protected $containers;
     protected $builder;
     protected $builderClass = '\PHPixie\Database\Query\Implementation\Builder';
     
     public function setUp()
     {
-        $this->builders = array(
-            $this->quickMock('\PHPixie\Database\Conditions\Builder', array()),
-            $this->quickMock('\PHPixie\Database\Conditions\Builder', array()),
+        $this->containers = array(
+            $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array()),
+            $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array()),
         );
         
-        $this->conditionsMock = $this->quickMock('\PHPixie\Database\Conditions', array('builder'));
+        $this->conditionsMock = $this->quickMock('\PHPixie\Database\Conditions', array('container'));
         $this->valuesMock = $this->quickMock('\PHPixie\Database\Values', array());
         
         $this->builder = $this->builder();
@@ -173,33 +173,33 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     }
     
     /**
-     * @covers ::conditionBuilder
+     * @covers ::conditionContainer
      */
-    public function testConditionBuilder()
+    public function testConditionContainer()
     {
-        $this->prepareBuilder();
+        $this->prepareContainer();
         $this
             ->conditionsMock
             ->expects($this->at(1))
-            ->method('builder')
-            ->will($this->returnValue($this->builders[1]));
+            ->method('container')
+            ->will($this->returnValue($this->containers[1]));
         
-        $firstBuilder = $this->builder->conditionBuilder('first');
-        $secondBuilder = $this->builder->conditionBuilder('second');
-        $this->assertEquals($firstBuilder, $this->builder->conditionBuilder('first'));
-        $this->assertEquals($firstBuilder, $this->builder->conditionBuilder());
-        $this->assertEquals($secondBuilder, $this->builder->conditionBuilder('second'));
-        $this->assertEquals($secondBuilder, $this->builder->conditionBuilder());
-        $this->assertNotSame($firstBuilder, $secondBuilder);
+        $firstContainer = $this->builder->conditionContainer('first');
+        $secondContainer = $this->builder->conditionContainer('second');
+        $this->assertEquals($firstContainer, $this->builder->conditionContainer('first'));
+        $this->assertEquals($firstContainer, $this->builder->conditionContainer());
+        $this->assertEquals($secondContainer, $this->builder->conditionContainer('second'));
+        $this->assertEquals($secondContainer, $this->builder->conditionContainer());
+        $this->assertNotSame($firstContainer, $secondContainer);
     }
     
     /**
-     * @covers ::conditionBuilder
+     * @covers ::conditionContainer
      */
-    public function testConditionBuilderException()
+    public function testConditionContainerException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->builder->conditionBuilder();
+        $this->builder->conditionContainer();
     }
     
     /**
@@ -207,19 +207,19 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testGetConditions()
     {
-        $this->prepareBuilder();
+        $this->prepareContainer();
         $this->assertEquals(array(), $this->builder->getConditions('first'));
         
-        $firstBuilder = $this->builder->conditionBuilder('first');
+        $firstContainer = $this->builder->conditionContainer('first');
         
-        $firstBuilder
+        $firstContainer
             ->expects($this->at(0))
             ->method('getConditions')
             ->will($this->returnValue(array()));
                            
         $this->assertEquals(array(), $this->builder->getConditions('first'));
                         
-        $firstBuilder
+        $firstContainer
             ->expects($this->at(0))
             ->method('getConditions')
             ->will($this->returnValue(array(1)));
@@ -233,8 +233,8 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testAddCondition()
     {
-        $this->prepareBuilder();
-        $this->expectCalls($this->builders[0], array('addCondition' => array('or', true, array(5))));
+        $this->prepareContainer();
+        $this->expectCalls($this->containers[0], array('addCondition' => array('or', true, array(5))));
         $this->builder->addCondition(array(5), 'or', true, 'first');
     }
     
@@ -243,8 +243,8 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testStartConditionGroup()
     {
-        $this->prepareBuilder();
-        $this->expectCalls($this->builders[0], array('startConditionGroup' => array('or', true)));
+        $this->prepareContainer();
+        $this->expectCalls($this->containers[0], array('startConditionGroup' => array('or', true)));
         $this->builder->startConditionGroup('or', true, 'first');
     }
     
@@ -253,8 +253,8 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testEndConditionGroup()
     {
-        $this->prepareBuilder();
-        $this->expectCalls($this->builders[0], array('endGroup' => array()));
+        $this->prepareContainer();
+        $this->expectCalls($this->containers[0], array('endGroup' => array()));
         $this->builder->endConditionGroup('first');
     }
     
@@ -302,12 +302,12 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals(true, $except);
     }
     
-    protected function prepareBuilder()
+    protected function prepareContainer()
     {
         $this->conditionsMock
                 ->expects($this->at(0))
-                ->method('builder')
-                ->will($this->returnValue($this->builders[0]));
+                ->method('container')
+                ->will($this->returnValue($this->containers[0]));
     }
     
     protected function builder()

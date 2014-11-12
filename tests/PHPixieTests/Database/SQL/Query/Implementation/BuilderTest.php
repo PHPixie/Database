@@ -54,14 +54,14 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
     public function testAddJoin()
     {
         $builder = $this->builder;
-        $this->prepareJoinBuilders();
+        $this->prepareJoinContainers();
         
         $builder->addJoin('test', 'pixie', 'inner');
         $builder->addJoin('test', 'pixie', 'left');
         
         $this->assertEquals(array(
-            array('builder' => $this->builders[0], 'table' => 'test', 'alias' => 'pixie', 'type' => 'inner'),
-            array('builder' => $this->builders[1], 'table' => 'test', 'alias' => 'pixie', 'type' => 'left'),
+            array('container' => $this->containers[0], 'table' => 'test', 'alias' => 'pixie', 'type' => 'inner'),
+            array('container' => $this->containers[1], 'table' => 'test', 'alias' => 'pixie', 'type' => 'left'),
         ), $builder->getArray('joins'));
     }
     
@@ -151,10 +151,10 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
         });
         
 
-        $this->prepareJoinBuilders();
+        $this->prepareJoinContainers();
         for($i=0;$i<2;$i++){
             $builder->addJoin('test', 'pixie', 'inner');
-            $this->expectCalls($this->builders[$i], array('addCondition' => array('or', true, array(5))));
+            $this->expectCalls($this->containers[$i], array('addCondition' => array('or', true, array(5))));
             $builder->addOnCondition(array(5), 'or', true);
         }
     }
@@ -169,10 +169,10 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
         $this->assertException(function() use($builder) {
             $builder->startOnConditionGroup('or', true);
         });
-        $this->prepareJoinBuilders();
+        $this->prepareJoinContainers();
         for($i=0;$i<2;$i++){
             $builder->addJoin('test', 'pixie', 'inner');
-            $this->expectCalls($this->builders[$i], array('startConditionGroup' => array('or', true)));
+            $this->expectCalls($this->containers[$i], array('startConditionGroup' => array('or', true)));
             $builder->startOnConditionGroup('or', true);
         }
     }
@@ -188,22 +188,22 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
             $builder->endOnConditionGroup();
         });
         
-        $this->prepareJoinBuilders();
+        $this->prepareJoinContainers();
         for($i=0;$i<2;$i++){
             $builder->addJoin('test', 'pixie', 'inner');
-            $this->expectCalls($this->builders[$i], array('endGroup' => array()));
+            $this->expectCalls($this->containers[$i], array('endGroup' => array()));
             $builder->endOnConditionGroup();
         }
     }
     
-    protected function prepareJoinBuilders()
+    protected function prepareJoinContainers()
     {
         for($i=0;$i<2;$i++){
             $this->conditionsMock
                 ->expects($this->at($i))
-                ->method('builder')
+                ->method('container')
                 ->with('=*')
-                ->will($this->returnValue($this->builders[$i]));
+                ->will($this->returnValue($this->containers[$i]));
         }
     }
 }

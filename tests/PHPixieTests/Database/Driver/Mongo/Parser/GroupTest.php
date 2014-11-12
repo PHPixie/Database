@@ -23,24 +23,24 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testParseSimple()
     {
-        $builder = $this->getBuilder()
+        $container = $this->getContainer()
                                     ->_and('name', 1)
-                                    ->_and(function ($builder) {
-                                        $builder->_and('id', 2)->_or('id', 3);
+                                    ->_and(function ($container) {
+                                        $container->_and('id', 2)->_or('id', 3);
                                     });
-        $this->assertGroup($builder, array(
+        $this->assertGroup($container, array(
             '$or'=>array(
                 array('name'=>1, 'id'=>2),
                 array('name' => 1, 'id' => 3)
             )
         ));
 
-        $builder = $this->getBuilder()
+        $container = $this->getContainer()
                                     ->_and('a', 1)
                                     ->_and('a', '>', 6)
                                     ->_and('a', '<', 10);
 
-        $this->assertGroup($builder, array(
+        $this->assertGroup($container, array(
             '$and'=>array(
                 array('a' => 1),
                 array('a' => array('$gt' => 6)),
@@ -48,15 +48,15 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
             )
         ));
 
-        $builder = $this->getBuilder()
+        $container = $this->getContainer()
                                     ->_and('a', 1)
-                                    ->_and(function ($builder) {
-                                        $builder
+                                    ->_and(function ($container) {
+                                        $container
                                             ->_and('b', '>', 2)
                                             ->_xor('c', '>' , 3);
                                     });
 
-        $this->assertGroup($builder, array(
+        $this->assertGroup($container, array(
             '$or' => array(
                         array(
                             'a' => 1,
@@ -71,14 +71,14 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
                     )
         ));
 
-        $builder = $this->getBuilder()
+        $container = $this->getContainer()
                                     ->_and('b', 1)
                                     ->_and('b', '>', 2)
                                     ->_and('a', 2)
                                     ->_and('a', '<', 3)
                                     ->andNot('a', '>', 4);
 
-        $this->assertGroup($builder, array(
+        $this->assertGroup($container, array(
             '$and' => array(
                         array(
                             'b' => 1,
@@ -94,11 +94,11 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
                     )
         ));
 
-        $builder = $this->getBuilder()
+        $container = $this->getContainer()
                                     ->_and('b', 1)
                                     ->xorNot('a', '>', 4);
 
-        $this->assertGroup($builder, array(
+        $this->assertGroup($container, array(
             '$or' => array(
                         array(
                             'b' => 1,
@@ -111,26 +111,26 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
                     )
         ));
 
-        $builder = $this->getBuilder()->_and(function ($builder) {
-            $builder->_and(function () {});
+        $container = $this->getContainer()->_and(function ($container) {
+            $container->_and(function () {});
         });
-        $this->assertGroup($builder, array());
+        $this->assertGroup($container, array());
 
-        $builder = $this->getBuilder()->_and(function ($builder) {
-            $builder
+        $container = $this->getContainer()->_and(function ($container) {
+            $container
                     ->_and('a', 1)
-                    ->_and(function ($builder) {
-                        $builder->_and(function () {});
+                    ->_and(function ($container) {
+                        $container->_and(function () {});
                     });
         });
-        $this->assertGroup($builder, array('a' => 1));
+        $this->assertGroup($container, array('a' => 1));
 
         $subdocument = $this->database->subdocumentCondition();
         $subdocument
                     ->and('a', 1)
                     ->or('a', '>', 1);
-        $builder = $this->getBuilder()->_and('p', 'elemMatch', $subdocument);
-        $this->assertGroup($builder, array(
+        $container = $this->getContainer()->_and('p', 'elemMatch', $subdocument);
+        $this->assertGroup($container, array(
             'p' => array(
                 '$elemMatch' => array(
                     '$or' => array(
@@ -152,10 +152,10 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testParseNegate()
     {
-        $builder = $this->getBuilder()
+        $container = $this->getContainer()
                                     ->_and('a', 1)
                                     ->andNot('c',2);
-        $this->assertGroup($builder, array(
+        $this->assertGroup($container, array(
             'a' => 1,
             'c' => array('$ne'=>2)
         ));
@@ -167,13 +167,13 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testParsePrecedance()
     {
-        $builder = $this->getBuilder()
+        $container = $this->getContainer()
                                     ->_and('a', 1)
                                     ->_and('b', 1)
                                     ->_or('c', 1)
                                     ->_and('d', 1);
 
-        $this->assertGroup($builder, array(
+        $this->assertGroup($container, array(
             '$or' => array(
                         array(
                             'a' => 1,
@@ -186,14 +186,14 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
                     )
         ));
 
-        $builder = $this->getBuilder()
+        $container = $this->getContainer()
                                     ->_and('d', 1)
                                     ->_or('a', 1)
                                     ->_and('b', 1)
                                     ->_xor('c', 1)
                                     ->_or('e',1);
 
-        $this->assertGroup($builder, array(
+        $this->assertGroup($container, array(
             '$or' => array(
                         array('d' => 1),
                         array(
@@ -213,14 +213,14 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
                     )
         ));
 
-        $builder = $this->getBuilder()
+        $container = $this->getContainer()
                                     ->_and('a', 1);
-        $placeholder = $builder->addPlaceholder('and')->builder();
+        $placeholder = $container->addPlaceholder('and')->container();
         $placeholder
                 ->_and('b',1)
                 ->_or('c', 1);
 
-        $this->assertGroup($builder, array(
+        $this->assertGroup($container, array(
             '$or' => array(
                         array('a' => 1, 'b' => 1),
                         array('a' => 1, 'c' => 1)
@@ -228,16 +228,16 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
         ));
     }
 
-    protected function getBuilder()
+    protected function getContainer()
     {
-        $builder = new \PHPixie\Database\Conditions\Builder($this->database->conditions());
+        $container = new \PHPixie\Database\Conditions\Builder\Container($this->database->conditions());
 
-        return $builder;
+        return $container;
     }
 
-    protected function assertGroup($builder, $expect)
+    protected function assertGroup($container, $expect)
     {
-        $parsed = $this->groupParser->parse($builder->getConditions());
+        $parsed = $this->groupParser->parse($container->getConditions());
         $this->assertEquals($expect, $parsed);
     }
 

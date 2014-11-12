@@ -9,7 +9,7 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
      
     /**
      * @covers ::<protected>
-     * @covers ::getWhereBuilder
+     * @covers ::getWhereContainer
      * @covers ::getWhereConditions
      * @covers ::where
      * @covers ::andWhere
@@ -27,6 +27,9 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
      * @covers ::startAndWhereNotGroup
      * @covers ::startOrWhereNotGroup
      * @covers ::startXorWhereNotGroup
+     * @covers ::addWhereOperatorCondition
+     * @covers ::startWhereConditionGroup
+     * @covers ::addWherePlaceholder
      * @covers ::endWhereGroup
      */
     public function testWhereMethods()
@@ -52,6 +55,9 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
      * @covers ::startOrNotGroup
      * @covers ::startXorNotGroup
      * @covers ::endGroup
+     * @covers ::addOperatorCondition
+     * @covers ::startConditionGroup
+     * @covers ::addPlaceholder
      */
     public function testShorthandMethods()
     {

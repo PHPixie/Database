@@ -7,7 +7,7 @@ class Placeholder extends \PHPixie\Database\Conditions\Condition
     protected $conditions;
     protected $defaultOperator;
     protected $allowEmpty;
-    protected $builder;
+    protected $container;
 
     public function __construct($conditions, $defaultOperator = '=', $allowEmpty = true)
     {
@@ -16,20 +16,20 @@ class Placeholder extends \PHPixie\Database\Conditions\Condition
         $this->allowEmpty      = $allowEmpty;
     }
 
-    public function builder()
+    public function container()
     {
-        if ($this->builder === null)
-            $this->builder = $this->conditions->builder($this->defaultOperator);
+        if ($this->container === null)
+            $this->container = $this->conditions->container($this->defaultOperator);
 
-        return $this->builder;
+        return $this->container;
     }
 
     public function conditions()
     {
         $conditions = array();
 
-        if ($this->builder !== null)
-            $conditions = $this->builder->getConditions();
+        if ($this->container !== null)
+            $conditions = $this->container->getConditions();
 
         if (empty($conditions))
             if(!$this->allowEmpty)

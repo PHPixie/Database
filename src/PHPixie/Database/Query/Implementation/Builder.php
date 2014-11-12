@@ -8,8 +8,8 @@ class Builder
     protected $valueBuilder;
     protected $values = array();
     protected $arrays = array();
-    protected $conditionBuilders = array();
-    protected $defaultBuilder;
+    protected $conditionContainers = array();
+    protected $defaultContainer;
 
     public function __construct($conditions, $valueBuilder)
     {
@@ -147,41 +147,51 @@ class Builder
         }
     }
 
-    public function conditionBuilder($name = null)
+    public function conditionContainer($name = null)
     {
         if ($name === null) {
-            $this->assert($this->defaultBuilder !== null, "None of the condition builders were used");
+            $this->assert($this->defaultContainer !== null, "None of the condition containers were used");
 
         } else {
-            if (!array_key_exists($name, $this->conditionBuilders))
-                $this->conditionBuilders[$name] = $this->conditions->builder();
-            $this->defaultBuilder = $this->conditionBuilders[$name];
+            if (!array_key_exists($name, $this->conditionContainers))
+                $this->conditionContainers[$name] = $this->conditions->container();
+            $this->defaultContainer = $this->conditionContainers[$name];
         }
 
-        return $this->defaultBuilder;
+        return $this->defaultContainer;
     }
 
     public function getConditions($name)
     {
-        if (!isset($this->conditionBuilders[$name]))
+        if (!isset($this->conditionContainers[$name]))
             return array();
 
-        return $this->conditionBuilders[$name]->getConditions();
+        return $this->conditionContainers[$name]->getConditions();
     }
 
-    public function addCondition($args, $logic = 'and', $negate = false, $builderName = null)
+    public function addCondition($args, $logic = 'and', $negate = false, $containerName = null)
     {
-        $this->conditionBuilder($builderName)->addCondition($logic, $negate, $args);
+        $this->conditionContainer($containerName)->addCondition($logic, $negate, $args);
     }
 
-    public function startConditionGroup($logic = 'and', $negate = false, $builderName = null)
+    public function addOperatorCondition($logic, $negate, $field, $operator, $values, $containerName = null)
     {
-        $this->conditionBuilder($builderName)->startConditionGroup($logic, $negate);
+        $this->conditionContainer($containerName)->addOperatorCondition($logic, $negate, $field, $operator, $values);
+    }
+    
+    public function startConditionGroup($logic = 'and', $negate = false, $containerName = null)
+    {
+        $this->conditionContainer($containerName)->startConditionGroup($logic, $negate);
     }
 
-    public function endConditionGroup($builderName = null)
+    public function endConditionGroup($containerName = null)
     {
-        $this->conditionBuilder($builderName)->endGroup();
+        $this->conditionContainer($containerName)->endGroup();
+    }
+    
+    public function addPlaceholder($logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
+    {
+        $this->conditionContainer($containerName)->addPlaceholder($logic, $negate, $allowEmpty);
     }
 
     public function assert($condition, $exceptionMessage)

@@ -12,6 +12,13 @@ interface Select extends \PHPixie\Database\SQL\Query\Items, \PHPixie\Database\Qu
     public function union($query, $all = false);
     public function clearUnions();
     public function getUnions();
+    
+    public function getHavingContainer();
+    public function getHavingConditions();
+    
+    public function addHavingOperatorCondition($logic, $negate, $field, $operator, $values);
+    public function addHavingPlaceholder($logic = 'and', $negate = false, $allowEmpty = true);
+    public function startHavingConditionGroup($logic = 'and', $negate = false);
 
     public function having();
     public function andHaving();

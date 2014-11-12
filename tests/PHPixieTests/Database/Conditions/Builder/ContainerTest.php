@@ -1,11 +1,11 @@
 <?php
 
-namespace PHPixieTests\Database\Conditions;
+namespace PHPixieTests\Database\Conditions\Builder;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Conditions\Builder
+ * @coversDefaultClass \PHPixie\Database\Conditions\Builder\Container
  */
-class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
+class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $builder;
     protected $conditions;
@@ -14,7 +14,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     public function setUp()
     {
         $this->conditions = new \PHPixie\Database\Conditions;
-        $this->builder = new \PHPixie\Database\Conditions\Builder($this->conditions, '=');
+        $this->builder = new \PHPixie\Database\Conditions\Builder\Container($this->conditions, '=');
     }
     
     /**
