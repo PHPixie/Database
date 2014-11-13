@@ -236,6 +236,24 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertSame('or', $condition->logic());
         $this->assertSame(true, $condition->negated());
     }
+    
+    /**
+     * @covers ::pushGroup
+     */
+    public function testPushGroup()
+    {
+        $group = $this->conditions->group();
+        $this->builder->pushGroup('or', true, $group);
+        
+        $condition = $this->conditions->operator('a', '=', array(1));
+        $this->builder->addToCurrentGroup('or', true, $condition);
+        
+        $this->assertConditions(array(
+            array('or', true, array(
+                array('or', true, 'a', '=', array(1))
+            ))
+        ));
+    }
 
     /**
      * @covers ::startConditionGroup
