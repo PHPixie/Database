@@ -28,6 +28,11 @@ class ParserStub extends \PHPixie\Database\Conditions\Logic\Parser
     }
 }
 
+class ConditionStub extends \PHPixie\Database\Conditions\Condition
+{
+    public $name;
+}
+
 /**
  * @coversDefaultClass \PHPixie\Database\Conditions\Logic\Parser
  */
@@ -84,9 +89,9 @@ class ParserTest extends \PHPixieTests\AbstractDatabaseTest
 
     protected function condition($name, $logic)
     {
-        $cond = new \stdClass;
+        $cond = new ConditionStub();
         $cond->name = $name;
-        $cond->logic = $logic;
+        $cond->setLogic($logic);
 
         return $cond;
     }

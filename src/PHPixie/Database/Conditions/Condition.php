@@ -4,8 +4,10 @@ namespace PHPixie\Database\Conditions;
 
 abstract class Condition
 {
+    protected $allowedLogic = array('and', 'or', 'xor');
+    
     protected $negated = false;
-    public $logic = 'and';
+    protected $logic = 'and';
 
     public function logic()
     {
@@ -14,8 +16,10 @@ abstract class Condition
 
     public function setLogic($logic)
     {
+        if(!in_array($logic, $this->allowedLogic))
+            throw new \PHPixie\Database\Exception\Builder("The '$logic' logic is not supported");
+        
         $this->logic = $logic;
-
         return $this;
     }
 

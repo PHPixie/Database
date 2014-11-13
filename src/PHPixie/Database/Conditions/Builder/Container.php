@@ -24,9 +24,10 @@ class Container implements \PHPixie\Database\Conditions\Builder
     public function startConditionGroup($logic = 'and', $negate = false)
     {
         $group = $this->conditions->group();
+        $group->setLogic($logic);
         if($negate)
             $group->negate();
-        $this->currentGroup->add($group, $logic);
+        $this->currentGroup->add($group);
         $this->pushGroup($group);
 
         return $this;
@@ -102,10 +103,11 @@ class Container implements \PHPixie\Database\Conditions\Builder
 
     protected function addToCurrent($logic, $negate, $condition)
     {
+        $condition->setLogic($logic);
         if ($negate)
             $condition->negate();
 
-        $this->currentGroup->add($condition, $logic);
+        $this->currentGroup->add($condition);
     }
 
     public function __call($method, $args)

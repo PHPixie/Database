@@ -44,7 +44,7 @@ abstract class Group
     {
         foreach ($group as $key=>$condition) {
             if ($key > 0)
-                $expr->sql.= ' '.strtoupper($condition->logic).' ';
+                $expr->sql.= ' '.strtoupper($condition->logic()).' ';
             $this->appendCondition($condition, $expr);
         }
     }

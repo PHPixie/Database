@@ -20,7 +20,7 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
             $group = $this->parseLogic($group);
 
             if ($group != null) {
-                $group->logic = $condition->logic;
+                $group->setLogic($condition->logic());
                 if ($condition->negated())
                     $group->negate();
             }
@@ -31,7 +31,7 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
         if ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
             $expanded = $this->driver->expandedCondition();
             $expanded->add($condition);
-            $expanded->logic = $condition->logic;
+            $expanded->setLogic($condition->logic());
 
             return $expanded;
         }
@@ -42,10 +42,10 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
 
     protected function merge($left, $right)
     {
-        if ($right->logic === 'and') {
+        if ($right->logic() === 'and') {
             return $left->add($right);
 
-        } elseif ($right->logic === 'or') {
+        } elseif ($right->logic() === 'or') {
             return $left->add($right, 'or');
 
         } else {
@@ -61,7 +61,7 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
             $rightPart->add($right);
 
             $merged->add($rightPart, 'or');
-            $merged->logic = $left->logic;
+            $merged->setLogic($left->logic());
 
             return $merged;
         }

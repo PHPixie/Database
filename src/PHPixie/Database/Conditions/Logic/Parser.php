@@ -23,12 +23,12 @@ abstract class Parser
                 break;
             }
 
-            if ($this->logicPrecedance[$next->logic] < $level) {
+            if ($this->logicPrecedance[$next->logic()] < $level) {
                 $iterator->seek($iterator->key()-1);
                 break;
             }
 
-            $right = $this->parseLogicLevel($iterator, $this->logicPrecedance[$next->logic] + 1);
+            $right = $this->parseLogicLevel($iterator, $this->logicPrecedance[$next->logic()] + 1);
 
             if ($right !== null)
                 $res = $this->merge($res, $right);

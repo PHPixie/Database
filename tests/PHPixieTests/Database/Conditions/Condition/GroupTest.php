@@ -13,33 +13,6 @@ class GroupTest extends \PHPixieTests\Database\Conditions\ConditionTest
     }
 
     /**
-     * @covers ::addAnd
-     * @covers ::addOr
-     * @covers ::addXor
-     * @covers ::add
-     * @covers ::conditions
-     */
-    public function testGroup()
-    {
-        $expected = array();
-        $this->condition->addAnd($expected[] = $this->condition());
-        $this->condition->addOr($expected[] = $this->condition());
-        $this->condition->addXor($expected[] = $this->condition());
-        $this->condition->add($expected[] = $this->condition(), 'and');
-        $this->condition->add($expected[] = $this->condition(), 'or');
-        $this->condition->add($expected[] = $this->condition(), 'xor');
-
-        $conditions = $this->condition->conditions();
-        $this->assertEquals($expected, $conditions);
-
-        $expectedLogic = array('and', 'or', 'xor', 'and', 'or', 'xor');
-        foreach ($conditions as $key => $condition) {
-            $this->assertEquals($expectedLogic[$key], $condition->logic);
-        }
-
-    }
-
-    /**
      * @covers ::setConditions
      * @covers ::conditions
      */
@@ -55,8 +28,13 @@ class GroupTest extends \PHPixieTests\Database\Conditions\ConditionTest
      */
     public function testException()
     {
-        $this->setExpectedException('\PHPixie\Database\Exception');
-        $this->condition->add($expected[] = $this->condition(), 'maybe');
+        $expected = array();
+        $this->condition->add($expected[] = $this->condition());
+        $this->condition->add($expected[] = $this->condition());
+        $this->condition->add($expected[] = $this->condition());
+
+        $conditions = $this->condition->conditions();
+        $this->assertEquals($expected, $conditions);
     }
 
     protected function condition()

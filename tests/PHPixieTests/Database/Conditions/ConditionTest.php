@@ -27,5 +27,8 @@ abstract class ConditionTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->assertEquals($this->condition, $this->condition->setLogic('or'));
         $this->assertEquals('or', $this->condition->logic());
+        
+        $this->setExpectedException('\PHPixie\Database\Exception\Builder');
+        $this->condition->setLogic('test');
     }
 }

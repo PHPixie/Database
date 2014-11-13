@@ -282,7 +282,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
         foreach ($conditions as $key => $condition) {
             $e = $expected[$key];
 
-            $this->assertEquals($e[0], $condition->logic);
+            $this->assertEquals($e[0], $condition->logic());
             $this->assertEquals($e[1], $condition->negated());
             if ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
                 $this->assertEquals($e[2], $condition->field);
