@@ -18,21 +18,24 @@ class Container implements \PHPixie\Database\Conditions\Builder
     public function __construct($conditions, $defaultOperator = '=') {
         $this->conditions = $conditions;
         $this->defaultOperator = $defaultOperator;
-        $this->pushGroup($this->conditions->group());
+                
+        $this->currentGroup = $this->conditions->group();
+        $this->groupStack[] = $this->currentGroup;
     }
 
     public function startConditionGroup($logic = 'and', $negate = false)
     {
         $group = $this->conditions->group();
-        $this->addToCurrent($logic, $negate, $group);
-        $this->pushGroup($group);
+        $this->pushGroup($logic, $negate, $group);
 
         return $this;
     }
 
-    protected function pushGroup($group)
+    public function pushGroup($logic, $negate, $group)
     {
-        $this->groupStack[]=$group;
+        $this->addToCurrentGroup($logic, $negate, $group);
+        
+        $this->groupStack[] = $group;
         $this->currentGroup = $group;
     }
 
@@ -82,13 +85,13 @@ class Container implements \PHPixie\Database\Conditions\Builder
     public function addOperatorCondition($logic, $negate, $field, $operator, $values)
     {
         $condition = $this->conditions->operator($field, $operator, $values);
-        $this->addToCurrent($logic, $negate, $condition);
+        $this->addToCurrentGroup($logic, $negate, $condition);
     }
 
     public function addPlaceholder($logic = 'and', $negate = false, $allowEmpty = true)
     {
         $placeholder = $this->conditions->placeholder($this->defaultOperator, $allowEmpty);
-        $this->addToCurrent($logic, $negate, $placeholder);
+        $this->addToCurrentGroup($logic, $negate, $placeholder);
 
         return $placeholder;
     }
@@ -98,7 +101,7 @@ class Container implements \PHPixie\Database\Conditions\Builder
         return $this->groupStack[0]->conditions();
     }
 
-    protected function addToCurrent($logic, $negate, $condition)
+    public function addToCurrentGroup($logic, $negate, $condition)
     {
         $this->addToGroup($this->currentGroup, $logic, $negate, $condition);
     }

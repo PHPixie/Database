@@ -13,8 +13,8 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 
     public function setUp()
     {
-        $this->conditions = new \PHPixie\Database\Conditions;
-        $this->builder = new \PHPixie\Database\Conditions\Builder\Container($this->conditions, '=');
+        $this->conditions = $this->conditions();
+        $this->builder = $this->builder();
     }
     
     /**
@@ -45,7 +45,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
      * @covers ::startXorNotGroup
      * @covers ::addCondition
      * @covers ::getConditions
-     * @covers ::addToCurrent
+     * @covers ::addToCurrentGroup
      * @covers ::pushGroup
      */
     public function testConditions()
@@ -113,7 +113,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     /**
      * @covers ::addCondition
      * @covers ::getConditions
-     * @covers ::addToCurrent
+     * @covers ::addToCurrentGroup
      */
     public function testAddCondition()
     {
@@ -161,7 +161,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     /**
      * @covers ::addOperatorCondition
      * @covers ::getConditions
-     * @covers ::addToCurrent
+     * @covers ::addToCurrentGroup
      */
     public function testAddOperatorCondition()
     {
@@ -176,7 +176,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
      * @covers ::startConditionGroup
      * @covers ::endGroup
      * @covers ::getConditions
-     * @covers ::addToCurrent
+     * @covers ::addToCurrentGroup
      * @covers ::pushGroup
      */
     public function testNested()
@@ -224,6 +224,18 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals(true, $placeholder->negated());
         $this->assertAttributeEquals(false, 'allowEmpty', $placeholder);
     }
+    
+    /**
+     * @covers ::addToCurrentGroup
+     */
+    public function testAddToCurrentGroup()
+    {
+        $condition = $this->conditions->operator('a', '=', array(1));
+        $this->builder->addToCurrentGroup('or', true, $condition);
+        $this->assertSame(array($condition), $this->builder->getConditions());
+        $this->assertSame('or', $condition->logic());
+        $this->assertSame(true, $condition->negated());
+    }
 
     /**
      * @covers ::startConditionGroup
@@ -254,7 +266,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 
     /**
      * @covers ::addCondition
-     * @covers ::addToCurrent
+     * @covers ::addToCurrentGroup
      */
     public function testSingleArgumentException()
     {
@@ -264,7 +276,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 
     /**
      * @covers ::addCondition
-     * @covers ::addToCurrent
+     * @covers ::addToCurrentGroup
      */
     public function testNoArgumentsException()
     {
@@ -292,5 +304,15 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
                 $this->assertConditionArray($condition->conditions(), $e[2]);
             }
         }
+    }
+    
+    protected function conditions()
+    {
+        return new \PHPixie\Database\Conditions;
+    }
+    
+    protected function builder($defaultOperator = '=')
+    {
+        return new \PHPixie\Database\Conditions\Builder\Container($this->conditions, $defaultOperator);
     }
 }
