@@ -314,13 +314,19 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 
             $this->assertEquals($e[0], $condition->logic());
             $this->assertEquals($e[1], $condition->negated());
-            if ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
-                $this->assertEquals($e[2], $condition->field);
-                $this->assertEquals($e[3], $condition->operator);
-                $this->assertEquals($e[4], $condition->values);
-            } else {
-                $this->assertConditionArray($condition->conditions(), $e[2]);
-            }
+            
+            $this->assertCondition($condition, $e);
+        }
+    }
+    
+    protected function assertCondition($condition, $expected)
+    {
+         if ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
+                $this->assertEquals($expected[2], $condition->field);
+                $this->assertEquals($expected[3], $condition->operator);
+                $this->assertEquals($expected[4], $condition->values);
+        } else {
+                $this->assertConditionArray($condition->conditions(), $expected[2]);
         }
     }
     
