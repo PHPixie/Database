@@ -238,24 +238,6 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     }
     
     /**
-     * @covers ::pushGroup
-     */
-    public function testPushGroup()
-    {
-        $group = $this->conditions->group();
-        $this->container->pushGroup('or', true, $group);
-        
-        $condition = $this->conditions->operator('a', '=', array(1));
-        $this->container->addToCurrentGroup('or', true, $condition);
-        
-        $this->assertConditions(array(
-            array('or', true, array(
-                array('or', true, 'a', '=', array(1))
-            ))
-        ));
-    }
-
-    /**
      * @covers ::startConditionGroup
      */
     public function testStartConditionGroupException()

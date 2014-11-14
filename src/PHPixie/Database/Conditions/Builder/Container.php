@@ -19,22 +19,21 @@ class Container implements \PHPixie\Database\Conditions\Builder
         $this->conditions = $conditions;
         $this->defaultOperator = $defaultOperator;
                 
-        $this->currentGroup = $this->conditions->group();
-        $this->groupStack[] = $this->currentGroup;
+        $group = $this->conditions->group();
+        $this->pushGroup($group);
     }
 
     public function startConditionGroup($logic = 'and', $negate = false)
     {
         $group = $this->conditions->group();
-        $this->pushGroup($logic, $negate, $group);
+        $this->addToCurrentGroup($logic, $negate, $group);
+        $this->pushGroup($group);
 
         return $this;
     }
 
-    public function pushGroup($logic, $negate, $group)
+    protected function pushGroup($group)
     {
-        $this->addToCurrentGroup($logic, $negate, $group);
-        
         $this->groupStack[] = $group;
         $this->currentGroup = $group;
     }
