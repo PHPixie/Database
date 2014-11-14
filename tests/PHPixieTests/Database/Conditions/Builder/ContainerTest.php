@@ -7,14 +7,14 @@ namespace PHPixieTests\Database\Conditions\Builder;
  */
 class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 {
-    protected $builder;
+    protected $container;
     protected $conditions;
     
 
     public function setUp()
     {
         $this->conditions = $this->conditions();
-        $this->builder = $this->builder();
+        $this->container = $this->container();
     }
     
     /**
@@ -50,7 +50,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testConditions()
     {
-        $this->builder
+        $this->container
                     ->and('a', 1)
                     ->or('a', '>', 1)
                     ->xor('a', 1)
@@ -58,11 +58,11 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
                     ->andNot('a', 1)
                     ->orNot('a', 1)
                     ->xorNot('a', 1)
-                    ->or(function ($builder) {
-                        $builder->_or('a', 1);
+                    ->or(function ($container) {
+                        $container->_or('a', 1);
                     })
-                    ->andNot(function ($builder) {
-                        $builder->andNot('a', 1);
+                    ->andNot(function ($container) {
+                        $container->andNot('a', 1);
                     })
                     ->startGroup()->endGroup()
                     ->startAndGroup()->endGroup()
@@ -107,7 +107,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     public function testMethodException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->builder->test();
+        $this->container->test();
     }
     
     /**
@@ -117,15 +117,15 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testAddCondition()
     {
-        $this->builder
+        $this->container
                     ->addCondition('and', false, array('a', 1))
                     ->addCondition('or', false, array('a', '>', 1))
                     ->addCondition('xor', false, array('a', 1))
                     ->addCondition('and', true, array('a', 1))
                     ->addCondition('or', true, array('a', 1))
                     ->addCondition('xor', true, array('a', 1))
-                    ->addCondition('or', false, array(function ($builder) {
-                        $builder->_or('a', 1);
+                    ->addCondition('or', false, array(function ($container) {
+                        $container->_or('a', 1);
                     }))
                     ->startConditionGroup('and', true)
                         ->addCondition('and', true, array('a', 1))
@@ -155,7 +155,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     public function testAddConditionException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->builder->addCondition('and', true, array());
+        $this->container->addCondition('and', true, array());
     }
 
     /**
@@ -165,7 +165,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testAddOperatorCondition()
     {
-        $this->builder->addOperatorCondition('or', true, 'test', '>', array(5));
+        $this->container->addOperatorCondition('or', true, 'test', '>', array(5));
         $this->assertConditions(array(
             array('or', true, 'test', '>', array(5))
         ));
@@ -181,13 +181,13 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testNested()
     {
-        $this->builder
+        $this->container
                     ->_and('a', 1)
-                    ->_or(function ($builder) {
-                        $builder
+                    ->_or(function ($container) {
+                        $container
                             ->_and('a', 2)
-                            ->_or(function ($builder) {
-                                $builder
+                            ->_or(function ($container) {
+                                $container
                                     ->_and('a', 3)
                                     ->startXorNotGroup()
                                         ->_and('a', 4)
@@ -214,12 +214,12 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testAddPlaceholder()
     {
-        $placeholder = $this->builder->addPlaceholder();
+        $placeholder = $this->container->addPlaceholder();
         $this->assertEquals('and', $placeholder->logic());
         $this->assertEquals(false, $placeholder->negated());
         $this->assertAttributeEquals(true, 'allowEmpty', $placeholder);
 
-        $placeholder = $this->builder->addPlaceholder('or', true, false);
+        $placeholder = $this->container->addPlaceholder('or', true, false);
         $this->assertEquals('or', $placeholder->logic());
         $this->assertEquals(true, $placeholder->negated());
         $this->assertAttributeEquals(false, 'allowEmpty', $placeholder);
@@ -231,8 +231,8 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     public function testAddToCurrentGroup()
     {
         $condition = $this->conditions->operator('a', '=', array(1));
-        $this->builder->addToCurrentGroup('or', true, $condition);
-        $this->assertSame(array($condition), $this->builder->getConditions());
+        $this->container->addToCurrentGroup('or', true, $condition);
+        $this->assertSame(array($condition), $this->container->getConditions());
         $this->assertSame('or', $condition->logic());
         $this->assertSame(true, $condition->negated());
     }
@@ -243,10 +243,10 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     public function testPushGroup()
     {
         $group = $this->conditions->group();
-        $this->builder->pushGroup('or', true, $group);
+        $this->container->pushGroup('or', true, $group);
         
         $condition = $this->conditions->operator('a', '=', array(1));
-        $this->builder->addToCurrentGroup('or', true, $condition);
+        $this->container->addToCurrentGroup('or', true, $condition);
         
         $this->assertConditions(array(
             array('or', true, array(
@@ -261,7 +261,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     public function testStartConditionGroupException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->builder->startConditionGroup('test');
+        $this->container->startConditionGroup('test');
     }
 
     /**
@@ -270,7 +270,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     public function testEndGroupException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->builder->endGroup();
+        $this->container->endGroup();
     }
 
     /**
@@ -279,7 +279,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     public function testNestedEndGroupException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->builder->startGroup('and')->endGroup()->endGroup();
+        $this->container->startGroup('and')->endGroup()->endGroup();
     }
 
     /**
@@ -289,7 +289,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     public function testSingleArgumentException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->builder->_and('a');
+        $this->container->_and('a');
     }
 
     /**
@@ -299,12 +299,12 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     public function testNoArgumentsException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->builder->_and();
+        $this->container->_and();
     }
 
     protected function assertConditions($expected)
     {
-        $this->assertConditionArray($this->builder->getConditions(), $expected);
+        $this->assertConditionArray($this->container->getConditions(), $expected);
     }
 
     protected function assertConditionArray($conditions, $expected)
@@ -335,7 +335,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
         return new \PHPixie\Database\Conditions;
     }
     
-    protected function builder($defaultOperator = '=')
+    protected function container($defaultOperator = '=')
     {
         return new \PHPixie\Database\Conditions\Builder\Container($this->conditions, $defaultOperator);
     }
