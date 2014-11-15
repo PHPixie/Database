@@ -4,6 +4,8 @@ namespace PHPixie\Database\Conditions;
 
 interface Builder
 {
+    
+    public function addCondition($logic, $negate, $params);
     public function addOperatorCondition($logic, $negate, $field, $operator, $values);
     public function startConditionGroup($logic = 'and', $negate = false);
     public function endGroup();
