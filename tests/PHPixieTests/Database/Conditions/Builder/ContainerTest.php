@@ -45,8 +45,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
      * @covers ::startXorNotGroup
      * @covers ::addCondition
      * @covers ::getConditions
-     * @covers ::addToCurrentGroup
-     * @covers ::pushGroup
+     * @covers ::<protected>
      */
     public function testConditions()
     {
@@ -113,7 +112,6 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     /**
      * @covers ::addCondition
      * @covers ::getConditions
-     * @covers ::addToCurrentGroup
      */
     public function testAddCondition()
     {
@@ -176,8 +174,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
      * @covers ::startConditionGroup
      * @covers ::endGroup
      * @covers ::getConditions
-     * @covers ::addToCurrentGroup
-     * @covers ::pushGroup
+     * @covers ::<protected>
      */
     public function testNested()
     {
@@ -224,19 +221,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals(true, $placeholder->negated());
         $this->assertAttributeEquals(false, 'allowEmpty', $placeholder);
     }
-    
-    /**
-     * @covers ::addToCurrentGroup
-     */
-    public function testAddToCurrentGroup()
-    {
-        $condition = $this->conditions->operator('a', '=', array(1));
-        $this->container->addToCurrentGroup('or', true, $condition);
-        $this->assertSame(array($condition), $this->container->getConditions());
-        $this->assertSame('or', $condition->logic());
-        $this->assertSame(true, $condition->negated());
-    }
-    
+
     /**
      * @covers ::startConditionGroup
      */
@@ -266,7 +251,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 
     /**
      * @covers ::addCondition
-     * @covers ::addToCurrentGroup
+     * @covers ::<protected>
      */
     public function testSingleArgumentException()
     {
@@ -276,7 +261,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 
     /**
      * @covers ::addCondition
-     * @covers ::addToCurrentGroup
+     * @covers ::<protected>
      */
     public function testNoArgumentsException()
     {

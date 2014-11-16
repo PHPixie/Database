@@ -141,7 +141,7 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
                     $logic = 'and';
                 
                 if($method !== '_'){
-                    $with = array(array('test', 1, 2), $logic, $negate);
+                    $with = array($logic, $negate, array('test', 1, 2));
                     if($passBuilderName)
                         $with[]=$name;
                     $this->builderMethodTest($method, array('test', 1, 2), $this->query,  null, $with, $methodMap['addCondition']);
@@ -164,7 +164,8 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         $methods = array(
             'add'.$uName.'OperatorCondition' => array('or', true, 'test', '>', array(5)),
             'add'.$uName.'Placeholder' => array('or', true, false),
-            'start'.$uName.'ConditionGroup' => array('or', true)
+            'start'.$uName.'ConditionGroup' => array('or', true),
+            'add'.$uName.'Condition' => array('or', true, array('a', 1)),
         );
         
         foreach($methods as $method => $params) {
@@ -185,10 +186,10 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
     
     protected function conditionAliasTest()
     {
-        $this->builderMethodTest('and', array('test', 1, 2), $this->query,  null, array(array('test', 1, 2), 'and', false), 'addCondition');
-        $this->builderMethodTest('or', array('test', 1, 2), $this->query,  null, array(array('test', 1, 2), 'or', false), 'addCondition');
-        $this->builderMethodTest('xor', array('test', 1, 2), $this->query,  null, array(array('test', 1, 2), 'xor', false), 'addCondition');
-        $this->builderMethodTest('not', array('test', 1, 2), $this->query,  null, array(array('test', 1, 2), 'and', true), 'addCondition');
+        $this->builderMethodTest('and', array('test', 1, 2), $this->query,  null, array('and', false, array('test', 1, 2)), 'addCondition');
+        $this->builderMethodTest('or', array('test', 1, 2), $this->query,  null, array('or', false, array('test', 1, 2)), 'addCondition');
+        $this->builderMethodTest('xor', array('test', 1, 2), $this->query,  null, array('xor', false, array('test', 1, 2)), 'addCondition');
+        $this->builderMethodTest('not', array('test', 1, 2), $this->query,  null, array('and', true, array('test', 1, 2)), 'addCondition');
     }
 
     protected function setClearGetTest($name, $paramSets, $type = 'value', $clearGetName = null)

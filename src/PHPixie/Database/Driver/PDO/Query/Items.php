@@ -110,9 +110,9 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
         return $this;
     }
     
-    protected function addContainerCondition($args, $logic = 'and', $negate = false, $containerName = null)
+    protected function addContainerCondition($logic, $negate, $args, $containerName = null)
     {
-        $this->builder->addCondition($args, $logic, $negate, $containerName);
+        $this->builder->addCondition($logic, $negate, $args, $containerName);
 
         return $this;
     }
@@ -135,6 +135,12 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
     {
         $this->builder->addPlaceholder($logic, $negate, $allowEmpty, $containerName);
         
+        return $this;
+    }
+    
+    public function addCondition($logic, $negate, $args)
+    {
+        $this->builder->addCondition($logic, $negate, $args);
         return $this;
     }
     
@@ -161,9 +167,9 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
     }
     
     
-    protected function addOnCondition($args, $logic = 'and', $negate = false)
+    public function addOnCondition($logic, $negate, $args)
     {
-        $this->builder->addOnCondition($args, $logic, $negate);
+        $this->builder->addOnCondition($logic, $negate, $args);
 
         return $this;
     }
@@ -189,6 +195,12 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
         return $this;
     }
 
+    public function addWhereCondition($logic, $negate, $params)
+    {
+        return $this->addContainerCondition($logic, $negate, $params, 'where');
+    }
+    
+    
     public function getWhereContainer()
     {
         return $this->builder->conditionContainer('where');
@@ -216,42 +228,42 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
 
     public function where()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', false, 'where');
+        return $this->addContainerCondition('and', false, func_get_args(), 'where');
     }
 
     public function andWhere()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', false, 'where');
+        return $this->addContainerCondition('and', false, func_get_args(), 'where');
     }
 
     public function orWhere()
     {
-        return $this->addContainerCondition(func_get_args(), 'or', false, 'where');
+        return $this->addContainerCondition('or', false, func_get_args(), 'where');
     }
 
     public function xorWhere()
     {
-        return $this->addContainerCondition(func_get_args(), 'xor', false, 'where');
+        return $this->addContainerCondition('xor', false, func_get_args(), 'where');
     }
 
     public function whereNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', true, 'where');
+        return $this->addContainerCondition('and', true, func_get_args(), 'where');
     }
 
     public function andWhereNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', true, 'where');
+        return $this->addContainerCondition('and', true, func_get_args(), 'where');
     }
 
     public function orWhereNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'or', true, 'where');
+        return $this->addContainerCondition('or', true, func_get_args(), 'where');
     }
 
     public function xorWhereNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'xor', true, 'where');
+        return $this->addContainerCondition('xor', true, func_get_args(), 'where');
     }
 
     public function startWhereGroup()
@@ -302,37 +314,37 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
     
     public function _and()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', false);
+        return $this->addContainerCondition('and', false, func_get_args());
     }
 
     public function _or()
     {
-        return $this->addContainerCondition(func_get_args(), 'or', false);
+        return $this->addContainerCondition('or', false, func_get_args());
     }
 
     public function _xor()
     {
-        return $this->addContainerCondition(func_get_args(), 'xor', false);
+        return $this->addContainerCondition('xor', false, func_get_args());
     }
 
     public function _not()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', true);
+        return $this->addContainerCondition('and', true, func_get_args());
     }
 
     public function andNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', true);
+        return $this->addContainerCondition('and', true, func_get_args());
     }
 
     public function orNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'or', true);
+        return $this->addContainerCondition('or', true, func_get_args());
     }
 
     public function xorNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'xor', true);
+        return $this->addContainerCondition('xor', true, func_get_args());
     }
 
     public function startGroup()
@@ -384,42 +396,42 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
     
     public function on()
     {
-        return $this->addOnCondition(func_get_args(), 'and', false);
+        return $this->addOnCondition('and', false, func_get_args());
     }
 
     public function andOn()
     {
-        return $this->addOnCondition(func_get_args(), 'and', false);
+        return $this->addOnCondition('and', false, func_get_args());
     }
 
     public function orOn()
     {
-        return $this->addOnCondition(func_get_args(), 'or', false);
+        return $this->addOnCondition('or', false, func_get_args());
     }
 
     public function xorOn()
     {
-        return $this->addOnCondition(func_get_args(), 'xor', false);
+        return $this->addOnCondition('xor', false, func_get_args());
     }
 
     public function onNot()
     {
-        return $this->addOnCondition(func_get_args(), 'and', true);
+        return $this->addOnCondition('and', true, func_get_args());
     }
 
     public function andOnNot()
     {
-        return $this->addOnCondition(func_get_args(), 'and', true);
+        return $this->addOnCondition('and', true, func_get_args());
     }
 
     public function orOnNot()
     {
-        return $this->addOnCondition(func_get_args(), 'or', true);
+        return $this->addOnCondition('or', true, func_get_args());
     }
 
     public function xorOnNot()
     {
-        return $this->addOnCondition(func_get_args(), 'xor', true);
+        return $this->addOnCondition('xor', true, func_get_args());
     }
 
     public function startOnGroup()

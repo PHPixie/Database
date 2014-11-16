@@ -235,7 +235,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->prepareContainer();
         $this->expectCalls($this->containers[0], array('addCondition' => array('or', true, array(5))));
-        $this->builder->addCondition(array(5), 'or', true, 'first');
+        $this->builder->addCondition('or', true, array(5), 'first');
     }
     
     /**

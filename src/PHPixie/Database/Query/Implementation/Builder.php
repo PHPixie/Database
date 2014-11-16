@@ -169,7 +169,7 @@ class Builder
         return $this->conditionContainers[$name]->getConditions();
     }
 
-    public function addCondition($args, $logic = 'and', $negate = false, $containerName = null)
+    public function addCondition($logic, $negate, $args, $containerName = null)
     {
         $this->conditionContainer($containerName)->addCondition($logic, $negate, $args);
     }

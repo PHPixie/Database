@@ -24,9 +24,9 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
         return $this;
     }
     
-    protected function addContainerCondition($args, $logic = 'and', $negate = false, $containerName = null)
+    protected function addContainerCondition($logic, $negate, $args, $containerName = null)
     {
-        $this->builder->addCondition($args, $logic, $negate, $containerName);
+        $this->builder->addCondition($logic, $negate, $args, $containerName);
 
         return $this;
     }
@@ -52,6 +52,17 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
         return $this;
     }
 
+    public function addCondition($logic, $negate, $params)
+    {
+        $this->builder->addCondition($logic, $negate, $params);
+        return $this;
+    }
+    
+    public function addWhereCondition($logic, $negate, $params)
+    {
+        return $this->addContainerCondition($logic, $negate, $params, 'where');
+    }
+    
     public function getWhereContainer()
     {
         return $this->builder->conditionContainer('where');
@@ -94,42 +105,42 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
 
     public function where()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', false, 'where');
+        return $this->addContainerCondition('and', false, func_get_args(), 'where');
     }
 
     public function andWhere()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', false, 'where');
+        return $this->addContainerCondition('and', false, func_get_args(), 'where');
     }
 
     public function orWhere()
     {
-        return $this->addContainerCondition(func_get_args(), 'or', false, 'where');
+        return $this->addContainerCondition('or', false, func_get_args(), 'where');
     }
 
     public function xorWhere()
     {
-        return $this->addContainerCondition(func_get_args(), 'xor', false, 'where');
+        return $this->addContainerCondition('xor', false, func_get_args(), 'where');
     }
 
     public function whereNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', true, 'where');
+        return $this->addContainerCondition('and', true, func_get_args(), 'where');
     }
 
     public function andWhereNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', true, 'where');
+        return $this->addContainerCondition('and', true, func_get_args(), 'where');
     }
 
     public function orWhereNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'or', true, 'where');
+        return $this->addContainerCondition('or', true, func_get_args(), 'where');
     }
 
     public function xorWhereNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'xor', true, 'where');
+        return $this->addContainerCondition('xor', true, func_get_args(), 'where');
     }
 
     public function startWhereGroup()
@@ -179,37 +190,37 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
 
     public function _and()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', false);
+        return $this->addContainerCondition('and', false, func_get_args());
     }
 
     public function _or()
     {
-        return $this->addContainerCondition(func_get_args(), 'or', false);
+        return $this->addContainerCondition('or', false, func_get_args());
     }
 
     public function _xor()
     {
-        return $this->addContainerCondition(func_get_args(), 'xor', false);
+        return $this->addContainerCondition('xor', false, func_get_args());
     }
 
     public function _not()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', true);
+        return $this->addContainerCondition('and', true, func_get_args());
     }
 
     public function andNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'and', true);
+        return $this->addContainerCondition('and', true, func_get_args());
     }
 
     public function orNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'or', true);
+        return $this->addContainerCondition('or', true, func_get_args());
     }
 
     public function xorNot()
     {
-        return $this->addContainerCondition(func_get_args(), 'xor', true);
+        return $this->addContainerCondition('xor', true, func_get_args());
     }
 
     public function startGroup()

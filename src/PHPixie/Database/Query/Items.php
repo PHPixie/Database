@@ -17,11 +17,10 @@ interface Items extends \PHPixie\Database\Query, \PHPixie\Database\Conditions\Bu
     public function clearOrderBy();
     public function getOrderBy();
 
-    
-    
+
     public function getWhereContainer();
     public function getWhereConditions();
-    
+    public function addWhereCondition($logic, $negate, $params);
     public function addWhereOperatorCondition($logic, $negate, $field, $operator, $values);
     public function addWherePlaceholder($logic = 'and', $negate = false, $allowEmpty = true);
     public function startWhereConditionGroup($logic = 'and', $negate = false);

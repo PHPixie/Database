@@ -9,6 +9,7 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
      
     /**
      * @covers ::<protected>
+     * @covers ::addWhereCondition
      * @covers ::getWhereContainer
      * @covers ::getWhereConditions
      * @covers ::where
@@ -39,6 +40,7 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
     
     /**
      * @covers ::<protected>
+     * @covers ::addCondition
      * @covers ::_and
      * @covers ::_or
      * @covers ::_xor

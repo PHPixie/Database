@@ -147,7 +147,7 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
     {
         $builder = $this->builder;
         $this->assertException(function() use($builder) {
-            $builder->addOnCondition(array(5), 'or', true);
+            $builder->addOnCondition('or', true, array(5));
         });
         
 
@@ -155,7 +155,7 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
         for($i=0;$i<2;$i++){
             $builder->addJoin('test', 'pixie', 'inner');
             $this->expectCalls($this->containers[$i], array('addCondition' => array('or', true, array(5))));
-            $builder->addOnCondition(array(5), 'or', true);
+            $builder->addOnCondition('or', true, array(5));
         }
     }
     

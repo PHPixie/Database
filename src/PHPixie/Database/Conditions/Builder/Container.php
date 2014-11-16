@@ -100,7 +100,7 @@ class Container implements \PHPixie\Database\Conditions\Builder
         return $this->groupStack[0]->conditions();
     }
 
-    public function addToCurrentGroup($logic, $negate, $condition)
+    protected function addToCurrentGroup($logic, $negate, $condition)
     {
         $this->addToGroup($this->currentGroup, $logic, $negate, $condition);
     }

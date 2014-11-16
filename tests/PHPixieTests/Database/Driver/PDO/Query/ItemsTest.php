@@ -59,6 +59,7 @@ abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
 
     /**
      * @covers ::<protected>
+     * @covers ::addWhereCondition
      * @covers ::getWhereContainer
      * @covers ::getWhereConditions
      * @covers ::where
@@ -89,6 +90,7 @@ abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
     
     /**
      * @covers ::<protected>
+     * @covers ::addCondition
      * @covers ::_and
      * @covers ::_or
      * @covers ::_xor
@@ -124,6 +126,7 @@ abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
 
     /**
      * @covers ::<protected>
+     * @covers ::addOnCondition
      * @covers ::on
      * @covers ::andOn
      * @covers ::orOn
