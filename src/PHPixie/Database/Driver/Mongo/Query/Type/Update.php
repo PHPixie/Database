@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver\Mongo\Query\Type;
 
-class Update extends \PHPixie\Database\Driver\Mongo\Query\Items implements \PHPixie\Database\Query\Type\Update
+class Update extends \PHPixie\Database\Driver\Mongo\Query\Items implements \PHPixie\Database\Query\Type\Update\Incrementable
 {
 
     public function __construct($connection, $parser, $builder)

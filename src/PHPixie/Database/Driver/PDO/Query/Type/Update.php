@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver\PDO\Query\Type;
 
-class Update extends \PHPixie\Database\Driver\PDO\Query\Items implements \PHPixie\Database\SQL\Query\Type\Update
+class Update extends \PHPixie\Database\Driver\PDO\Query\Items implements \PHPixie\Database\SQL\Query\Type\Update\Incrementable
 {
     public function type()
     {
