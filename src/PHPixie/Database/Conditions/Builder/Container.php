@@ -44,7 +44,7 @@ class Container implements \PHPixie\Database\Conditions\Builder
             throw new \PHPixie\Database\Exception\Builder("endGroup() was called more times than expected.");
 
         array_pop($this->groupStack);
-        $this->currentGroup = current($this->groupStack);
+        $this->currentGroup = end($this->groupStack);
 
         return $this;
     }

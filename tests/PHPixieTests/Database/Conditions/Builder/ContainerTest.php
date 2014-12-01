@@ -146,6 +146,33 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
             )
         ));
     }
+    
+    /**
+     * @covers ::endGroup
+     * @covers ::<protected>
+     */
+    public function testStack()
+    {
+        $this->container
+            ->_and(function($b){
+                $b->_and(function($b){
+                    $b->_and('a', 1);
+                })
+                ->_and('b', 1);
+            })
+            ->_and('c', 1);
+
+        $this->assertConditions(array(
+            array('and', false, array(
+                    array('and', false, array(
+                        array('and', false, 'a', '=', array(1))
+                    )),
+                    array('and', false, 'b', '=', array(1))
+                )
+            ),
+            array('and', false, 'c', '=', array(1))
+        ));
+    }
 
     /**
      * @covers ::addCondition
