@@ -102,6 +102,26 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     {
         return $this->addContainerPlaceholder($logic, $negate, $allowEmpty, 'where');
     }
+    
+    public function addSubdocumentCondition($logic, $negate, $field)
+    {
+        return $this->addContainerSubdocumentCondition($logic, $negate, $field);
+    }
+    
+    public function addWhereSubdocumentCondition($logic, $negate, $field)
+    {
+        return $this->addContainerSubdocumentCondition($logic, $negate, $field, 'where');
+    }
+    
+    public function addArrayItemCondition($logic, $negate, $field)
+    {
+        return $this->addArrayItemCondition($logic, $negate, $field);
+    }
+    
+    public function addWhereArrayItemCondition($logic, $negate, $field)
+    {
+        return $this->addArrayItemCondition($logic, $negate, $field, 'where');
+    }    
 
     public function where()
     {

@@ -191,7 +191,7 @@ class Builder
     
     public function addPlaceholder($logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
     {
-        $this->conditionContainer($containerName)->addPlaceholder($logic, $negate, $allowEmpty);
+        return $this->conditionContainer($containerName)->addPlaceholder($logic, $negate, $allowEmpty);
     }
 
     public function assert($condition, $exceptionMessage)
