@@ -4,7 +4,7 @@ namespace PHPixieTests\Database\Driver\PDO\Adapter\Mysql\Parser;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Adapter\Mysql\Parser\Fragment
  */
-class FragmentTest extends \PHPixieTests\Database\SQL\Parser\FragmentTest
+class FragmentTest extends \PHPixieTests\Database\Type\SQL\Parser\FragmentTest
 {
     protected $quoted = '`a`';
     protected $expectedColumns = array(

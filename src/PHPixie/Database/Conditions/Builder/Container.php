@@ -92,7 +92,7 @@ class Container implements \PHPixie\Database\Conditions\Builder
         $placeholder = $this->conditions->placeholder($this->defaultOperator, $allowEmpty);
         $this->addToCurrentGroup($logic, $negate, $placeholder);
 
-        return $placeholder;
+        return $placeholder->container();
     }
 
     public function getConditions()

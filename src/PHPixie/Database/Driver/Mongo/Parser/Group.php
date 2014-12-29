@@ -15,14 +15,30 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
 
     protected function normalize($condition)
     {
-        if ($condition instanceof \PHPixie\Database\Conditions\Condition\Group || $condition instanceof \PHPixie\Database\Conditions\Condition\Placeholder) {
+        if($condition instanceof \PHPixie\Database\Type\Type\Document\Conditions\Condition\Subdocument\ArrayItem) {
+            $conditions = $condition->conditions();
+            $parsed = $this->parse($conditions);
+            
+            $operatorCondition = $this->conditions->operator($condition->field, 'elemMatch', array($parsed));
+            return $this->copyLogicAndNegated($condition, $operatorCondition);  
+        }
+        
+        if($condition instanceof \PHPixie\Database\Type\Type\Document\Conditions\Condition\Subdocument) {
+            $conditions = $condition->conditions();
+            $conditions = $this->prefixConditions($conditions);
+            
+            $group = $this->conditions->group();
+            $group->setConditions($conditions);
+            return $this->copyLogicAndNegated($condition, $group);
+        }
+        
+        if ($condition instanceof \PHPixie\Database\Conditions\Condition\Group || 
+                 $condition instanceof \PHPixie\Database\Conditions\Condition\Placeholder) {
             $group = $condition->conditions();
             $group = $this->parseLogic($group);
 
             if ($group != null) {
-                $group->setLogic($condition->logic());
-                if ($condition->negated())
-                    $group->negate();
+                $this->copyLogicAndNegated($condition, $group);
             }
 
             return $group;
@@ -80,7 +96,6 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
         foreach ($expanded->groups() as $group) {
             $andGroup = array();
             foreach ($group as $condition) {
-                $this->parseConditionSubdocuments($condition);
                 $condition = $this->operatorParser->parse($condition);
                 foreach ($condition as $field => $fieldConditions) {
                     $appended = false;
@@ -115,13 +130,38 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
         return $andGroups;
 
     }
-
-    protected function parseConditionSubdocuments($condition)
+    
+    protected function prefixConditions($prefix, $conditions)
     {
-        foreach ($condition->values as $key=>$value) {
-            if ($value instanceof \PHPixie\Database\Document\Conditions\Subdocument)
-                $condition->values[0] = $this->parse($value->getConditions());
+        foreach($conditions as $key => $condition) {
+            if ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
+                $condition->field = $prefix.'.'.$condition->field;
+                
+            }elseif ($condition instanceof \PHPixie\Database\Conditions\Condition\Group) {
+                $conditions = $condition->conditions();
+                $conditions = $this->prefixConditions($prefix, $conditions);
+                $condition->setConditions($conditions);
+                
+            }elseif ($condition instanceof \PHPixie\Database\Type\Type\Document\Conditions\Condition\Subdocument) {
+                $condition->setField($prefix.'.'.$condition->field());
+            
+            }elseif ($condition instanceof \PHPixie\Database\Conditions\Condition\Placeholder) {
+                $conditions = $condition->conditions();
+                $conditions = $this->prefixConditions($prefix, $conditions);
+                $group->setConditions($conditions);
+                $this->copyLogicAndNegated($condition, $group);
+                $conditions[$key] = $group;
+            }
         }
+    }
+    
+    protected function copyLogicAndNegated($source, $target)
+    {
+        $target->setLogic($source->logic());
+        if($source->negated())
+            $target->negate();
+        
+        return $target;
     }
 
 }

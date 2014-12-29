@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver\PDO\Query\Type;
 
-class Select extends \PHPixie\Database\Driver\PDO\Query\Items implements \PHPixie\Database\SQL\Query\Type\Select
+class Select extends \PHPixie\Database\Driver\PDO\Query\Items implements \PHPixie\Database\Type\SQL\Query\Type\Select
 {
     public function type()
     {

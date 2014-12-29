@@ -4,7 +4,7 @@ namespace PHPixieTests\Database\Driver\PDO;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query
  */
-abstract class QueryTest extends \PHPixieTests\Database\SQL\Query\ImplementationTest
+abstract class QueryTest extends \PHPixieTests\Database\Type\SQL\Query\ImplementationTest
 {
     protected $queryClass;
     protected $resultClass = '\PHPixie\Database\Driver\PDO\Result';

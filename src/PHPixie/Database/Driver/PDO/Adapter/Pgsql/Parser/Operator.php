@@ -2,6 +2,6 @@
 
 namespace PHPixie\Database\Driver\PDO\Adapter\Pgsql\Parser;
 
-class Operator extends \PHPixie\Database\SQL\Parser\Operator
+class Operator extends \PHPixie\Database\Type\SQL\Parser\Operator
 {
 }

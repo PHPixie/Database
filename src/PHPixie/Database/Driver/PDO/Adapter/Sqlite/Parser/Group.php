@@ -2,6 +2,6 @@
 
 namespace PHPixie\Database\Driver\PDO\Adapter\Sqlite\Parser;
 
-class Group extends \PHPixie\Database\SQL\Parser\Group
+class Group extends \PHPixie\Database\Type\SQL\Parser\Group
 {
 }

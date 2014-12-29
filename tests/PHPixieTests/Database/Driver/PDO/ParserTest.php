@@ -4,7 +4,7 @@ namespace PHPixieTests\Database\Driver\PDO;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Parser
  */
-abstract class ParserTest extends \PHPixieTests\Database\SQL\ParserTest
+abstract class ParserTest extends \PHPixieTests\Database\Type\SQL\ParserTest
 {
     protected $adapter;
     

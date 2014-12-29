@@ -45,16 +45,17 @@ class Mongo extends \PHPixie\Database\Driver
         return new \PHPixie\Database\Driver\Mongo\Parser\Group($this, $operatorParser);
     }
 
-    public function buildQueryBuilder($conditions, $values)
-    {
-        return new \PHPixie\Database\Driver\Mongo\Query\Builder($conditions, $values);
-    }
-
     public function buildQuery($type, $connection, $parser, $builder)
     {
         $class = '\PHPixie\Database\Driver\Mongo\Query\Type\\'.ucfirst($type);
 
         return new $class($connection, $parser, $builder);
+    }
+    
+    public function buildQueryBuilder($conditions, $values)
+    {
+        $databaseConditions = $this->database->document()->conditions();
+        return new \PHPixie\Database\Driver\Mongo\Query\Builder($conditions, $databaseConditions, $values);
     }
 
     public function result($cursor)

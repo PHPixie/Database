@@ -26,15 +26,36 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
     }
     
     /**
+     * @covers ::sql
+     * @covers ::<protected>
+     */
+    public function testSql()
+    {
+        $sql = $this->database->sql();
+        $this->assertInstanceOf('\PHPixie\Database\Type\SQL', $sql);
+        $this->assertSame($sql, $this->database->sql());
+    }
+    
+    /**
+     * @covers ::document
+     * @covers ::<protected>
+     */
+    public function testDocument()
+    {
+        $document = $this->database->document();
+        $this->assertInstanceOf('\PHPixie\Database\Type\Document', $document);
+        $this->assertAttributeSame($this->database, 'database', $document);
+        $this->assertSame($document, $this->database->document());
+    }
+    
+    /**
      * @covers ::sqlExpression
+     * @covers ::<protected>
      */
     public function testSQLExpression()
     {
-        $expr = $this->database->sqlExpression();
-        $this->assertInstanceOf('\PHPixie\Database\SQL\Expression', $expr);
-        $this->assertEquals('', $expr->sql);
-        $this->assertEquals(array(), $expr->params);
         $expr = $this->database->sqlExpression('pixie');
+        $this->assertInstanceOf('\PHPixie\Database\Type\SQL\Expression', $expr);
         $this->assertEquals('pixie', $expr->sql);
         $this->assertEquals(array(), $expr->params);
         $expr = $this->database->sqlExpression('pixie', array('test'));
@@ -42,15 +63,7 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals(array('test'), $expr->params);
     }
     
-    /**
-     * @covers ::subdocumentCondition
-     */
-    public function testSubdocumentCondition()
-    {
-        $subdocument = $this->database->subdocumentCondition();
-        $this->assertInstanceOf('\PHPixie\Database\Document\Conditions\Subdocument', $subdocument);
-    }
-
+    
     /**
      * @covers ::driver
      * @covers ::buildDriver

@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver;
 
-class PDO extends \PHPixie\Database\SQL\Driver
+class PDO extends \PHPixie\Database\Type\SQL\Driver
 {
     public function buildConnection($connectionName, $config)
     {

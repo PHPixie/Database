@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver\Mongo\Query;
 
-class Builder extends \PHPixie\Database\Query\Implementation\Builder
+class Builder extends \PHPixie\Database\Type\Document\Query\Implementation\Builder
 {
     public function setCollection($collection)
     {

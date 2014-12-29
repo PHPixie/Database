@@ -4,7 +4,7 @@ namespace PHPixieTests\Database\Driver\PDO\Adapter\Sqlite\Parser;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Adapter\Sqlite\Parser\Group
  */
-class GroupTest extends \PHPixieTests\Database\SQL\Parser\GroupTest
+class GroupTest extends \PHPixieTests\Database\Type\SQL\Parser\GroupTest
 {
     protected $expected = array(
         array('"a" = ?', array(1)),

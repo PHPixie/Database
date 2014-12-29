@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver\Mongo\Query;
 
-abstract class Items extends Item implements \PHPixie\Database\Document\Query\Items
+abstract class Items extends Item implements \PHPixie\Database\Type\Document\Query\Items
 {
     public function limit($limit)
     {

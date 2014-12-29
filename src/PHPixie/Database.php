@@ -9,6 +9,7 @@ class Database
     protected $conditions;
     protected $values;
     protected $sql;
+    protected $document;
     protected $drivers = array();
     protected $connections =  array();
 
@@ -63,26 +64,48 @@ class Database
 
         return $this->values;
     }
-
-    public function sqlExpression($sql = '', $params = array())
+    
+    protected function buildValues()
     {
-        return new \PHPixie\Database\SQL\Expression($sql, $params);
-    }
-
-    public function subdocumentCondition()
-    {
-        $conditions = $this->conditions();
-        return new \PHPixie\Database\Document\Conditions\Subdocument($conditions);
+        return new \PHPixie\Database\Values();
     }
 
     protected function buildConditions()
     {
         return new \PHPixie\Database\Conditions();
     }
-    
-    protected function buildValues()
+
+    public function sqlExpression($sql, $params = array())
     {
-        return new \PHPixie\Database\Values();
+        return $this->sql()->expression($sql, $params);
     }
+    
+    public function sql()
+    {
+        if ($this->sql === null)
+            $this->sql = $this->buildSql();
+
+        return $this->sql;
+    }
+
+    protected function buildSql()
+    {
+        return new \PHPixie\Database\Type\SQL();
+    }
+    
+    public function document()
+    {
+        if ($this->document === null)
+            $this->document = $this->buildDocument();
+
+        return $this->document;
+    }
+    
+    protected function buildDocument()
+    {
+        return new \PHPixie\Database\Type\Document($this);
+    }
+    
+
 
 }

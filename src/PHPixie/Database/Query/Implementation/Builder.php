@@ -4,16 +4,16 @@ namespace PHPixie\Database\Query\Implementation;
 
 class Builder
 {
-    protected $conditions;
+    protected $containerBuilder;
     protected $valueBuilder;
     protected $values = array();
     protected $arrays = array();
     protected $conditionContainers = array();
     protected $defaultContainer;
 
-    public function __construct($conditions, $valueBuilder)
+    public function __construct($containerBuilder, $valueBuilder)
     {
-        $this->conditions = $conditions;
+        $this->containerBuilder = $containerBuilder;
         $this->valueBuilder = $valueBuilder;
     }
 
@@ -154,7 +154,7 @@ class Builder
 
         } else {
             if (!array_key_exists($name, $this->conditionContainers))
-                $this->conditionContainers[$name] = $this->conditions->container();
+                $this->conditionContainers[$name] = $this->containerBuilder->container();
             $this->defaultContainer = $this->conditionContainers[$name];
         }
 

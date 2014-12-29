@@ -7,14 +7,12 @@ namespace PHPixieTests\Database\Conditions\Condition;
  */
 class PlaceholderTest extends \PHPixieTests\Database\Conditions\ConditionTest
 {
-    protected $conditionsMock;
-    protected $containerMock;
+    protected $container;
 
     protected function setUp()
     {
-        $this->containerMock = $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array('getConditions'));
-        $this->conditionsMock = $this->quickMock('\PHPixie\Database\Conditions', array('container', 'group'));
-        $this->condition = new \PHPixie\Database\Conditions\Condition\Placeholder($this->conditionsMock, '=');
+        $this->container = $this->getContainer();
+        $this->condition = $this->placeholder();
     }
 
     /**
@@ -23,19 +21,8 @@ class PlaceholderTest extends \PHPixieTests\Database\Conditions\ConditionTest
      */
     public function testContainer()
     {
-        $this->expectContainer();
-        $this->assertEquals($this->containerMock, $this->condition->container());
-        $this->assertEquals($this->containerMock, $this->condition->container());
-    }
-
-    /**
-     * @covers ::conditions
-     */
-    public function testConditionsNoBuilderException()
-    {
-        $placeholder = new \PHPixie\Database\Conditions\Condition\Placeholder($this->conditionsMock, '=', false);
-        $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $placeholder->conditions();
+        $this->assertEquals($this->container, $this->condition->container());
+        $this->assertEquals($this->container, $this->condition->container());
     }
 
     /**
@@ -43,9 +30,8 @@ class PlaceholderTest extends \PHPixieTests\Database\Conditions\ConditionTest
      */
     public function testConditionsEmptyException()
     {
-        $this->expectCalls($this->containerMock, array(), array('getConditions' => array()));
-        $placeholder = new \PHPixie\Database\Conditions\Condition\Placeholder($this->conditionsMock, '>', false);
-        $this->expectContainer('>');
+        $this->expectCalls($this->container, array(), array('getConditions' => array()));
+        $placeholder = $this->placeholder(false);
         $placeholder->container();
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
         $placeholder->conditions();
@@ -56,7 +42,7 @@ class PlaceholderTest extends \PHPixieTests\Database\Conditions\ConditionTest
      */
     public function testConditionsEmpty()
     {
-        $this->condition = new \PHPixie\Database\Conditions\Condition\Placeholder($this->conditionsMock);
+        $this->expectCalls($this->container, array(), array('getConditions' => array()));
         $this->assertEquals(array(), $this->condition->conditions());
     }
 
@@ -65,18 +51,18 @@ class PlaceholderTest extends \PHPixieTests\Database\Conditions\ConditionTest
      */
     public function testConditions()
     {
-        $this->expectCalls($this->containerMock, array(), array('getConditions' => array('test')));
-        $this->expectContainer();
+        $this->expectCalls($this->container, array(), array('getConditions' => array('test')));
         $this->condition->container();
         $this->assertEquals(array('test'), $this->condition->conditions());
     }
-
-    protected function expectContainer($operator = '=')
+    
+    protected function getContainer()
     {
-        $this->conditionsMock
-                ->expects($this->once())
-                ->method('container')
-                ->with($operator)
-                ->will($this->returnValue($this->containerMock));
+        return $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array('getConditions'));
+    }
+    
+    protected function placeholder($allowEmpty = true)
+    {
+        return new \PHPixie\Database\Conditions\Condition\Placeholder($this->container, $allowEmty);   
     }
 }

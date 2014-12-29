@@ -20,7 +20,7 @@ class CountTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemsTest
                 ->expects($this->any())
                 ->method('parse')
                 ->with ($query)
-                ->will($this->returnValue(new \PHPixie\Database\SQL\Expression('pixie', array(5))));
+                ->will($this->returnValue(new \PHPixie\Database\Type\SQL\Expression('pixie', array(5))));
 
         $result = $this->quickMock('\PHPixie\Database\Driver\PDO\Result', array('get'));
         $this->expectCalls($result, array('get' => array('count')), array('get'=>5));

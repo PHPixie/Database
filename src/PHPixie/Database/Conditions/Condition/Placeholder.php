@@ -4,32 +4,23 @@ namespace PHPixie\Database\Conditions\Condition;
 
 class Placeholder extends \PHPixie\Database\Conditions\Condition
 {
-    protected $conditions;
-    protected $defaultOperator;
-    protected $allowEmpty;
     protected $container;
+    protected $allowEmpty;
 
-    public function __construct($conditions, $defaultOperator = '=', $allowEmpty = true)
+    public function __construct($container, $allowEmpty = true)
     {
-        $this->conditions      = $conditions;
-        $this->defaultOperator = $defaultOperator;
-        $this->allowEmpty      = $allowEmpty;
+        $this->container      = $container;
+        $this->allowEmpty     = $allowEmpty;
     }
 
     public function container()
     {
-        if ($this->container === null)
-            $this->container = $this->conditions->container($this->defaultOperator);
-
         return $this->container;
     }
 
     public function conditions()
     {
-        $conditions = array();
-
-        if ($this->container !== null)
-            $conditions = $this->container->getConditions();
+        $conditions = $this->container->getConditions();
 
         if (empty($conditions))
             if(!$this->allowEmpty)

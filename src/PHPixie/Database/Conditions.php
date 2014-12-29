@@ -2,11 +2,12 @@
 
 namespace PHPixie\Database;
 
-class Conditions
+class Conditions implements \PHPixie\Database\Conditions\Builder\Container\Builder
 {
     public function placeholder($defaultOperator = '=', $allowEmpty = true)
     {
-        return new Conditions\Condition\Placeholder($this, $defaultOperator, $allowEmpty);
+        $container = $this->container($defaultOperator);
+        return new Conditions\Condition\Placeholder($container, $allowEmpty);
     }
 
     public function operator($field, $operator, $values)

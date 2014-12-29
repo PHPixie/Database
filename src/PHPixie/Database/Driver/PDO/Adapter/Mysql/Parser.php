@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver\PDO\Adapter\Mysql;
 
-class Parser extends \PHPixie\Database\SQL\Parser
+class Parser extends \PHPixie\Database\Type\SQL\Parser
 {
     protected $supportedJoins = array(
         'inner' => 'INNER',

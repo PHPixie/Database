@@ -4,7 +4,7 @@ namespace PHPixieTests\Database\Driver\PDO\Adapter\Sqlite\Parser;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Adapter\Sqlite\Parser\Operator
  */
-class OperatorTest extends \PHPixieTests\Database\SQL\Parser\OperatorTest
+class OperatorTest extends \PHPixieTests\Database\Type\SQL\Parser\OperatorTest
 {
     protected $expected = array(
         array('"a" = ?', array(1)),
