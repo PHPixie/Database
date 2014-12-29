@@ -75,7 +75,7 @@ class Database
         return new \PHPixie\Database\Conditions();
     }
 
-    public function sqlExpression($sql, $params = array())
+    public function sqlExpression($sql = '', $params = array())
     {
         return $this->sql()->expression($sql, $params);
     }

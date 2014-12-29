@@ -5,17 +5,19 @@ namespace PHPixie\Database\Driver\Mongo\Parser;
 class Group extends \PHPixie\Database\Conditions\Logic\Parser
 {
     protected $driver;
+    protected $conditions;
     protected $operatorParser;
 
-    public function __construct($driver, $operatorParser)
+    public function __construct($driver, $conditions, $operatorParser)
     {
         $this->driver = $driver;
+        $this->conditions = $conditions;
         $this->operatorParser = $operatorParser;
     }
 
     protected function normalize($condition)
     {
-        if($condition instanceof \PHPixie\Database\Type\Type\Document\Conditions\Condition\Subdocument\ArrayItem) {
+        if($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Subdocument\ArrayItem) {
             $conditions = $condition->conditions();
             $parsed = $this->parse($conditions);
             
@@ -23,9 +25,9 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
             return $this->copyLogicAndNegated($condition, $operatorCondition);  
         }
         
-        if($condition instanceof \PHPixie\Database\Type\Type\Document\Conditions\Condition\Subdocument) {
+        if($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Subdocument) {
             $conditions = $condition->conditions();
-            $conditions = $this->prefixConditions($conditions);
+            $conditions = $this->prefixConditions($condition->field(), $conditions);
             
             $group = $this->conditions->group();
             $group->setConditions($conditions);
@@ -133,25 +135,34 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
     
     protected function prefixConditions($prefix, $conditions)
     {
+        $prefixed = array();
         foreach($conditions as $key => $condition) {
             if ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
-                $condition->field = $prefix.'.'.$condition->field;
+                 $newCondition = $this->conditions->operator(
+                     $prefix.'.'.$condition->field,
+                     $condition->operator,
+                     $condition->values
+                 );
                 
             }elseif ($condition instanceof \PHPixie\Database\Conditions\Condition\Group) {
                 $conditions = $condition->conditions();
                 $conditions = $this->prefixConditions($prefix, $conditions);
-                $condition->setConditions($conditions);
+                $newCondition = $this->conditions->group();
+                $newCondition->setConditions($conditions);
                 
-            }elseif ($condition instanceof \PHPixie\Database\Type\Type\Document\Conditions\Condition\Subdocument) {
+            }elseif ($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Subdocument) {
                 $condition->setField($prefix.'.'.$condition->field());
             
             }elseif ($condition instanceof \PHPixie\Database\Conditions\Condition\Placeholder) {
                 $conditions = $condition->conditions();
                 $conditions = $this->prefixConditions($prefix, $conditions);
+                $group = $this->conditions->group();
                 $group->setConditions($conditions);
                 $this->copyLogicAndNegated($condition, $group);
                 $conditions[$key] = $group;
             }
+            
+            $
         }
     }
     

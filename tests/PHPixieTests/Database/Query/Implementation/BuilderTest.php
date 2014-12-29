@@ -6,21 +6,20 @@ namespace PHPixieTests\Database\Query\Implementation;
  */
 class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
 {
-    protected $conditionsMock;
+    protected $containerBuilderMock;
     protected $valuesMock;
     
     protected $containers;
     protected $builder;
-    protected $builderClass = '\PHPixie\Database\Query\Implementation\Builder';
     
     public function setUp()
     {
         $this->containers = array(
-            $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array()),
-            $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array()),
+            $this->container(),
+            $this->container(),
         );
         
-        $this->conditionsMock = $this->quickMock('\PHPixie\Database\Conditions', array('container'));
+        $this->containerBuilderMock = $this->containerBuilder();
         $this->valuesMock = $this->quickMock('\PHPixie\Database\Values', array());
         
         $this->builder = $this->builder();
@@ -179,7 +178,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->prepareContainer();
         $this
-            ->conditionsMock
+            ->containerBuilderMock
             ->expects($this->at(1))
             ->method('container')
             ->will($this->returnValue($this->containers[1]));
@@ -196,10 +195,10 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     /**
      * @covers ::conditionContainer
      */
-    public function testConditionContainerException()
+    public function testConditionContainerDefault()
     {
-        $this->setExpectedException('\PHPixie\Database\Exception\Builder');
-        $this->builder->conditionContainer();
+        $container = $this->builder->conditionContainer();
+        $this->assertSame($container, $this->builder->conditionContainer('where'));
     }
     
     /**
@@ -324,20 +323,29 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     
     protected function prepareContainer()
     {
-        $this->conditionsMock
+        $this->containerBuilderMock
                 ->expects($this->at(0))
                 ->method('container')
                 ->will($this->returnValue($this->containers[0]));
     }
     
-    protected function builder()
-    {
-        $class = $this->builderClass;
-        return new $class($this->conditionsMock, $this->valuesMock);
-    }
-    
     protected function getDriver()
     {
         return $this->quickMock('\PHPixie\Database\Driver', array('valuesData'));
+    }
+    
+    protected function containerBuilder()
+    {
+        return $this->quickMock('\PHPixie\Database\Conditions', array('container'));
+    }
+    
+    protected function container()
+    {
+        return $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array());
+    }
+    
+    protected function builder()
+    {
+        return new \PHPixie\Database\Query\Implementation\Builder($this->containerBuilderMock, $this->valuesMock);
     }
 }

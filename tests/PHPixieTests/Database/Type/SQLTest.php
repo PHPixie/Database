@@ -20,9 +20,9 @@ class SQLTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testExpression()
     {
-        $expr = $this->sql->expression('pixie');
+        $expr = $this->sql->expression();
         $this->assertInstanceOf('\PHPixie\Database\Type\SQL\Expression', $expr);
-        $this->assertEquals('pixie', $expr->sql);
+        $this->assertEquals('', $expr->sql);
         $this->assertEquals(array(), $expr->params);
         $expr = $this->sql->expression('pixie', array('test'));
         $this->assertEquals('pixie', $expr->sql);

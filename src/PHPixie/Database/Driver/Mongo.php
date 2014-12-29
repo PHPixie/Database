@@ -38,6 +38,14 @@ class Mongo extends \PHPixie\Database\Driver
 
         return $this->groupParser;
     }
+    
+    public function queryBuilder()
+    {
+        $documentConditions = $this->database->document()->conditions();
+        $values = $this->database->values();
+
+        return $this->buildQueryBuilder($documentConditions, $values);
+    }
 
     public function buildGroupParserInstance()
     {
@@ -52,10 +60,9 @@ class Mongo extends \PHPixie\Database\Driver
         return new $class($connection, $parser, $builder);
     }
     
-    public function buildQueryBuilder($conditions, $values)
+    public function buildQueryBuilder($documentContainerBuilder, $values)
     {
-        $databaseConditions = $this->database->document()->conditions();
-        return new \PHPixie\Database\Driver\Mongo\Query\Builder($conditions, $databaseConditions, $values);
+        return new \PHPixie\Database\Driver\Mongo\Query\Builder($documentContainerBuilder, $values);
     }
 
     public function result($cursor)

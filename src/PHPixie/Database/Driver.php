@@ -41,7 +41,7 @@ abstract class Driver
 
     abstract public function buildConnection($name, $config);
     abstract public function buildParserInstance($connectionName);
-    abstract public function buildQueryBuilder($conditions, $values);
+    abstract public function buildQueryBuilder($containerBuilder, $values);
     abstract public function buildQuery($type, $connection, $parser, $builder);
     abstract public function result($cursor);
 }

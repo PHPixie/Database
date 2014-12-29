@@ -5,10 +5,8 @@ namespace PHPixieTests\Database\Driver\Mongo\Query;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Query\Builder
  */
-class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTest
+class BuilderTest extends \PHPixieTests\Database\Type\Document\Query\Implementation\BuilderTest
 {
-    
-    protected $builderClass = '\PHPixie\Database\Driver\Mongo\Query\Builder';
     
     /**
      * @covers ::<protected>
@@ -81,5 +79,10 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
             array('t' => 1),
             array('t' => 2)
         ), $this->builder->getValue('batchData'));
+    }
+    
+    protected function builder()
+    {
+        return new \PHPixie\Database\Driver\Mongo\Query\Builder($this->containerBuilderMock, $this->valuesMock);
     }
 }

@@ -57,7 +57,7 @@ abstract class Fragment
     {
         if ($value instanceof \PHPixie\Database\Type\SQL\Expression) {
             $expr->append($value);
-        } elseif ($value instanceof \PHPixie\Database\SQl\Query) {
+        } elseif ($value instanceof \PHPixie\Database\Type\SQL\Query) {
             $expr->sql.= "( ";
             $expr->append($value-> parse());
             $expr->sql.= " )";

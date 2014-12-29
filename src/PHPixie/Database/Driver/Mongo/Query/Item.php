@@ -3,7 +3,7 @@
 namespace PHPixie\Database\Driver\Mongo\Query;
 
 abstract class Item extends \PHPixie\Database\Driver\Mongo\Query 
-                    implements \PHPixie\Database\Conditions\Builder
+                    implements \PHPixie\Database\Type\Document\Conditions\Builder
 {
     public function __construct($connection, $parser, $builder)
     {
@@ -47,9 +47,17 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     
     protected function addContainerPlaceholder($logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
     {
-        $this->builder->addPlaceholder($logic, $negate, $allowEmpty, $containerName);
-        
-        return $this;
+        return $this->builder->addPlaceholder($logic, $negate, $allowEmpty, $containerName);
+    }
+    
+    protected function addContainerSubdocumentPlaceholder($field, $logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
+    {
+        return $this->builder->addSubdocumentPlaceholder($field, $logic, $negate, $allowEmpty, $containerName);
+    }
+    
+    protected function addContainerSubarrayItemPlaceholder($field, $logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
+    {
+        return $this->builder->addSubarrayItemPlaceholder($field, $logic, $negate, $allowEmpty, $containerName);
     }
 
     public function addCondition($logic, $negate, $params)
@@ -103,25 +111,25 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
         return $this->addContainerPlaceholder($logic, $negate, $allowEmpty, 'where');
     }
     
-    public function addSubdocumentCondition($logic, $negate, $field)
+    public function addSubdocumentPlaceholder($field, $logic = 'and', $negate = false, $allowEmpty = true)
     {
-        return $this->addContainerSubdocumentCondition($logic, $negate, $field);
+        return $this->addContainerSubdocumentPlaceholder($field, $logic, $negate, $allowEmpty);
     }
     
-    public function addWhereSubdocumentCondition($logic, $negate, $field)
+    public function addWhereSubdocumentPlaceholder($field, $logic = 'and', $negate = false, $allowEmpty = true)
     {
-        return $this->addContainerSubdocumentCondition($logic, $negate, $field, 'where');
+        return $this->addContainerSubdocumentPlaceholder($field, $logic, $negate, $allowEmpty, 'where');
     }
     
-    public function addArrayItemCondition($logic, $negate, $field)
+    public function addSubarrayItemPlaceholder($field, $logic = 'and', $negate = false, $allowEmpty = true)
     {
-        return $this->addArrayItemCondition($logic, $negate, $field);
+        return $this->addContainerSubarrayItemPlaceholder($field, $logic, $negate, $allowEmpty);
     }
     
-    public function addWhereArrayItemCondition($logic, $negate, $field)
+    public function addWhereSubarrayItemPlaceholder($field, $logic = 'and', $negate = false, $allowEmpty = true)
     {
-        return $this->addArrayItemCondition($logic, $negate, $field, 'where');
-    }    
+        return $this->addContainerSubarrayItemPlaceholder($field, $logic, $negate, $allowEmpty, 'where');
+    } 
 
     public function where()
     {

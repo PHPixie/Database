@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Type\Document\Conditions\Condition\Placeholder;
 
-class Subdocument extends \PHPixie\Database\Type\Document\Conditions\Condition\Placeholder
+abstract class Embedded extends \PHPixie\Database\Type\Document\Conditions\Condition\Placeholder
 {
     protected $field;
     
@@ -15,5 +15,10 @@ class Subdocument extends \PHPixie\Database\Type\Document\Conditions\Condition\P
     public function field()
     {
         return $this->field;
+    }
+    
+    public function setField($field)
+    {
+        $this->field = $field;
     }
 }

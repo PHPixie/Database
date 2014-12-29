@@ -5,7 +5,7 @@ namespace PHPixieTests\Database\Type;
 /**
  * @coversDefaultClass \PHPixie\Database\Type\Document
  */
-class SQLTest extends \PHPixieTests\AbstractDatabaseTest
+class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $database;
     

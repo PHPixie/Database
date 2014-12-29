@@ -133,9 +133,7 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
     
     protected function addContainerPlaceholder($logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
     {
-        $this->builder->addPlaceholder($logic, $negate, $allowEmpty, $containerName);
-        
-        return $this;
+        return $this->builder->addPlaceholder($logic, $negate, $allowEmpty, $containerName);
     }
     
     public function addCondition($logic, $negate, $args)
@@ -183,9 +181,7 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
     
     public function addOnPlaceholder($logic = 'and', $negate = false, $allowEmpty = true)
     {
-        $this->builder->addOnPlaceholder($logic, $negate, $allowEmpty);
-        
-        return $this;
+        return $this->builder->addOnPlaceholder($logic, $negate, $allowEmpty);
     }
 
     public function startOnConditionGroup($logic = 'and', $negate = false)

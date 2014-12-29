@@ -31,11 +31,14 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
      * @covers ::addWhereOperatorCondition
      * @covers ::startWhereConditionGroup
      * @covers ::addWherePlaceholder
+     * @covers ::addWhereSubdocumentCondition
+     * @covers ::addWhereSubarrayItemCondition
      * @covers ::endWhereGroup
      */
     public function testWhereMethods()
     {
         $this->conditionMethodsTest('where');
+        $this->subdocumentMethodsTest('where');
     }
     
     /**
@@ -60,10 +63,13 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
      * @covers ::addOperatorCondition
      * @covers ::startConditionGroup
      * @covers ::addPlaceholder
+     * @covers ::addSubdocumentCondition
+     * @covers ::addSubarrayItemCondition
      */
     public function testShorthandMethods()
     {
         $this->conditionMethodsTest(null, false);
+        $this->subdocumentMethodsTest();
     }
     
     /**
@@ -72,5 +78,27 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
     public function testAliasedConditionMethods()
     {
         $this->conditionAliasTest();
+    }
+    
+    protected function subdocumentMethodsTest($builderName = null)
+    {
+        $types = array('subdocument', 'subarrayItem');
+        
+        foreach($types as $type) {
+            $container = $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array());
+            $params = array('pixie', 'or', true, false);
+            $builderParams = $params;
+            if($builderName !== null)
+                $builderParams[]=$builderName;
+        
+            $this->builderMethodTest(
+                'add'.ucfirst($builderName).ucfirst($type).'Placeholder',
+                $params,
+                $container,
+                $container,
+                $builderParams,
+                 'add'.ucfirst($type).'Placeholder'
+            );
+        }
     }
 }

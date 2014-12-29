@@ -238,15 +238,11 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testAddPlaceholder()
     {
-        $placeholder = $this->container->addPlaceholder();
-        $this->assertEquals('and', $placeholder->logic());
-        $this->assertEquals(false, $placeholder->negated());
-        $this->assertAttributeEquals(true, 'allowEmpty', $placeholder);
+        $container = $this->container->addPlaceholder();
+        $this->assertPlaceholder($container, 'and', false, true);
 
-        $placeholder = $this->container->addPlaceholder('or', true, false);
-        $this->assertEquals('or', $placeholder->logic());
-        $this->assertEquals(true, $placeholder->negated());
-        $this->assertAttributeEquals(false, 'allowEmpty', $placeholder);
+        $container = $this->container->addPlaceholder('or', true, false);
+        $this->assertPlaceholder($container, 'or', true, false);
     }
 
     /**
@@ -322,6 +318,21 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
         } else {
                 $this->assertConditionArray($condition->conditions(), $expected[2]);
         }
+    }
+    
+    protected function assertPlaceholder($container, $logic, $negated, $allowEmpty)
+    {
+        $placeholder = $this->getLastCondition();
+        $this->assertSame($placeholder->container(), $container);
+        $this->assertEquals($logic, $placeholder->logic());
+        $this->assertEquals($negated, $placeholder->negated());
+        $this->assertAttributeEquals($allowEmpty, 'allowEmpty', $placeholder);
+    }
+    
+    protected function getLastCondition()
+    {
+        $conditions = $this->container->getConditions();
+        return end($conditions);
     }
     
     protected function conditions()

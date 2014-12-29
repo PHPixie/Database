@@ -14,18 +14,28 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder
         return parent::conditionContainer($name);
     }
     
+    public function startSubdocumentConditionGroup($field, $logic = 'and', $negate = false, $containerName = null)
+    {
+        $this->conditionContainer($containerName)->startSubdocumentConditionGroup($field, $logic, $negate);
+    }
+    
+    public function startSubarrayItemConditionGroup($field, $logic = 'and', $negate = false, $containerName = null)
+    {
+        $this->conditionContainer($containerName)->startSubarrayItemConditionGroup($field, $logic, $negate);
+    }
+    
     public function addPlaceholder($logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
     {
         return parent::addPlaceholder($logic, $negate, $allowEmpty, $containerName);
     }
     
-    public function addSubdocumentCondition($field, $logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
+    public function addSubdocumentPlaceholder($field, $logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
     {
-        return $this->conditionContainer($containerName)->addSubdocumentCondition($field, $logic, $negate, $allowEmpty);
+        return $this->conditionContainer($containerName)->addSubdocumentPlaceholder($field, $logic, $negate, $allowEmpty);
     }
     
-    public function addArrayItemCondition($field, $logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
+    public function addSubarrayItemPlaceholder($field, $logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
     {
-        return $this->conditionContainer($containerName)->addArrayItemCondition($field, $logic, $negate, $allowEmpty);
+        return $this->conditionContainer($containerName)->addSubarrayItemPlaceholder($field, $logic, $negate, $allowEmpty);
     }
 }

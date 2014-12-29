@@ -59,12 +59,12 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
 
     protected function builderMethodTest($method, $with, $will = null, $builderWill = null, $builderWith = null, $builderMethod = null)
     {
+        if($builderWill === null)
+            $builderWill = $will;
+        
         if($builderWith === null)
             $builderWith = $with;
 
-        if($builderMethod === null)
-            $builderMethod = $method;
-        
         if($builderMethod === null)
             $builderMethod = $method;
         
@@ -97,7 +97,7 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
             'startConditionGroup',
             'endConditionGroup',
             'addOperatorCondition',
-            'addPlaceholder',
+            'addPlaceholder'
         );
         
         $methodMap = array();
@@ -163,7 +163,6 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         
         $methods = array(
             'add'.$uName.'OperatorCondition' => array('or', true, 'test', '>', array(5)),
-            'add'.$uName.'Placeholder' => array('or', true, false),
             'start'.$uName.'ConditionGroup' => array('or', true),
             'add'.$uName.'Condition' => array('or', true, array('a', 1)),
         );
@@ -176,6 +175,14 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
             $builderMethod = str_replace($uName, '', $method);
             $this->builderMethodTest($method, $params, $this->query, null, $builderParams, $methodMap[$builderMethod]);
         }
+        
+        $container = $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array());
+        $params = array('or', true, false);
+        $builderParams = $params;
+            if($passBuilderName)
+                $builderParams[]=$name;
+        
+        $this->builderMethodTest('add'.$uName.'Placeholder', $params, $container, $container, $builderParams, $methodMap['addPlaceholder']);
         
         if($testContainer){
             $this->builderMethodTest('get'.$uName.'Container', array(), $this->builder, $this->builder, $with, 'conditionContainer');

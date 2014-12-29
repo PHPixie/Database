@@ -8,8 +8,6 @@ namespace PHPixieTests\Database\Type\SQL\Query\Implementation;
 class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTest
 {
     
-    protected $builderClass = '\PHPixie\Database\Type\SQL\Query\Implementation\Builder';
-    
     /**
      * @covers ::<protected>
      * @covers ::addFields
@@ -239,11 +237,16 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
     protected function prepareJoinContainers()
     {
         for($i=0;$i<2;$i++){
-            $this->conditionsMock
+            $this->containerBuilderMock
                 ->expects($this->at($i))
                 ->method('container')
                 ->with('=*')
                 ->will($this->returnValue($this->containers[$i]));
         }
+    }
+    
+    protected function builder()
+    {
+        return new \PHPixie\Database\Type\SQL\Query\Implementation\Builder($this->containerBuilderMock, $this->valuesMock);
     }
 }

@@ -210,7 +210,7 @@ class PDOTest extends \PHPixieTests\Database\DriverTest
         $builder = $this->driver->buildQueryBuilder($conditions, $values);
         $this->assertInstanceOf('\PHPixie\Database\Driver\PDO\Query\Builder', $builder);
         
-        $this->assertAttributeSame($conditions, 'conditions', $builder);
+        $this->assertAttributeSame($conditions, 'containerBuilder', $builder);
         $this->assertAttributesame($values, 'valueBuilder', $builder);
     }
 }

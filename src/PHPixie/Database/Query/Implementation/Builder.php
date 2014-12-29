@@ -150,13 +150,16 @@ class Builder
     public function conditionContainer($name = null)
     {
         if ($name === null) {
-            $this->assert($this->defaultContainer !== null, "None of the condition containers were used");
-
-        } else {
-            if (!array_key_exists($name, $this->conditionContainers))
-                $this->conditionContainers[$name] = $this->containerBuilder->container();
-            $this->defaultContainer = $this->conditionContainers[$name];
+            if($this->defaultContainer !== null) {
+                return $this->defaultContainer;
+            }else{
+                $name = 'where';
+            }
         }
+        
+        if (!array_key_exists($name, $this->conditionContainers))
+            $this->conditionContainers[$name] = $this->containerBuilder->container();
+        $this->defaultContainer = $this->conditionContainers[$name];
 
         return $this->defaultContainer;
     }

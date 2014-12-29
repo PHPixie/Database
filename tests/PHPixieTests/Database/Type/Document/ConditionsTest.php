@@ -58,32 +58,32 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     }
     
     /**
-     * @covers ::subdocument
+     * @covers ::subdocumentPlaceholder
      * @covers ::<protected>
      */
-    public function testSubdocument()
+    public function testSubdocumentPlaceholder()
     {
-        $condition = $this->conditions->subdocument('test');
-        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Subdocument', $condition);
+        $condition = $this->conditions->subdocumentPlaceholder('test');
+        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Embedded\Subdocument', $condition);
         $this->assertSame('test', $condition->field());
         $this->assertPlaceholderContainer($condition, '=', true);
         
-        $condition = $this->conditions->subdocument('test', '>', false);
+        $condition = $this->conditions->subdocumentPlaceholder('test', '>', false);
         $this->assertPlaceholderContainer($condition, '>', false);
     }
     
     /**
-     * @covers ::arraySubdocument
+     * @covers ::subarrayItemPlaceholder
      * @covers ::<protected>
      */
-    public function testArraySubdocument()
+    public function testSubarrayItemPlaceholder()
     {
-        $condition = $this->conditions->arraySubdocument('test');
-        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Subdocument\ArrayItem', $condition);
+        $condition = $this->conditions->subarrayItemPlaceholder('test');
+        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Embedded\SubarrayItem', $condition);
         $this->assertSame('test', $condition->field());
         $this->assertPlaceholderContainer($condition, '=', true);
         
-        $condition = $this->conditions->arraySubdocument('test', '>', false);
+        $condition = $this->conditions->subarrayItemPlaceholder('test', '>', false);
         $this->assertPlaceholderContainer($condition, '>', false);
     }
     

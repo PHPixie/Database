@@ -63,6 +63,6 @@ class PlaceholderTest extends \PHPixieTests\Database\Conditions\ConditionTest
     
     protected function placeholder($allowEmpty = true)
     {
-        return new \PHPixie\Database\Conditions\Condition\Placeholder($this->container, $allowEmty);   
+        return new \PHPixie\Database\Conditions\Condition\Placeholder($this->container, $allowEmpty);   
     }
 }

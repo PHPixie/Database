@@ -1,6 +1,9 @@
 <?php
 namespace PHPixieTests\Database\Driver;
 
+if(!class_exists('\MongoClient'))
+    require_once(__DIR__.'/Mongo/ConnectionTestFiles/MongoClient.php');
+
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo
  */
@@ -161,13 +164,13 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
      */
     public function testBuildQueryBuilder()
     {
-        $conditions = $this->quickMock('\PHPixie\Database\Conditions', array());
+        $documentConditions = $this->quickMock('\PHPixie\Database\Type\Document\Conditions', array());
         $values = $this->quickMock('\PHPixie\Database\Values', array());
         
-        $builder = $this->driver->buildQueryBuilder($conditions, $values);
+        $builder = $this->driver->buildQueryBuilder($documentConditions, $values);
         $this->assertInstanceOf('\PHPixie\Database\Driver\Mongo\Query\Builder', $builder);
         
-        $this->assertAttributeSame($conditions, 'conditions', $builder);
+        $this->assertAttributeSame($documentConditions, 'containerBuilder', $builder);
         $this->assertAttributesame($values, 'valueBuilder', $builder);
     }
 

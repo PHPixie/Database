@@ -22,7 +22,7 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder
     public function addJoin($table, $alias, $type)
     {
         $this->addToArray('joins', array(
-            'container' => $this->conditions->container('=*'),
+            'container' => $this->containerBuilder->container('=*'),
             'table' => $table,
             'alias' => $alias,
             'type'  => $type

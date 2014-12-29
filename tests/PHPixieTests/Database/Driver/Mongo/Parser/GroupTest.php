@@ -13,7 +13,11 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->database = new \PHPixie\Database(null);
         $operatorParser = new \PHPixie\Database\Driver\Mongo\Parser\Operator();
-        $this->groupParser = new \PHPixie\Database\Driver\Mongo\Parser\Group($this->database->driver('Mongo'), $operatorParser);
+        $this->groupParser = new \PHPixie\Database\Driver\Mongo\Parser\Group(
+            $this->database->driver('Mongo'),
+            $this->database->conditions(),
+            $operatorParser
+        );
     }
 
     /**
@@ -125,25 +129,6 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
         });
         $this->assertGroup($container, array('a' => 1));
 
-        $subdocument = $this->database->subdocumentCondition();
-        $subdocument
-                    ->and('a', 1)
-                    ->or('a', '>', 1);
-        $container = $this->getContainer()->_and('p', 'elemMatch', $subdocument);
-        $this->assertGroup($container, array(
-            'p' => array(
-                '$elemMatch' => array(
-                    '$or' => array(
-                        array( 'a' => 1 ),
-                        array(
-                            'a' => array(
-                                '$gt' => 1
-                            )
-                        )
-                    )
-                )
-            )
-        ));
     }
 
     /**
@@ -215,7 +200,7 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
 
         $container = $this->getContainer()
                                     ->_and('a', 1);
-        $placeholder = $container->addPlaceholder('and')->container();
+        $placeholder = $container->addPlaceholder('and');
         $placeholder
                 ->_and('b',1)
                 ->_or('c', 1);
@@ -228,9 +213,34 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
         ));
     }
 
+    /**
+     * @covers ::parse
+     * @covers ::<protected>
+     */
+    public function testParseSubdocuments()
+    {
+        $container = $this->getContainer();
+        
+        $subdocumentContainer = $container->addSubdocumentCondition('a');
+        $subdocumentContainer
+            ->startGroup()
+            ->_and('b', 1)
+            ->addPlaceholder()
+                ->_and('c', 1);
+        $subarrayItemContainer = $subdocumentContainer->addSubarrayItemCondition('d', 'or', true);
+        $subarrayItemContainer
+            ->addSubdocumentCondition('e')
+                ->_and('f', 1);
+        $subdocumentContainer->endGroup();
+
+        $this->assertGroup($container, array(
+
+        ));
+    }
+    
     protected function getContainer()
     {
-        $container = new \PHPixie\Database\Conditions\Builder\Container($this->database->conditions());
+        $container = $this->database->document()->conditions()->container();
 
         return $container;
     }
@@ -238,6 +248,7 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
     protected function assertGroup($container, $expect)
     {
         $parsed = $this->groupParser->parse($container->getConditions());
+        print_r($parsed);
         $this->assertEquals($expect, $parsed);
     }
 

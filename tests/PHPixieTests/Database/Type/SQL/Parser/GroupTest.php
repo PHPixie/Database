@@ -21,7 +21,7 @@ abstract class GroupTest extends \PHPixieTests\Database\Type\SQL\AbstractParserT
         $placeholderBuilder = $this->container()
                         ->_and('a', 1);
 
-        $placeholder = $placeholderBuilder->addPlaceholder('or')->container();
+        $placeholder = $placeholderBuilder->addPlaceholder('or');
         $placeholderBuilder->xorNot(function ($container) {
                             $container
                                 ->_and('d', 1)
