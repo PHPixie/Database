@@ -7,17 +7,17 @@ class Conditions implements \PHPixie\Database\Conditions\Builder\Container\Build
     public function placeholder($defaultOperator = '=', $allowEmpty = true)
     {
         $container = $this->container($defaultOperator);
-        return new Conditions\Condition\Placeholder($container, $allowEmpty);
+        return new Conditions\Condition\Collection\Placeholder($container, $allowEmpty);
     }
 
     public function operator($field, $operator, $values)
     {
-        return new Conditions\Condition\Operator($field, $operator, $values);
+        return new Conditions\Condition\Field\Operator($field, $operator, $values);
     }
 
     public function group()
     {
-        return new Conditions\Condition\Group();
+        return new Conditions\Condition\Collection\Group();
     }
 
     public function container($defaultOperator = '=')

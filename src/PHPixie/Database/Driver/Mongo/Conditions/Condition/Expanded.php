@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver\Mongo\Conditions\Condition;
 
-class Expanded extends \PHPixie\Database\Conditions\Condition
+class Expanded extends \PHPixie\Database\Conditions\Condition\Implementation
 {
     protected $groups = array();
 
@@ -15,24 +15,34 @@ class Expanded extends \PHPixie\Database\Conditions\Condition
     protected function addAnd($condition)
     {
         $newGroups = array();
-        foreach ($this->groups as $key=>$group) {
-            if ($condition instanceof Expanded) {
-                foreach($condition->groups as $newGroup)
-                    $newGroups[] = array_merge($group, $newGroup);
-            } else {
+        if($condition instanceof Expanded) {
+            $groups = $condition->groups();
+            
+            if(empty($groups))
+                return;
+            
+            foreach ($this->groups as $group) {
+                foreach($groups as $conditionGroup) {
+                    $newGroups[] = array_merge($group, $conditionGroup);
+                }
+            }
+            
+        }else{
+            foreach ($this->groups as $group) {
                 $group[] = $condition;
                 $newGroups[] = $group;
             }
         }
+
         $this->groups = $newGroups;
     }
 
-    protected function addOr($group)
+    protected function addOr($condition)
     {
-        if ($group instanceof Expanded) {
-            $this->groups = array_merge($this->groups, $group->groups);
+        if ($condition instanceof Expanded) {
+            $this->groups = array_merge($this->groups, $condition->groups());
         } else {
-            $this->groups[] = array($group);
+            $this->groups[] = array($condition);
         }
 
         return $this;
@@ -40,11 +50,12 @@ class Expanded extends \PHPixie\Database\Conditions\Condition
 
     public function add($condition, $logic = 'and')
     {
+        $condition = clone $condition;
         if (empty($this->groups)) {
 
             if ($condition instanceof Expanded) {
-                $this->groups = $condition->groups;
-            } elseif ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
+                $this->groups = $condition->groups();
+            } elseif ($condition instanceof \PHPixie\Database\Conditions\Condition\Field\Operator) {
                 $this->groups[] = array($condition);
             } else {
                 throw new \PHPixie\Database\Exception\Parser("You can only add Expanded and Operator conditions");
@@ -75,13 +86,14 @@ class Expanded extends \PHPixie\Database\Conditions\Condition
 
             foreach ($group as $operator) {
                 if (!in_array($operator, $negated, true)) {
+                    $operator = clone $operator;
                     $operator->negate();
                     $negated[] = $operator;
                 }
 
                 foreach ($groups as $oldMerged) {
                     if (!in_array($operator, $oldMerged, true)) {
-                        array_unshift($oldMerged, $operator);
+                        array_unshift($oldMerged, clone $operator);
                     }
                     $merged[] = $oldMerged;
 

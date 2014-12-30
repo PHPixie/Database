@@ -23,14 +23,14 @@ abstract class Group
 
     protected function appendCondition($condition, $expr)
     {
-        if ($condition->negated()) {
+        if ($condition->isNegated()) {
             $expr->sql .= 'NOT ';
         }
 
-        if ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
+        if ($condition instanceof \PHPixie\Database\Conditions\Condition\Field\Operator) {
             $expr->append($this->operatorParser->parse($condition));
 
-        } elseif ($condition instanceof \PHPixie\Database\Conditions\Condition\Group || $condition instanceof \PHPixie\Database\Conditions\Condition\Placeholder) {
+        } elseif ($condition instanceof \PHPixie\Database\Conditions\Condition\Collection\Group || $condition instanceof \PHPixie\Database\Conditions\Condition\Collection\Placeholder) {
             $expr->sql.= "( ";
             $this->appendGroup($condition->conditions(), $expr);
             $expr->sql.= " )";

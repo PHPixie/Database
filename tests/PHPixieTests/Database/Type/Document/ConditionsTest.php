@@ -49,7 +49,7 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     public function testPlaceholder()
     {
         $placeholder = $this->conditions->placeholder();
-        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Placeholder', $placeholder);
+        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Collection\Placeholder', $placeholder);
         $this->assertPlaceholderContainer($placeholder, '=', true);
         
         $placeholder = $this->conditions->placeholder('>', false);
@@ -64,7 +64,7 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     public function testSubdocumentPlaceholder()
     {
         $condition = $this->conditions->subdocumentPlaceholder('test');
-        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Embedded\Subdocument', $condition);
+        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Collection\Embedded\Placeholder\Subdocument', $condition);
         $this->assertSame('test', $condition->field());
         $this->assertPlaceholderContainer($condition, '=', true);
         
@@ -79,7 +79,7 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     public function testSubarrayItemPlaceholder()
     {
         $condition = $this->conditions->subarrayItemPlaceholder('test');
-        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Embedded\SubarrayItem', $condition);
+        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Collection\Embedded\Placeholder\SubarrayItem', $condition);
         $this->assertSame('test', $condition->field());
         $this->assertPlaceholderContainer($condition, '=', true);
         

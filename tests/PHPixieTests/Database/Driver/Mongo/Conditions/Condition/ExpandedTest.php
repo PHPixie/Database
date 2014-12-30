@@ -5,15 +5,25 @@ namespace PHPixieTests\Database\Driver\Mongo\Conditions\Condition;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Conditions\Condition\Expanded
  */
-class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
+class ExpandedTest extends \PHPixieTests\Database\Conditions\Condition\ImplementationTest
 {
-    protected $expanded;
-
-    protected function setUp()
+    /**
+     * @covers ::negate
+     * @covers ::isNegated
+     * @covers ::setIsNegated
+     */
+    public function testNegation()
     {
-        $this->expanded = $this->getExpanded();
+        $this->assertEquals(false, $this->condition->isNegated());
+        $this->assertEquals($this->condition, $this->condition->negate());
+        $this->assertEquals(false, $this->condition->isNegated());
+        
+        $this->assertEquals($this->condition, $this->condition->setIsNegated(true));
+        $this->assertEquals(false, $this->condition->isNegated());
+        $this->assertEquals($this->condition, $this->condition->setIsNegated(false));
+        $this->assertEquals(false, $this->condition->isNegated());
     }
-
+    
     /**
      * @covers ::__construct
      * @covers ::add
@@ -31,9 +41,9 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
         $exp1->add($b);
         $exp2 = $this->getExpanded();
         $exp2->add($c)->add($b);
-        $this->expanded->add($exp1)->add($exp2, 'or');
+        $this->condition->add($exp1)->add($exp2, 'or');
 
-        $this->expanded->negate();
+        $this->condition->negate();
         $this->assertGroup(array(array('!a','!c'),array('!b')));
     }
 
@@ -52,19 +62,19 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
         $d = $this->getOperator('d');
         $e = $this->getOperator('e');
 
-        $this->expanded->add($a);
+        $this->condition->add($a);
         $this->assertGroup(array(array('a')));
 
-        $this->expanded->add($b);
+        $this->condition->add($b);
         $this->assertGroup(array(array('a', 'b')));
 
-        $this->expanded->add($c);
+        $this->condition->add($c);
         $this->assertGroup(array(array('a', 'b', 'c')));
 
-        $this->expanded->add($d,'or');
+        $this->condition->add($d,'or');
         $this->assertGroup(array(array('a', 'b', 'c'), array('d')));
 
-        $this->expanded->add($e);
+        $this->condition->add($e);
         $this->assertGroup(array(array('a', 'b', 'c', 'e'), array('d', 'e')));
 
         $exp = $this->getExpanded();
@@ -76,7 +86,7 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
         $exp->add($g);
         $exp->add($h, 'or');
 
-        $this->expanded->add($exp);
+        $this->condition->add($exp);
 
         $this->assertGroup(array(
             array('a', 'b', 'c', 'e', 'f', 'g'),
@@ -89,6 +99,7 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
     /**
      * @covers ::add
      * @covers ::negate
+     * @covers ::setIsNegated
      * @covers ::groups
      * @covers ::<protected>
      * @covers ::__clone
@@ -101,10 +112,10 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
         $d = $this->getOperator('d');
         $e = $this->getOperator('e');
 
-        $this->expanded->add($a);
-        $this->expanded->add($b);
-        $this->expanded->add($c,'or');
-        $this->expanded->negate();
+        $this->condition->add($a);
+        $this->condition->add($b);
+        $this->condition->add($c,'or');
+        $this->condition->negate();
         $this->assertGroup(array(array('!a','!c'),array('!b','!c')));
 
         $exp = $this->getExpanded();
@@ -131,7 +142,7 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
             array('k'),
         ), $exp);
 
-        $exp->negate();
+        $exp->setIsNegated(true);
         $this->assertGroup(array(
             array('!f', '!h','!i','!k'),
             array('!f', '!h', '!j', '!k'),
@@ -142,7 +153,7 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
         $l = $this->getOperator('l');
         $exp->add($l);
 
-        $exp->negate(true);
+        $exp->negate();
         $this->assertGroup(array(
             array('f', 'g'),
             array('h'),
@@ -158,7 +169,7 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
         foreach ($groups as $group) {
             $row = array();
             foreach ($group as $op) {
-                $row[] = ($op->negated()?'!':'').$op->field;
+                $row[] = ($op->isNegated()?'!':'').$op->field();
             }
             $parsed[] = $row;
         }
@@ -178,7 +189,7 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
     public function testAddOperatorException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Parser');
-        $this->expanded->add(array());
+        $this->condition->add(array());
     }
 
     /**
@@ -187,14 +198,14 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
     public function testAddLogicException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Parser');
-        $this->expanded->add($this->getOperator('a'));
-        $this->expanded->add($this->getOperator('b'), 'xor');
+        $this->condition->add($this->getOperator('a'));
+        $this->condition->add($this->getOperator('b'), 'xor');
     }
 
     protected function assertGroup($expected, $expanded = null)
     {
         if ($expanded == null)
-            $expanded = $this->expanded;
+            $expanded = $this->condition;
 
         $parsed = $this->parseGroups($expanded->groups());
         $this->assertEquals($expected, $parsed);
@@ -202,7 +213,7 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
 
     protected function getOperator($field)
     {
-        return $mock = $this->getMockBuilder('\PHPixie\Database\Conditions\Condition\Operator')
+        return $mock = $this->getMockBuilder('\PHPixie\Database\Conditions\Condition\Field\Operator')
                         ->setMethods(null)
                         ->setConstructorArgs(array($field, '=', strtoupper($field)))
                         ->getMock();
@@ -211,6 +222,11 @@ class ExpandedTest extends \PHPixieTests\AbstractDatabaseTest
     protected function getExpanded($operator = null)
     {
         return new \PHPixie\Database\Driver\Mongo\Conditions\Condition\Expanded($operator);
+    }
+    
+    protected function condition()
+    {
+        return $this->getExpanded();
     }
 
 }

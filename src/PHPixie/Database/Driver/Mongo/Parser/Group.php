@@ -17,65 +17,62 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
         $this->operatorParser = $operatorParser;
     }
 
-    protected function normalize($condition)
+    protected function normalize($condition, $prefix = null)
     {
-        if(
-            $condition instanceof DocumentCondition\Placeholder\Embedded\SubarrayItem ||
-            $condition instanceof DocumentCondition\Group\Embedded\SubarrayItem
-          ) {
+        if($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Collection\Embedded\SubarrayItem) {
             $conditions = $condition->conditions();
             $parsed = $this->parse($conditions);
             
-            $operatorCondition = $this->conditions->operator($condition->field, 'elemMatch', array($parsed));
+            $field = $this->prefixField($prefix, $condition->field());
+            $operatorCondition = $this->conditions->operator($field, 'elemMatch', array($parsed));
             $this->copyLogicAndNegated($condition, $operatorCondition);
             
             return $this->normalizeOperatorCondition($operatorCondition);
         }
         
-        if(
-            $condition instanceof DocumentCondition\Placeholder\Embedded\Subdocument ||
-            $condition instanceof DocumentCondition\Group\Embedded\Subdocument
-          ) {
+        if($condition instanceof \PHPixie\Database\Conditions\Condition\Collection) {
             $conditions = $condition->conditions();
-            $conditions = $this->prefixConditions($condition->field(), $conditions);
-            $group = $this->parseLogic($conditions);
-            if ($group != null) {
-                $this->copyLogicAndNegated($condition, $group);
+            
+            $collectionPrefix = $prefix;
+            
+            if($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Collection\Embedded\Subdocument) {
+                $collectionPrefix = $this->prefixField($prefix, $condition->field());
             }
             
-            return $group;
+            $expanded = $this->parseLogic($conditions);
+            
+            var_dump(111111111111111);
+            foreach ($expanded->groups() as $expandedGroup) {
+                foreach ($expandedGroup as $expandedCondition) {
+                    if($expandedCondition instanceof \PHPixie\Database\Conditions\Condition\Field) {
+                        print_r([$collectionPrefix, $expandedCondition->field()]);
+                        $expandedCondition->setField($this->prefixField($collectionPrefix, $expandedCondition->field()));
+                    }
+                }
+            }
+            
+            return $this->copyLogicAndNegated($condition, $expanded);
         }
         
-        if (
-            $condition instanceof \PHPixie\Database\Conditions\Condition\Group || 
-            $condition instanceof \PHPixie\Database\Conditions\Condition\Placeholder
-        ) {
-            $group = $condition->conditions();
-            $group = $this->parseLogic($group);
-
-            if ($group != null) {
-                $this->copyLogicAndNegated($condition, $group);
-            }
-
-            return $group;
-        }
-
-        if ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
+        if ($condition instanceof \PHPixie\Database\Conditions\Condition\Field\Operator) {
             return $this->normalizeOperatorCondition($condition);
         }
 
         return $condition;
-
+        
     }
     
+    protected function prefixField($prefix, $field)
+    {
+        if($prefix === null)
+            return $field;
+        return $prefix.'.'.$field;
+    }
+        
     protected function normalizeOperatorCondition($condition)
     {
-        $copy = $this->conditions->operator($condition->field, $condition->operator, $condition->values);
-        $this->copyLogicAndNegated($condition, $copy);
-        
-        $expanded = $this->driver->expandedCondition();
-        $expanded->add($copy);
-        $expanded->setLogic($copy->logic());
+        $expanded = $this->driver->expandedCondition($condition);
+        $expanded->setLogic($condition->logic());
         
         return $expanded;
     }
@@ -102,19 +99,24 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
 
             $merged->add($rightPart, 'or');
             $merged->setLogic($left->logic());
-
             return $merged;
         }
 
+    }
+    
+    protected function parseLogic($conditions)
+    {
+        $expanded = parent::parseLogic($conditions);
+        
+        if ($expanded === null)
+            $expanded = $this->driver->expandedCondition();
+        
+        return $expanded;
     }
 
     public function parse($conditions)
     {
         $expanded = $this->parseLogic($conditions);
-        $expanded = $this->normalize($expanded);
-
-        if (empty($expanded))
-            return array();
 
         $andGroups = array();
         foreach ($expanded->groups() as $group) {
@@ -145,9 +147,11 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
         }
 
         $count = count($andGroups);
+        
         if ($count === 1) {
             $andGroups = current($andGroups);
-        } else {
+        
+        } elseif($count > 1) {
             $andGroups = array('$or' => $andGroups);
         }
 
@@ -155,54 +159,10 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
 
     }
     
-    protected function prefixConditions($prefix, $conditions)
-    {
-        $prefixed = array();
-        foreach($conditions as $key => $condition) {
-            if ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
-                $copy = $this->conditions->operator(
-                    $prefix.'.'.$condition->field,
-                    $condition->operator,
-                    $condition->values
-                );
-                $this->copyLogicAndNegated($condition, $copy);
-                $condition = $copy;
-                
-            }elseif ($condition instanceof DocumentCondition\Placeholder\Embedded\S) {
-                $condition->setField($prefix.'.'.$condition->field());                
-                
-            }elseif (
-                $condition instanceof \PHPixie\Database\Conditions\Condition\Group ||
-                $condition instanceof \PHPixie\Database\Conditions\Condition\Placeholder
-            ) {
-                $conditions = $condition->conditions();
-                $conditions = $this->prefixConditions($prefix, $conditions);
-                $copy = $this->conditions->group();
-                $this->copyLogicAndNegated($condition, $copy);
-                $copy->setConditions($conditions);
-                $condition = $copy;
-                
-            }elseif ($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Subdocument) {
-                $condition->setField($prefix.'.'.$condition->field());
-            
-            }elseif ($condition instanceof \PHPixie\Database\Conditions\Condition\Placeholder) {
-                $conditions = $condition->conditions();
-                $conditions = $this->prefixConditions($prefix, $conditions);
-                $group = $this->conditions->group();
-                $group->setConditions($conditions);
-                $this->copyLogicAndNegated($condition, $group);
-                $conditions[$key] = $group;
-            }
-            
-            $
-        }
-    }
-    
     protected function copyLogicAndNegated($source, $target)
     {
         $target->setLogic($source->logic());
-        if($source->negated())
-            $target->negate();
+        $target->setIsNegated($source->isNegated());
         
         return $target;
     }

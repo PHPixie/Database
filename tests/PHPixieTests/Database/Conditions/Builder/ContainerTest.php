@@ -303,7 +303,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
             $e = $expected[$key];
 
             $this->assertEquals($e[0], $condition->logic());
-            $this->assertEquals($e[1], $condition->negated());
+            $this->assertEquals($e[1], $condition->isNegated());
             
             $this->assertCondition($condition, $e);
         }
@@ -311,10 +311,10 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
     
     protected function assertCondition($condition, $expected)
     {
-         if ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
-                $this->assertEquals($expected[2], $condition->field);
-                $this->assertEquals($expected[3], $condition->operator);
-                $this->assertEquals($expected[4], $condition->values);
+         if ($condition instanceof \PHPixie\Database\Conditions\Condition\Field\Operator) {
+                $this->assertEquals($expected[2], $condition->field());
+                $this->assertEquals($expected[3], $condition->operator());
+                $this->assertEquals($expected[4], $condition->values());
         } else {
                 $this->assertConditionArray($condition->conditions(), $expected[2]);
         }
@@ -325,7 +325,7 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
         $placeholder = $this->getLastCondition();
         $this->assertSame($placeholder->container(), $container);
         $this->assertEquals($logic, $placeholder->logic());
-        $this->assertEquals($negated, $placeholder->negated());
+        $this->assertEquals($negated, $placeholder->isNegated());
         $this->assertAttributeEquals($allowEmpty, 'allowEmpty', $placeholder);
     }
     

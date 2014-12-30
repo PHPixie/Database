@@ -19,29 +19,29 @@ class Conditions implements \PHPixie\Database\Type\Document\Conditions\Builder\C
 
     public function subdocumentGroup($field)
     {
-        return new Conditions\Condition\Group\Embedded\Subdocument($field);
+        return new Conditions\Condition\Collection\Embedded\Group\Subdocument($field);
     }
     
     public function subarrayItemGroup($field)
     {
-        return new Conditions\Condition\Group\Embedded\SubarrayItem($field);
+        return new Conditions\Condition\Collection\Embedded\Group\SubarrayItem($field);
     }
     
     public function placeholder($defaultOperator = '=', $allowEmpty = true)
     {
         $container = $this->container($defaultOperator);
-        return new Conditions\Condition\Placeholder($container, $allowEmpty);
+        return new Conditions\Condition\Collection\Placeholder($container, $allowEmpty);
     }
     
     public function subdocumentPlaceholder($field, $defaultOperator = '=', $allowEmpty = true)
     {
         $container = $this->container($defaultOperator);
-        return new Conditions\Condition\Placeholder\Embedded\Subdocument($container, $field, $allowEmpty);
+        return new Conditions\Condition\Collection\Embedded\Placeholder\Subdocument($container, $field, $allowEmpty);
     }
     
     public function subarrayItemPlaceholder($field, $defaultOperator = '=', $allowEmpty = true)
     {
         $container = $this->container($defaultOperator);
-        return new Conditions\Condition\Placeholder\Embedded\SubarrayItem($container, $field, $allowEmpty);
+        return new Conditions\Condition\Collection\Embedded\Placeholder\SubarrayItem($container, $field, $allowEmpty);
     }
 }

@@ -122,14 +122,14 @@ class OperatorTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testRegex()
     {
-        $operator = new \PHPixie\Database\Conditions\Condition\Operator('p', 'regex', array('/la/'));
+        $operator = new \PHPixie\Database\Conditions\Condition\Field\Operator('p', 'regex', array('/la/'));
         $parsed = $this->parser->parse($operator);
         $this->assertEquals('p', key($parsed));
         $parsed = $parsed['p'];
         $this->assertEquals('$regex', key($parsed));
         $this->assertEquals('MongoRegex', get_class(current($parsed)));
 
-        $operator = new \PHPixie\Database\Conditions\Condition\Operator('p', 'regex', array('/la/'));
+        $operator = new \PHPixie\Database\Conditions\Condition\Field\Operator('p', 'regex', array('/la/'));
         $operator->negate();
         $parsed = $this->parser->parse($operator);
         $this->assertEquals('p', key($parsed));
@@ -138,7 +138,7 @@ class OperatorTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals('$regex', key($parsed));
         $this->assertEquals('MongoRegex', get_class(current($parsed)));
 
-        $operator = new \PHPixie\Database\Conditions\Condition\Operator('p', 'not regex', array('/la/'));
+        $operator = new \PHPixie\Database\Conditions\Condition\Field\Operator('p', 'not regex', array('/la/'));
         $parsed = $this->parser->parse($operator);
         $this->assertEquals('p', key($parsed));
         $parsed = $parsed['p'];
@@ -146,7 +146,7 @@ class OperatorTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals('$regex', key($parsed));
         $this->assertEquals('MongoRegex', get_class(current($parsed)));
 
-        $operator = new \PHPixie\Database\Conditions\Condition\Operator('p', 'not regex', array('/la/'));
+        $operator = new \PHPixie\Database\Conditions\Condition\Field\Operator('p', 'not regex', array('/la/'));
         $operator->negate();
         $parsed = $this->parser->parse($operator);
         $this->assertEquals('p', key($parsed));
@@ -170,7 +170,7 @@ class OperatorTest extends \PHPixieTests\AbstractDatabaseTest
     protected function assertException($operator, $value)
     {
         $except = false;
-        $o = new \PHPixie\Database\Conditions\Condition\Operator('p', $operator, $value);
+        $o = new \PHPixie\Database\Conditions\Condition\Field\Operator('p', $operator, $value);
         try {
             $this->parser->parse($o);
         } catch (\PHPixie\Database\Exception\Parser $e) {
@@ -181,7 +181,7 @@ class OperatorTest extends \PHPixieTests\AbstractDatabaseTest
 
     protected function assertOperator($result, $operator, $negated = false, $value = array(5))
     {
-        $operator = new \PHPixie\Database\Conditions\Condition\Operator('p', $operator, $value);
+        $operator = new \PHPixie\Database\Conditions\Condition\Field\Operator('p', $operator, $value);
         if ($negated)
             $operator->negate();
         $this->assertEquals($result, $this->parser->parse($operator));

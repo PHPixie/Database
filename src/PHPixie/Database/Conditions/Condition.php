@@ -2,37 +2,12 @@
 
 namespace PHPixie\Database\Conditions;
 
-abstract class Condition
+interface Condition
 {
-    protected $allowedLogic = array('and', 'or', 'xor');
+    public function logic();
+    public function setLogic($logic);
     
-    protected $negated = false;
-    protected $logic = 'and';
-
-    public function logic()
-    {
-        return $this->logic;
-    }
-
-    public function setLogic($logic)
-    {
-        if(!in_array($logic, $this->allowedLogic))
-            throw new \PHPixie\Database\Exception\Builder("The '$logic' logic is not supported");
-        
-        $this->logic = $logic;
-        return $this;
-    }
-
-    public function negate()
-    {
-        $this->negated = !$this->negated;
-
-        return $this;
-    }
-
-    public function negated()
-    {
-        return $this->negated;
-    }
-
+    public function isNegated();
+    public function setIsNegated($negated);
+    public function negate();
 }

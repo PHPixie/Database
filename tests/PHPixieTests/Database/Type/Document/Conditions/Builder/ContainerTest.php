@@ -79,7 +79,7 @@ class ContainerTest extends \PHPixieTests\Database\Conditions\Builder\ContainerT
         $this->container->addPlaceholder();
         $placeholder = $this->getLastCondition();
         
-        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Placeholder', $placeholder);
+        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Collection\Placeholder', $placeholder);
     }
     
     /**
@@ -111,9 +111,9 @@ class ContainerTest extends \PHPixieTests\Database\Conditions\Builder\ContainerT
     protected function assertSubdocument($isArray, $container, $field, $logic, $negated, $allowEmpty)
     {
         if($isArray) {
-            $class = '\PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Embedded\SubarrayItem';
+            $class = '\PHPixie\Database\Type\Document\Conditions\Condition\Collection\Embedded\Placeholder\SubarrayItem';
         }else{
-            $class = '\PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Embedded\Subdocument';
+            $class = '\PHPixie\Database\Type\Document\Conditions\Condition\Collection\Embedded\Placeholder\Subdocument';
         }
         
         $subdocument = $this->getLastCondition();
@@ -124,8 +124,8 @@ class ContainerTest extends \PHPixieTests\Database\Conditions\Builder\ContainerT
     
     protected function assertCondition($condition, $expected)
     {
-        if ($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Group\Embedded) {
-            if($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Group\Embedded\Subdocument) {
+        if ($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Collection\Embedded\Group) {
+            if($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Collection\Embedded\Group\Subdocument) {
                 $type = 'subdocument';
             }else{
                 $type = 'subarrayItem';

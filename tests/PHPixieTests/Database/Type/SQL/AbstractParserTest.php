@@ -22,7 +22,7 @@ abstract class AbstractParserTest extends \PHPixieTests\AbstractDatabaseTest
 
     protected function operator($field, $operator, $values)
     {
-        return new \PHPixie\Database\Conditions\Condition\Operator($field, $operator, $values);
+        return new \PHPixie\Database\Conditions\Condition\Field\Operator($field, $operator, $values);
     }
 
 }

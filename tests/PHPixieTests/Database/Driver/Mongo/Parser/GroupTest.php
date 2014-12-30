@@ -38,7 +38,16 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
                 array('name' => 1, 'id' => 3)
             )
         ));
+        
+        $container = $this->getContainer()
+            ->_and('b', 1)
+            ->startGroup()
+            ->endGroup();
 
+        $this->assertGroup($container, array(
+            'b' => 1
+        ));
+        
         $container = $this->getContainer()
                                     ->_and('a', 1)
                                     ->_and('a', '>', 6)
@@ -218,24 +227,52 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
      * @covers ::<protected>
      */
     public function testParseSubdocuments()
-    {
-        $container = $this->getContainer();
+    {/*
+        $container = $this->getContainer()
+            ->startSubdocumentConditionGroup('a')
+                ->startSubdocumentConditionGroup('b')
+                    ->_and('c', 1)
+                ->endGroup()
+            ->endGroup();
+
+        $this->assertGroup($container, array(
+            'a.b.c' => 1
+        ));
         
-        $subdocumentContainer = $container->addSubdocumentCondition('a');
-        $subdocumentContainer
-            ->startGroup()
-            ->_and('b', 1)
-            ->addPlaceholder()
-                ->_and('c', 1);
-        $subarrayItemContainer = $subdocumentContainer->addSubarrayItemCondition('d', 'or', true);
-        $subarrayItemContainer
-            ->addSubdocumentCondition('e')
-                ->_and('f', 1);
-        $subdocumentContainer->endGroup();
+        $container = $this->getContainer()
+            ->startSubarrayItemGroup('a')
+                ->startSubdocumentConditionGroup('b')
+                    ->_and('c', 1)
+                ->endGroup()
+            ->endGroup();
+
+        $this->assertGroup($container, array(
+            'a' => array (
+                '$elemMatch' => array (
+                    'b.c' => 1,
+                ),
+            )
+        ));
+        */
+        $container = $this->getContainer()
+            ->startSubdocumentConditionGroup('a')
+                ->startGroup()
+                    ->_and('b', 1)
+                    ->startGroup()
+                        ->_and('c', 1)
+                        ->startSubarrayItemConditionGroup('d', 'or')
+                            ->startSubdocumentConditionGroup('e')
+                                ->_and('f', 1)
+                            ->endGroup()
+                        ->endGroup()
+                    ->endGroup()
+                ->endGroup()
+            ->endGroup();
 
         $this->assertGroup($container, array(
 
         ));
+        
     }
     
     protected function getContainer()
@@ -249,6 +286,7 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $parsed = $this->groupParser->parse($container->getConditions());
         print_r($parsed);
+        $this->assertSame($parsed, $this->groupParser->parse($container->getConditions()));
         $this->assertEquals($expect, $parsed);
     }
 

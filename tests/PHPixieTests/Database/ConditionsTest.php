@@ -11,7 +11,7 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
 
     public function setUp()
     {
-        $this->conditions = new \PHPixie\Database\Conditions;
+        $this->conditions = new \PHPixie\Database\Conditions();
     }
 
     /**
@@ -20,10 +20,10 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     public function testOperator()
     {
         $operator = $this->conditions->operator('a', '=', array(1));
-        $this->assertInstanceOf('PHPixie\Database\Conditions\Condition\Operator', $operator);
-        $this->assertEquals('a', $operator->field);
-        $this->assertEquals('=', $operator->operator);
-        $this->assertEquals(array(1), $operator->values);
+        $this->assertInstanceOf('PHPixie\Database\Conditions\Condition\Field\Operator', $operator);
+        $this->assertEquals('a', $operator->field());
+        $this->assertEquals('=', $operator->operator());
+        $this->assertEquals(array(1), $operator->values());
     }
 
     /**
@@ -32,7 +32,7 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     public function testGroup()
     {
         $group = $this->conditions->group();
-        $this->assertInstanceOf('PHPixie\Database\Conditions\Condition\Group', $group);
+        $this->assertInstanceOf('PHPixie\Database\Conditions\Condition\Collection\Group', $group);
     }
 
     /**
@@ -41,7 +41,7 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     public function testPlaceholder()
     {
         $placeholder = $this->conditions->placeholder();
-        $this->assertInstanceOf('PHPixie\Database\Conditions\Condition\Placeholder', $placeholder);
+        $this->assertInstanceOf('PHPixie\Database\Conditions\Condition\Collection\Placeholder', $placeholder);
         $this->assertAttributeEquals('=', 'defaultOperator', $placeholder->container());
 
         $placeholder = $this->conditions->placeholder('>');

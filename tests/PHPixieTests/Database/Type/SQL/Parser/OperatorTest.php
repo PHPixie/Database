@@ -75,7 +75,7 @@ abstract class OperatorTest extends \PHPixieTests\Database\Parser\OperatorTest
 
     protected function operator($field, $operator, $values)
     {
-        return new \PHPixie\Database\Conditions\Condition\Operator($field, $operator, $values);
+        return new \PHPixie\Database\Conditions\Condition\Field\Operator($field, $operator, $values);
     }
 
     protected function queryStub($sql, $params = array())

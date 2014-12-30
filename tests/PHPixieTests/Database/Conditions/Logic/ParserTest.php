@@ -28,7 +28,7 @@ class ParserStub extends \PHPixie\Database\Conditions\Logic\Parser
     }
 }
 
-class ConditionStub extends \PHPixie\Database\Conditions\Condition
+class ConditionStub extends \PHPixie\Database\Conditions\Condition\Implementation
 {
     public $name;
 }
