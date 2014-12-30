@@ -2,6 +2,8 @@
 
 namespace PHPixie\Database\Driver\Mongo\Parser;
 
+use \PHPixie\Database\Type\Document\Conditions\Condition as DocumentCondition;
+
 class Group extends \PHPixie\Database\Conditions\Logic\Parser
 {
     protected $driver;
@@ -17,25 +19,37 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
 
     protected function normalize($condition)
     {
-        if($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Subdocument\ArrayItem) {
+        if(
+            $condition instanceof DocumentCondition\Placeholder\Embedded\SubarrayItem ||
+            $condition instanceof DocumentCondition\Group\Embedded\SubarrayItem
+          ) {
             $conditions = $condition->conditions();
             $parsed = $this->parse($conditions);
             
             $operatorCondition = $this->conditions->operator($condition->field, 'elemMatch', array($parsed));
-            return $this->copyLogicAndNegated($condition, $operatorCondition);  
+            $this->copyLogicAndNegated($condition, $operatorCondition);
+            
+            return $this->normalizeOperatorCondition($operatorCondition);
         }
         
-        if($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Subdocument) {
+        if(
+            $condition instanceof DocumentCondition\Placeholder\Embedded\Subdocument ||
+            $condition instanceof DocumentCondition\Group\Embedded\Subdocument
+          ) {
             $conditions = $condition->conditions();
             $conditions = $this->prefixConditions($condition->field(), $conditions);
+            $group = $this->parseLogic($conditions);
+            if ($group != null) {
+                $this->copyLogicAndNegated($condition, $group);
+            }
             
-            $group = $this->conditions->group();
-            $group->setConditions($conditions);
-            return $this->copyLogicAndNegated($condition, $group);
+            return $group;
         }
         
-        if ($condition instanceof \PHPixie\Database\Conditions\Condition\Group || 
-                 $condition instanceof \PHPixie\Database\Conditions\Condition\Placeholder) {
+        if (
+            $condition instanceof \PHPixie\Database\Conditions\Condition\Group || 
+            $condition instanceof \PHPixie\Database\Conditions\Condition\Placeholder
+        ) {
             $group = $condition->conditions();
             $group = $this->parseLogic($group);
 
@@ -47,17 +61,25 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
         }
 
         if ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
-            $expanded = $this->driver->expandedCondition();
-            $expanded->add($condition);
-            $expanded->setLogic($condition->logic());
-
-            return $expanded;
+            return $this->normalizeOperatorCondition($condition);
         }
 
         return $condition;
 
     }
-
+    
+    protected function normalizeOperatorCondition($condition)
+    {
+        $copy = $this->conditions->operator($condition->field, $condition->operator, $condition->values);
+        $this->copyLogicAndNegated($condition, $copy);
+        
+        $expanded = $this->driver->expandedCondition();
+        $expanded->add($copy);
+        $expanded->setLogic($copy->logic());
+        
+        return $expanded;
+    }
+    
     protected function merge($left, $right)
     {
         if ($right->logic() === 'and') {
@@ -138,17 +160,27 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
         $prefixed = array();
         foreach($conditions as $key => $condition) {
             if ($condition instanceof \PHPixie\Database\Conditions\Condition\Operator) {
-                 $newCondition = $this->conditions->operator(
-                     $prefix.'.'.$condition->field,
-                     $condition->operator,
-                     $condition->values
-                 );
+                $copy = $this->conditions->operator(
+                    $prefix.'.'.$condition->field,
+                    $condition->operator,
+                    $condition->values
+                );
+                $this->copyLogicAndNegated($condition, $copy);
+                $condition = $copy;
                 
-            }elseif ($condition instanceof \PHPixie\Database\Conditions\Condition\Group) {
+            }elseif ($condition instanceof DocumentCondition\Placeholder\Embedded\S) {
+                $condition->setField($prefix.'.'.$condition->field());                
+                
+            }elseif (
+                $condition instanceof \PHPixie\Database\Conditions\Condition\Group ||
+                $condition instanceof \PHPixie\Database\Conditions\Condition\Placeholder
+            ) {
                 $conditions = $condition->conditions();
                 $conditions = $this->prefixConditions($prefix, $conditions);
-                $newCondition = $this->conditions->group();
-                $newCondition->setConditions($conditions);
+                $copy = $this->conditions->group();
+                $this->copyLogicAndNegated($condition, $copy);
+                $copy->setConditions($conditions);
+                $condition = $copy;
                 
             }elseif ($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Placeholder\Subdocument) {
                 $condition->setField($prefix.'.'.$condition->field());

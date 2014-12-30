@@ -30,7 +30,7 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
 
         return $this;
     }
-
+    
     protected function startContainerConditionGroup($logic = 'and', $negate = false, $containerName = null)
     {
         $this->builder->startConditionGroup($logic, $negate, $containerName);
@@ -38,6 +38,20 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
         return $this;
     }
 
+    protected function startContainerSubdocumentConditionGroup($field, $logic = 'and', $negate = false, $containerName = null)
+    {
+        $this->builder->startSubdocumentConditionGroup($field, $logic, $negate, $containerName);
+
+        return $this;
+    }
+    
+    protected function startContainerSubarrayItemConditionGroup($field, $logic = 'and', $negate = false, $containerName = null)
+    {
+        $this->builder->startSubarrayItemConditionGroup($field, $logic, $negate, $containerName);
+
+        return $this;
+    }
+    
     protected function endContainerConditionGroup($containerName = null)
     {
         $this->builder->endConditionGroup($containerName);
@@ -99,6 +113,26 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     public function startWhereConditionGroup($logic = 'and', $negate = false)
     {
         return $this->startContainerConditionGroup($logic, $negate, 'where');
+    }
+    
+    public function startSubdocumentConditionGroup($field, $logic = 'and', $negate = false)
+    {
+        return $this->startContainerSubdocumentConditionGroup($field, $logic, $negate);
+    }
+    
+    public function startWhereSubdocumentConditionGroup($field, $logic = 'and', $negate = false)
+    {
+        return $this->startContainerSubdocumentConditionGroup($field, $logic, $negate, 'where');
+    }
+    
+    public function startSubarrayItemConditionGroup($field, $logic = 'and', $negate = false)
+    {
+        return $this->startContainerSubarrayItemConditionGroup($field, $logic, $negate);
+    }
+    
+    public function startWhereSubarrayItemConditionGroup($field, $logic = 'and', $negate = false)
+    {
+        return $this->startContainerSubarrayItemConditionGroup($field, $logic, $negate, 'where');
     }
 
     public function addPlaceholder($logic = 'and', $negate = false, $allowEmpty = true)
@@ -291,6 +325,170 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
         return $this->startConditionGroup('xor', true);
     }
 
+
+    
+    public function startSubdocumentGroup($field)
+    {
+        return $this->startSubdocumentConditionGroup($field, 'and', false);
+    }
+
+    public function startAndSubdocumentGroup($field)
+    {
+        return $this->startSubdocumentConditionGroup($field, 'and', false);
+    }
+
+    public function startOrSubdocumentGroup($field)
+    {
+        return $this->startSubdocumentConditionGroup($field, 'or', false);
+    }
+
+    public function startXorSubdocumentGroup($field)
+    {
+        return $this->startSubdocumentConditionGroup($field, 'xor', false);
+    }
+
+    public function startNotSubdocumentGroup($field)
+    {
+        return $this->startSubdocumentConditionGroup($field, 'and', true);
+    }
+
+    public function startAndNotSubdocumentGroup($field)
+    {
+        return $this->startSubdocumentConditionGroup($field, 'and', true);
+    }
+
+    public function startOrNotSubdocumentGroup($field)
+    {
+        return $this->startSubdocumentConditionGroup($field, 'or', true);
+    }
+
+    public function startXorNotSubdocumentGroup($field)
+    {
+        return $this->startSubdocumentConditionGroup($field, 'xor', true);
+    }
+    
+    public function startSubarrayItemGroup($field)
+    {
+        return $this->startSubarrayItemConditionGroup($field, 'and', false);
+    }
+
+    public function startAndSubarrayItemGroup($field)
+    {
+        return $this->startSubarrayItemConditionGroup($field, 'and', false);
+    }
+
+    public function startOrSubarrayItemGroup($field)
+    {
+        return $this->startSubarrayItemConditionGroup($field, 'or', false);
+    }
+
+    public function startXorSubarrayItemGroup($field)
+    {
+        return $this->startSubarrayItemConditionGroup($field, 'xor', false);
+    }
+
+    public function startNotSubarrayItemGroup($field)
+    {
+        return $this->startSubarrayItemConditionGroup($field, 'and', true);
+    }
+
+    public function startAndNotSubarrayItemGroup($field)
+    {
+        return $this->startSubarrayItemConditionGroup($field, 'and', true);
+    }
+
+    public function startOrNotSubarrayItemGroup($field)
+    {
+        return $this->startSubarrayItemConditionGroup($field, 'or', true);
+    }
+
+    public function startXorNotSubarrayItemGroup($field)
+    {
+        return $this->startSubarrayItemConditionGroup($field, 'xor', true);
+    }
+    
+    
+    
+    public function startWhereSubdocumentGroup($field)
+    {
+        return $this->startWhereSubdocumentConditionGroup($field, 'and', false);
+    }
+
+    public function startAndWhereSubdocumentGroup($field)
+    {
+        return $this->startWhereSubdocumentConditionGroup($field, 'and', false);
+    }
+
+    public function startOrWhereSubdocumentGroup($field)
+    {
+        return $this->startWhereSubdocumentConditionGroup($field, 'or', false);
+    }
+
+    public function startXorWhereSubdocumentGroup($field)
+    {
+        return $this->startWhereSubdocumentConditionGroup($field, 'xor', false);
+    }
+
+    public function startWhereNotSubdocumentGroup($field)
+    {
+        return $this->startWhereSubdocumentConditionGroup($field, 'and', true);
+    }
+
+    public function startAndWhereNotSubdocumentGroup($field)
+    {
+        return $this->startWhereSubdocumentConditionGroup($field, 'and', true);
+    }
+
+    public function startOrWhereNotSubdocumentGroup($field)
+    {
+        return $this->startWhereSubdocumentConditionGroup($field, 'or', true);
+    }
+
+    public function startXorWhereNotSubdocumentGroup($field)
+    {
+        return $this->startWhereSubdocumentConditionGroup($field, 'xor', true);
+    }
+    
+    public function startWhereSubarrayItemGroup($field)
+    {
+        return $this->startWhereSubarrayItemConditionGroup($field, 'and', false);
+    }
+
+    public function startAndWhereSubarrayItemGroup($field)
+    {
+        return $this->startWhereSubarrayItemConditionGroup($field, 'and', false);
+    }
+
+    public function startOrWhereSubarrayItemGroup($field)
+    {
+        return $this->startWhereSubarrayItemConditionGroup($field, 'or', false);
+    }
+
+    public function startXorWhereSubarrayItemGroup($field)
+    {
+        return $this->startWhereSubarrayItemConditionGroup($field, 'xor', false);
+    }
+
+    public function startWhereNotSubarrayItemGroup($field)
+    {
+        return $this->startWhereSubarrayItemConditionGroup($field, 'and', true);
+    }
+
+    public function startAndWhereNotSubarrayItemGroup($field)
+    {
+        return $this->startWhereSubarrayItemConditionGroup($field, 'and', true);
+    }
+
+    public function startOrWhereNotSubarrayItemGroup($field)
+    {
+        return $this->startWhereSubarrayItemConditionGroup($field, 'or', true);
+    }
+
+    public function startXorWhereNotSubarrayItemGroup($field)
+    {
+        return $this->startWhereSubarrayItemConditionGroup($field, 'xor', true);
+    }    
+    
     public function endGroup()
     {
         return $this->endContainerConditionGroup();
