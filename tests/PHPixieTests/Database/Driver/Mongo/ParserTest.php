@@ -13,7 +13,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
         $this->database = new \PHPixie\Database(null);
         $driver = $this->database->driver('Mongo');
         $operatorParser = new \PHPixie\Database\Driver\Mongo\Parser\Operator();
-        $groupParser = new \PHPixie\Database\Driver\Mongo\Parser\Group($driver, $operatorParser);
+        $groupParser = new \PHPixie\Database\Driver\Mongo\Parser\Group($driver, $this->database->conditions(), $operatorParser);
         $this->parser = new \PHPixie\Database\Driver\Mongo\Parser($this->database, $driver, 'default', $groupParser);
     }
 

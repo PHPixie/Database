@@ -11,14 +11,14 @@ class ContainerTest extends \PHPixieTests\Database\Conditions\Builder\ContainerT
     
     /**
      * @covers ::startSubdocumentConditionGroup
-     * @covers ::startSubarrayItemGroup
-     * @covers ::startAndSubarrayItemGroup
-     * @covers ::startOrSubarrayItemGroup
-     * @covers ::startXorSubarrayItemGroup
-     * @covers ::startNotSubarrayItemGroup
-     * @covers ::startAndNotSubarrayItemGroup
-     * @covers ::startOrNotSubarrayItemGroup
-     * @covers ::startXorNotSubarrayItemGroup
+     * @covers ::startSubdocumentGroup
+     * @covers ::startAndSubdocumentGroup
+     * @covers ::startOrSubdocumentGroup
+     * @covers ::startXorSubdocumentGroup
+     * @covers ::startNotSubdocumentGroup
+     * @covers ::startAndNotSubdocumentGroup
+     * @covers ::startOrNotSubdocumentGroup
+     * @covers ::startXorNotSubdocumentGroup
      * @covers ::<protected>
      */
     public function testSubdocumentConditions()
@@ -83,7 +83,7 @@ class ContainerTest extends \PHPixieTests\Database\Conditions\Builder\ContainerT
     }
     
     /**
-     * @covers ::addSubdocumentCondition
+     * @covers ::addSubdocumentPlaceholder
      * @covers ::<protected>
      */
     public function testAddSubdocumentCondition()
@@ -96,7 +96,7 @@ class ContainerTest extends \PHPixieTests\Database\Conditions\Builder\ContainerT
     }
     
     /**
-     * @covers ::addSubarrayItemCondition
+     * @covers ::addSubarrayItemPlaceholder
      * @covers ::<protected>
      */
     public function testAddSubarrayItemCondition()

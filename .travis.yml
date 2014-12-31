@@ -12,7 +12,7 @@ before_script:
 
 script: 
 - "mkdir -p build/logs"
-- "php phpunit.phar --coverage-clover build/logs/clover.xml ."
+- "php phpunit.phar --coverage-clover build/logs/clover.xml"
 
 after_script: 
 - "mkdir -p build/coverage"

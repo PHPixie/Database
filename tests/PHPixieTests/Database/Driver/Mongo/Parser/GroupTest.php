@@ -139,6 +139,16 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertGroup($container, array('a' => 1));
 
     }
+    
+    /**
+     * @covers ::parse
+     * @covers ::<protected>
+     */
+    public function testParseConditionException()
+    {
+        $this->setExpectedException('\PHPixie\Database\Exception\Parser');
+        $this->groupParser->parse(array(new \stdClass()));
+    }
 
     /**
      * @covers ::parse
@@ -227,7 +237,7 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
      * @covers ::<protected>
      */
     public function testParseSubdocuments()
-    {/*
+    {
         $container = $this->getContainer()
             ->startSubdocumentConditionGroup('a')
                 ->startSubdocumentConditionGroup('b')
@@ -253,7 +263,7 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
                 ),
             )
         ));
-        */
+        
         $container = $this->getContainer()
             ->startSubdocumentConditionGroup('a')
                 ->startGroup()
@@ -270,7 +280,23 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
             ->endGroup();
 
         $this->assertGroup($container, array(
+            '$or' => array (
+                array (
+                    'a.b' => 1,
+                    'a.c' => 1
+                ),
+                
+                array (
+                    'a.b' => 1,
+                    'a.d' => array (
+                            '$elemMatch' => array (
+                                    'e.f' => 1
+                            )
+                    )
 
+                )
+
+            )
         ));
         
     }
@@ -285,7 +311,6 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
     protected function assertGroup($container, $expect)
     {
         $parsed = $this->groupParser->parse($container->getConditions());
-        print_r($parsed);
         $this->assertSame($parsed, $this->groupParser->parse($container->getConditions()));
         $this->assertEquals($expect, $parsed);
     }

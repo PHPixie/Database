@@ -1,8 +1,8 @@
 <?php
 
-namespace PHPixie\Database\Driver\Mongo\Conditions\Condition;
+namespace PHPixie\Database\Driver\Mongo\Parser\Group;
 
-class Expanded extends \PHPixie\Database\Conditions\Condition\Implementation
+class ExpandedGroup extends \PHPixie\Database\Conditions\Condition\Implementation
 {
     protected $groups = array();
 
@@ -15,7 +15,7 @@ class Expanded extends \PHPixie\Database\Conditions\Condition\Implementation
     protected function addAnd($condition)
     {
         $newGroups = array();
-        if($condition instanceof Expanded) {
+        if($condition instanceof ExpandedGroup) {
             $groups = $condition->groups();
             
             if(empty($groups))
@@ -23,7 +23,11 @@ class Expanded extends \PHPixie\Database\Conditions\Condition\Implementation
             
             foreach ($this->groups as $group) {
                 foreach($groups as $conditionGroup) {
-                    $newGroups[] = array_merge($group, $conditionGroup);
+                    $newGroup = array();
+                    foreach(array_merge($group, $conditionGroup) as $cond) {
+                        $newGroup[] = clone $cond;
+                    }
+                    $newGroups[] = $newGroup;
                 }
             }
             
@@ -33,32 +37,32 @@ class Expanded extends \PHPixie\Database\Conditions\Condition\Implementation
                 $newGroups[] = $group;
             }
         }
-
         $this->groups = $newGroups;
     }
 
     protected function addOr($condition)
     {
-        if ($condition instanceof Expanded) {
+        if ($condition instanceof ExpandedGroup) {
             $this->groups = array_merge($this->groups, $condition->groups());
         } else {
             $this->groups[] = array($condition);
         }
-
-        return $this;
     }
 
     public function add($condition, $logic = 'and')
     {
+        $isExpandedGroup = $condition instanceof ExpandedGroup;
+        if(!$isExpandedGroup && !(($condition instanceof \PHPixie\Database\Conditions\Condition\Field\Operator))) {
+            throw new \PHPixie\Database\Exception\Parser("You can only add ExpandedGroup and Operator conditions");
+        }
+        
         $condition = clone $condition;
         if (empty($this->groups)) {
 
-            if ($condition instanceof Expanded) {
+            if ($isExpandedGroup) {
                 $this->groups = $condition->groups();
-            } elseif ($condition instanceof \PHPixie\Database\Conditions\Condition\Field\Operator) {
-                $this->groups[] = array($condition);
             } else {
-                throw new \PHPixie\Database\Exception\Parser("You can only add Expanded and Operator conditions");
+                $this->groups[] = array($condition);
             }
 
         } elseif ($logic == 'and') {
@@ -92,7 +96,7 @@ class Expanded extends \PHPixie\Database\Conditions\Condition\Implementation
                 }
 
                 foreach ($groups as $oldMerged) {
-                    if (!in_array($operator, $oldMerged, true)) {
+                    if (!$this->conditioninArray($operator, $oldMerged)) {
                         array_unshift($oldMerged, clone $operator);
                     }
                     $merged[] = $oldMerged;
@@ -132,9 +136,10 @@ class Expanded extends \PHPixie\Database\Conditions\Condition\Implementation
 
     protected function isSubset(&$subset, &$set)
     {
-        foreach($subset as $item)
-            if (!in_array($item, $set))
-                return false;
+        foreach($subset as $item) {
+            if(!$this->conditionInArray($item, $set))
+               return false;
+        }
 
         return true;
     }
@@ -153,4 +158,28 @@ class Expanded extends \PHPixie\Database\Conditions\Condition\Implementation
         }
     }
 
+    protected function conditionInArray($condition, $set)
+    {
+        foreach($set as $setCondition) {
+            if(
+                $condition->field() === $setCondition->field() &&
+                $condition->operator() === $setCondition->operator() &&
+                $condition->isNegated() === $setCondition->isNegated()
+            )
+                return true;
+        }
+        
+        return false;
+    }
+    
+    public function operatorConditions()
+    {
+        $conditions = array();
+        foreach ($this->groups as $group) {
+            foreach ($group as $item) {
+                $conditions[] = $item;
+            }
+        }
+        return $conditions;
+    }
 }

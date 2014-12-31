@@ -7,6 +7,15 @@ namespace PHPixieTests\Database\Conditions\Condition;
  */
 class OperatorTest extends \PHPixieTests\Database\Conditions\Condition\ImplementationTest
 {
+    
+    /**
+     * @covers ::__construct
+     */
+    public function testConstruct()
+    {
+        
+    }
+     
     /**
      * @covers ::field
      * @covers ::setField

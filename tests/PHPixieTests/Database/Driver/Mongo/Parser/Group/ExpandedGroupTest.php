@@ -1,11 +1,11 @@
 <?php
 
-namespace PHPixieTests\Database\Driver\Mongo\Conditions\Condition;
+namespace PHPixieTests\Database\Driver\Mongo\Parser\Group;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Conditions\Condition\Expanded
+ * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Parser\Group\ExpandedGroup
  */
-class ExpandedTest extends \PHPixieTests\Database\Conditions\Condition\ImplementationTest
+class ExpandedGroupTest extends \PHPixieTests\Database\Conditions\Condition\ImplementationTest
 {
     /**
      * @covers ::negate
@@ -37,9 +37,9 @@ class ExpandedTest extends \PHPixieTests\Database\Conditions\Condition\Implement
         $a = $this->getOperator('a');
         $b = $this->getOperator('b');
         $c = $this->getOperator('c');
-        $exp1 = $this->getExpanded($a);
+        $exp1 = $this->getExpandedGroup($a);
         $exp1->add($b);
-        $exp2 = $this->getExpanded();
+        $exp2 = $this->getExpandedGroup();
         $exp2->add($c)->add($b);
         $this->condition->add($exp1)->add($exp2, 'or');
 
@@ -77,7 +77,7 @@ class ExpandedTest extends \PHPixieTests\Database\Conditions\Condition\Implement
         $this->condition->add($e);
         $this->assertGroup(array(array('a', 'b', 'c', 'e'), array('d', 'e')));
 
-        $exp = $this->getExpanded();
+        $exp = $this->getExpandedGroup();
         $f = $this->getOperator('f');
         $g = $this->getOperator('g');
         $h = $this->getOperator('h');
@@ -118,7 +118,7 @@ class ExpandedTest extends \PHPixieTests\Database\Conditions\Condition\Implement
         $this->condition->negate();
         $this->assertGroup(array(array('!a','!c'),array('!b','!c')));
 
-        $exp = $this->getExpanded();
+        $exp = $this->getExpandedGroup();
         $f = $this->getOperator('f');
         $g = $this->getOperator('g');
         $h = $this->getOperator('h');
@@ -126,7 +126,7 @@ class ExpandedTest extends \PHPixieTests\Database\Conditions\Condition\Implement
         $exp->add($g);
         $exp->add($h, 'or');
 
-        $exp2 = $this->getExpanded();
+        $exp2 = $this->getExpandedGroup();
         $i = $this->getOperator('i');
         $j = $this->getOperator('j');
         $k = $this->getOperator('k');
@@ -177,10 +177,32 @@ class ExpandedTest extends \PHPixieTests\Database\Conditions\Condition\Implement
         return $parsed;
     }
 
+
+    /**
+     * @covers ::__clone
+     */
     public function testClone()
     {
-        $exp1 = $this->getExpanded($this->getOperator('a'));
+        $exp1 = $this->getExpandedGroup($this->getOperator('a'));
         $exp2 = clone $exp1;
+    }
+    
+    /**
+     * @covers ::operatorConditions
+     */
+    public function testOperatorConditions()
+    {
+        $a = $this->getOperator('a');
+        $b = $this->getOperator('b');
+        
+        $this->condition->add($a);
+        $this->condition->add($b, 'or');;
+        $this->condition->negate();
+        
+        $conditions = $this->condition->operatorConditions();
+        $this->assertSame(2, count($conditions));
+        $this->assertSame('a', $conditions[0]->field());
+        $this->assertSame('b', $conditions[1]->field());
     }
 
     /**
@@ -219,14 +241,14 @@ class ExpandedTest extends \PHPixieTests\Database\Conditions\Condition\Implement
                         ->getMock();
     }
 
-    protected function getExpanded($operator = null)
+    protected function getExpandedGroup($operator = null)
     {
-        return new \PHPixie\Database\Driver\Mongo\Conditions\Condition\Expanded($operator);
+        return new \PHPixie\Database\Driver\Mongo\Parser\Group\ExpandedGroup($operator);
     }
     
     protected function condition()
     {
-        return $this->getExpanded();
+        return $this->getExpandedGroup();
     }
 
 }

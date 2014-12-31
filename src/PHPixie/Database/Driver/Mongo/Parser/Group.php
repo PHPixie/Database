@@ -41,14 +41,8 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
             
             $expanded = $this->parseLogic($conditions);
             
-            var_dump(111111111111111);
-            foreach ($expanded->groups() as $expandedGroup) {
-                foreach ($expandedGroup as $expandedCondition) {
-                    if($expandedCondition instanceof \PHPixie\Database\Conditions\Condition\Field) {
-                        print_r([$collectionPrefix, $expandedCondition->field()]);
-                        $expandedCondition->setField($this->prefixField($collectionPrefix, $expandedCondition->field()));
-                    }
-                }
+            foreach ($expanded->operatorConditions() as $operatorCondition) {  
+                $operatorCondition->setField($this->prefixField($collectionPrefix, $operatorCondition->field()));
             }
             
             return $this->copyLogicAndNegated($condition, $expanded);
@@ -57,8 +51,9 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
         if ($condition instanceof \PHPixie\Database\Conditions\Condition\Field\Operator) {
             return $this->normalizeOperatorCondition($condition);
         }
-
-        return $condition;
+        
+        $class = get_class($condition);
+        throw new \PHPixie\Database\Exception\Parser("Condition of type '$class' is not supprted");
         
     }
     
@@ -71,7 +66,7 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
         
     protected function normalizeOperatorCondition($condition)
     {
-        $expanded = $this->driver->expandedCondition($condition);
+        $expanded = $this->driver->expandedGroup($condition);
         $expanded->setLogic($condition->logic());
         
         return $expanded;
@@ -86,14 +81,14 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
             return $left->add($right, 'or');
 
         } else {
-            $merged = $this->driver->expandedCondition();
+            $merged = $this->driver->expandedGroup();
             $rightClone = clone $right;
             $leftClone = clone $left;
 
             $merged->add($left);
             $merged->add($rightClone->negate());
 
-            $rightPart = $this->driver->expandedCondition();
+            $rightPart = $this->driver->expandedGroup();
             $rightPart->add($leftClone->negate());
             $rightPart->add($right);
 
@@ -109,7 +104,7 @@ class Group extends \PHPixie\Database\Conditions\Logic\Parser
         $expanded = parent::parseLogic($conditions);
         
         if ($expanded === null)
-            $expanded = $this->driver->expandedCondition();
+            $expanded = $this->driver->expandedGroup();
         
         return $expanded;
     }

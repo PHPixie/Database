@@ -129,17 +129,17 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
     }
 
     /**
-     * @covers ::expandedCondition
+     * @covers ::expandedGroup
      */
     public function testExpandedCondition()
     {
-        $condition = $this->driver->expandedCondition();
-        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Conditions\Condition\Expanded', $condition);
+        $condition = $this->driver->expandedGroup();
+        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Parser\Group\ExpandedGroup', $condition);
         $this->assertEquals(array(), $condition->groups());
 
         $operator = new \PHPixie\Database\Conditions\Condition\Field\Operator('a', '=', array(1));
-        $condition = $this->driver->expandedCondition($operator);
-        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Conditions\Condition\Expanded', $condition);
+        $condition = $this->driver->expandedGroup($operator);
+        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Parser\Group\ExpandedGroup', $condition);
         $this->assertEquals(array(array($operator)), $condition->groups());
     }
 

@@ -41,6 +41,28 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
         $container = $this->conditions->container('>');
         $this->assertAttributeSame('>', 'defaultOperator', $container);
     }
+
+    /**
+     * @covers ::subdocumentGroup
+     * @covers ::<protected>
+     */
+    public function testSubdocumentGroup()
+    {
+        $condition = $this->conditions->subdocumentGroup('test');
+        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Collection\Embedded\Group\Subdocument', $condition);
+        $this->assertSame('test', $condition->field());
+    }
+    
+    /**
+     * @covers ::subarrayItemGroup
+     * @covers ::<protected>
+     */
+    public function testSubarrayItemGroup()
+    {
+        $condition = $this->conditions->subarrayItemGroup('test');
+        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Condition\Collection\Embedded\Group\SubarrayItem', $condition);
+        $this->assertSame('test', $condition->field());
+    }
     
     /**
      * @covers ::placeholder
