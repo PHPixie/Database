@@ -60,6 +60,7 @@ abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
     /**
      * @covers ::<protected>
      * @covers ::addWhereCondition
+     * @covers ::buildWhereCondition
      * @covers ::getWhereContainer
      * @covers ::getWhereConditions
      * @covers ::where
@@ -90,6 +91,7 @@ abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
     
     /**
      * @covers ::<protected>
+     * @covers ::buildCondition
      * @covers ::addCondition
      * @covers ::_and
      * @covers ::_or
@@ -127,6 +129,7 @@ abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
     /**
      * @covers ::<protected>
      * @covers ::addOnCondition
+     * @covers ::buildOnCondition
      * @covers ::on
      * @covers ::andOn
      * @covers ::orOn
@@ -151,6 +154,7 @@ abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
     public function testOnMethods()
     {
         $methods = array(
+            'buildCondition' => 'buildOnCondition',
             'addCondition' => 'addOnCondition',
             'startConditionGroup' => 'startOnConditionGroup',
             'endConditionGroup' => 'endOnConditionGroup',

@@ -20,7 +20,8 @@ interface Items extends \PHPixie\Database\Query, \PHPixie\Database\Conditions\Bu
 
     public function getWhereContainer();
     public function getWhereConditions();
-    public function addWhereCondition($logic, $negate, $params);
+    public function buildWhereCondition($logic, $negate, $params);
+    public function addWhereCondition($logic, $negate, $condition);
     public function addWhereOperatorCondition($logic, $negate, $field, $operator, $values);
     public function addWherePlaceholder($logic = 'and', $negate = false, $allowEmpty = true);
     public function startWhereConditionGroup($logic = 'and', $negate = false);

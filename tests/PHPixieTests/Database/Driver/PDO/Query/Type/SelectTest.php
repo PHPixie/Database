@@ -49,6 +49,7 @@ class SelectTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemsTest
     /**
      * @covers ::<protected>
      * @covers ::addHavingCondition
+     * @covers ::buildHavingCondition
      * @covers ::getHavingContainer
      * @covers ::getHavingConditions
      * @covers ::having

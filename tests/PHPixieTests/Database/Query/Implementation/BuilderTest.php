@@ -233,8 +233,19 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     public function testAddCondition()
     {
         $this->prepareContainer();
-        $this->expectCalls($this->containers[0], array('addCondition' => array('or', true, array(5))));
-        $this->builder->addCondition('or', true, array(5), 'first');
+        $condition = $this->quickMock('\PHPixie\ORM\Conditions\Condition', array());
+        $this->expectCalls($this->containers[0], array('addCondition' => array('or', true, $condition)));
+        $this->builder->addCondition('or', true, $condition);
+    }
+    
+    /**
+     * @covers ::buildCondition
+     */
+    public function testBuildCondition()
+    {
+        $this->prepareContainer();
+        $this->expectCalls($this->containers[0], array('buildCondition' => array('or', true, array(5))));
+        $this->builder->buildCondition('or', true, array(5), 'first');
     }
     
     /**

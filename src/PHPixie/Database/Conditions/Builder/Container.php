@@ -18,21 +18,26 @@ class Container implements \PHPixie\Database\Conditions\Builder
     public function __construct($conditions, $defaultOperator = '=') {
         $this->conditions = $conditions;
         $this->defaultOperator = $defaultOperator;
-                
+        
         $group = $this->conditions->group();
-        $this->pushGroup($group);
+        $this->pushGroupToStack($group);
     }
 
     public function startConditionGroup($logic = 'and', $negate = false)
     {
         $group = $this->conditions->group();
-        $this->addToCurrentGroup($logic, $negate, $group);
-        $this->pushGroup($group);
+        $this->pushGroup($logic, $negate, $group);
 
         return $this;
     }
 
-    protected function pushGroup($group)
+    public function pushGroup($logic, $negate, $group)
+    {
+        $this->addCondition($logic, $negate, $group);
+        $this->pushGroupToStack($group);
+    }
+    
+    protected function pushGroupToStack($group)
     {
         $this->groupStack[] = $group;
         $this->currentGroup = $group;
@@ -49,7 +54,7 @@ class Container implements \PHPixie\Database\Conditions\Builder
         return $this;
     }
 
-    public function addCondition($logic, $negate, $args)
+    public function buildCondition($logic, $negate, $args)
     {
         $count = count($args);
         if ($count >= 2) {
@@ -84,13 +89,13 @@ class Container implements \PHPixie\Database\Conditions\Builder
     public function addOperatorCondition($logic, $negate, $field, $operator, $values)
     {
         $condition = $this->conditions->operator($field, $operator, $values);
-        $this->addToCurrentGroup($logic, $negate, $condition);
+        $this->addCondition($logic, $negate, $condition);
     }
 
     public function addPlaceholder($logic = 'and', $negate = false, $allowEmpty = true)
     {
         $placeholder = $this->conditions->placeholder($this->defaultOperator, $allowEmpty);
-        $this->addToCurrentGroup($logic, $negate, $placeholder);
+        $this->addCondition($logic, $negate, $placeholder);
 
         return $placeholder->container();
     }
@@ -100,7 +105,7 @@ class Container implements \PHPixie\Database\Conditions\Builder
         return $this->groupStack[0]->conditions();
     }
 
-    protected function addToCurrentGroup($logic, $negate, $condition)
+    public function addCondition($logic, $negate, $condition)
     {
         $this->addToGroup($this->currentGroup, $logic, $negate, $condition);
     }
@@ -123,37 +128,37 @@ class Container implements \PHPixie\Database\Conditions\Builder
 
     public function _and()
     {
-        return $this->addCondition('and', false, func_get_args());
+        return $this->buildCondition('and', false, func_get_args());
     }
 
     public function _or()
     {
-        return $this->addCondition('or', false, func_get_args());
+        return $this->buildCondition('or', false, func_get_args());
     }
 
     public function _xor()
     {
-        return $this->addCondition('xor', false, func_get_args());
+        return $this->buildCondition('xor', false, func_get_args());
     }
 
     public function _not()
     {
-        return $this->addCondition('and', true, func_get_args());
+        return $this->buildCondition('and', true, func_get_args());
     }
 
     public function andNot()
     {
-        return $this->addCondition('and', true, func_get_args());
+        return $this->buildCondition('and', true, func_get_args());
     }
 
     public function orNot()
     {
-        return $this->addCondition('or', true, func_get_args());
+        return $this->buildCondition('or', true, func_get_args());
     }
 
     public function xorNot()
     {
-        return $this->addCondition('xor', true, func_get_args());
+        return $this->buildCondition('xor', true, func_get_args());
     }
 
     public function startGroup()

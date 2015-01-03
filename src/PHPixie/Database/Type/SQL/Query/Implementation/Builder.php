@@ -60,9 +60,14 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder
         return $container;
     }
 
-    public function addOnCondition($logic, $negate, $args)
+    public function addOnCondition($logic, $negate, $condition)
     {
-        $this->lastOnContainer()->addCondition($logic, $negate, $args);
+        $this->lastOnContainer()->addCondition($logic, $negate, $condition);
+    }
+    
+    public function buildOnCondition($logic, $negate, $args)
+    {
+        $this->lastOnContainer()->buildCondition($logic, $negate, $args);
     }
 
     public function startOnConditionGroup($logic, $negate)

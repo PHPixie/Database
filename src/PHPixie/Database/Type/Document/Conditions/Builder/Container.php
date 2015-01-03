@@ -16,7 +16,7 @@ class Container extends    \PHPixie\Database\Conditions\Builder\Container
     public function addPlaceholder($logic = 'and', $negate = false, $allowEmpty = true)
     {
         $placeholder = $this->documentConditions->placeholder($this->defaultOperator, $allowEmpty);
-        $this->addToCurrentGroup($logic, $negate, $placeholder);
+        $this->addCondition($logic, $negate, $placeholder);
 
         return $placeholder->container();
     }
@@ -24,7 +24,7 @@ class Container extends    \PHPixie\Database\Conditions\Builder\Container
     public function addSubdocumentPlaceholder($field, $logic = 'and', $negate = false, $allowEmpty = true)
     {
         $subdocument = $this->documentConditions->subdocumentPlaceholder($field, $this->defaultOperator, $allowEmpty);
-        $this->addToCurrentGroup($logic, $negate, $subdocument);
+        $this->addCondition($logic, $negate, $subdocument);
 
         return $subdocument->container();
     }
@@ -32,7 +32,7 @@ class Container extends    \PHPixie\Database\Conditions\Builder\Container
     public function addSubarrayItemPlaceholder($field, $logic = 'and', $negate = false, $allowEmpty = true)
     {
         $subdocument = $this->documentConditions->subarrayItemPlaceholder($field, $this->defaultOperator, $allowEmpty);
-        $this->addToCurrentGroup($logic, $negate, $subdocument);
+        $this->addCondition($logic, $negate, $subdocument);
 
         return $subdocument->container();
     }
@@ -40,8 +40,7 @@ class Container extends    \PHPixie\Database\Conditions\Builder\Container
     public function startSubdocumentConditionGroup($field, $logic = 'and', $negate = false)
     {
         $group = $this->documentConditions->subdocumentGroup($field);
-        $this->addToCurrentGroup($logic, $negate, $group);
-        $this->pushGroup($group);
+        $this->pushGroup($logic, $negate, $group);
 
         return $this;
     }
@@ -49,8 +48,7 @@ class Container extends    \PHPixie\Database\Conditions\Builder\Container
     public function startSubarrayItemConditionGroup($field, $logic = 'and', $negate = false)
     {
         $group = $this->documentConditions->subarrayItemGroup($field);
-        $this->addToCurrentGroup($logic, $negate, $group);
-        $this->pushGroup($group);
+        $this->pushGroup($logic, $negate, $group);
 
         return $this;
     }

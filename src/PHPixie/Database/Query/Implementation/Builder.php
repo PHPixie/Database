@@ -172,9 +172,14 @@ class Builder
         return $this->conditionContainers[$name]->getConditions();
     }
 
-    public function addCondition($logic, $negate, $args, $containerName = null)
+    public function addCondition($logic, $negate, $condition, $containerName = null)
     {
-        $this->conditionContainer($containerName)->addCondition($logic, $negate, $args);
+        $this->conditionContainer($containerName)->addCondition($logic, $negate, $condition);
+    }
+    
+    public function buildCondition($logic, $negate, $args, $containerName = null)
+    {
+        $this->conditionContainer($containerName)->buildCondition($logic, $negate, $args);
     }
 
     public function addOperatorCondition($logic, $negate, $field, $operator, $values, $containerName = null)

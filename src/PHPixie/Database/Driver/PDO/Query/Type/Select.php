@@ -71,10 +71,15 @@ class Select extends \PHPixie\Database\Driver\PDO\Query\Items implements \PHPixi
         return parent::execute();
     }
 
-    public function addHavingCondition($logic, $negate, $params)
+    public function buildHavingCondition($logic, $negate, $params)
     {
-        return $this->addContainerCondition($logic, $negate, $params, 'having');
+        return $this->buildContainerCondition($logic, $negate, $params, 'having');
     }
+    
+    public function addHavingCondition($logic, $negate, $condition)
+    {
+        return $this->addContainerCondition($logic, $negate, $condition, 'having');
+    }    
     
     public function getHavingContainer()
     {
@@ -103,42 +108,42 @@ class Select extends \PHPixie\Database\Driver\PDO\Query\Items implements \PHPixi
 
     public function having()
     {
-        return $this->addContainerCondition('and', false, func_get_args(), 'having');
+        return $this->buildContainerCondition('and', false, func_get_args(), 'having');
     }
 
     public function andHaving()
     {
-        return $this->addContainerCondition('and', false, func_get_args(), 'having');
+        return $this->buildContainerCondition('and', false, func_get_args(), 'having');
     }
 
     public function orHaving()
     {
-        return $this->addContainerCondition('or', false, func_get_args(), 'having');
+        return $this->buildContainerCondition('or', false, func_get_args(), 'having');
     }
 
     public function xorHaving()
     {
-        return $this->addContainerCondition('xor', false, func_get_args(), 'having');
+        return $this->buildContainerCondition('xor', false, func_get_args(), 'having');
     }
 
     public function havingNot()
     {
-        return $this->addContainerCondition('and', true, func_get_args(), 'having');
+        return $this->buildContainerCondition('and', true, func_get_args(), 'having');
     }
 
     public function andHavingNot()
     {
-        return $this->addContainerCondition('and', true, func_get_args(), 'having');
+        return $this->buildContainerCondition('and', true, func_get_args(), 'having');
     }
 
     public function orHavingNot()
     {
-        return $this->addContainerCondition('or', true, func_get_args(), 'having');
+        return $this->buildContainerCondition('or', true, func_get_args(), 'having');
     }
 
     public function xorHavingNot()
     {
-        return $this->addContainerCondition('xor', true, func_get_args(), 'having');
+        return $this->buildContainerCondition('xor', true, func_get_args(), 'having');
     }
 
     public function startHavingGroup()

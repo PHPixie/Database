@@ -139,21 +139,43 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
     
     /**
      * @covers ::<protected>
-     * @covers ::addOnCondition
+     * @covers ::buildOnCondition
      */
-    public function testAddOnCondition()
+    public function testBuildOnCondition()
     {
         $builder = $this->builder;
         $this->assertException(function() use($builder) {
-            $builder->addOnCondition('or', true, array(5));
+            $builder->buildOnCondition('or', true, array(5));
         });
         
 
         $this->prepareJoinContainers();
         for($i=0;$i<2;$i++){
             $builder->addJoin('test', 'pixie', 'inner');
-            $this->expectCalls($this->containers[$i], array('addCondition' => array('or', true, array(5))));
-            $builder->addOnCondition('or', true, array(5));
+            $this->expectCalls($this->containers[$i], array('buildCondition' => array('or', true, array(5))));
+            $builder->buildOnCondition('or', true, array(5));
+        }
+    }
+    
+    /**
+     * @covers ::<protected>
+     * @covers ::addOnCondition
+     */
+    public function testAddOnCondition()
+    {
+        $builder = $this->builder;
+        $condition = $this->quickMock('\PHPixie\Database\Conditions\Condition', array());
+        
+        $this->assertException(function() use($builder, $condition) {
+            $builder->addOnCondition('or', true, $condition);
+        });
+        
+
+        $this->prepareJoinContainers();
+        for($i=0;$i<2;$i++){
+            $builder->addJoin('test', 'pixie', 'inner');
+            $this->expectCalls($this->containers[$i], array('addCondition' => array('or', true, $condition)));
+            $builder->addOnCondition('or', true, $condition);
         }
     }
     

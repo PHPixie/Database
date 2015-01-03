@@ -14,7 +14,7 @@ class Builder
         $this->getConditionsStub = new \stdClass;
     }
 
-    public function addCondition()
+    public function buildCondition()
     {
         $this->passed[] = func_get_args();
     }
