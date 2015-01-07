@@ -1,9 +1,9 @@
 <?php
 
-namespace PHPixieTests\Database\Driver\Mongo\Parser\Group;
+namespace PHPixieTests\Database\Driver\Mongo\Parser\Conditions;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Parser\Group\ExpandedGroup
+ * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Parser\Conditions\ExpandedGroup
  */
 class ExpandedGroupTest extends \PHPixieTests\Database\Conditions\Condition\ImplementationTest
 {
@@ -243,7 +243,7 @@ class ExpandedGroupTest extends \PHPixieTests\Database\Conditions\Condition\Impl
 
     protected function getExpandedGroup($operator = null)
     {
-        return new \PHPixie\Database\Driver\Mongo\Parser\Group\ExpandedGroup($operator);
+        return new \PHPixie\Database\Driver\Mongo\Parser\Conditions\ExpandedGroup($operator);
     }
     
     protected function condition()

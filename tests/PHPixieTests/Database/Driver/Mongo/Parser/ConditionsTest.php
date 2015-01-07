@@ -3,17 +3,17 @@
 namespace PHPixieTests\Database\Driver\Mongo\Parser;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Parser\Group
+ * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Parser\Conditions
  */
-class GroupTest extends \PHPixieTests\AbstractDatabaseTest
+class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
 {
-    protected $groupParser;
+    protected $conditionsParser;
 
     protected function setUp()
     {
         $this->database = new \PHPixie\Database(null);
         $operatorParser = new \PHPixie\Database\Driver\Mongo\Parser\Operator();
-        $this->groupParser = new \PHPixie\Database\Driver\Mongo\Parser\Group(
+        $this->conditionsParser = new \PHPixie\Database\Driver\Mongo\Parser\Conditions(
             $this->database->driver('Mongo'),
             $this->database->conditions(),
             $operatorParser
@@ -147,7 +147,7 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
     public function testParseConditionException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Parser');
-        $this->groupParser->parse(array(new \stdClass()));
+        $this->conditionsParser->parse(array(new \stdClass()));
     }
 
     /**
@@ -310,8 +310,8 @@ class GroupTest extends \PHPixieTests\AbstractDatabaseTest
 
     protected function assertGroup($container, $expect)
     {
-        $parsed = $this->groupParser->parse($container->getConditions());
-        $this->assertSame($parsed, $this->groupParser->parse($container->getConditions()));
+        $parsed = $this->conditionsParser->parse($container->getConditions());
+        $this->assertSame($parsed, $this->conditionsParser->parse($container->getConditions()));
         $this->assertEquals($expect, $parsed);
     }
 

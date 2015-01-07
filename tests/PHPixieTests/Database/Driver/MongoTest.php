@@ -55,21 +55,21 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
     }
 
     /**
-     * @covers ::groupParser
+     * @covers ::conditionsParser
      */
-    public function testGroupParser()
+    public function testConditionsParser()
     {
-        $groupParser = $this->driver->groupParser();
-        $this->assertSame($groupParser, $this->driver->groupParser());
+        $conditionsParser = $this->driver->conditionsParser();
+        $this->assertSame($conditionsParser, $this->driver->conditionsParser());
     }
 
     /**
-     * @covers ::buildGroupParserInstance
+     * @covers ::buildConditionsParserInstance
      */
-    public function testBuildGroupParserInstance()
+    public function testBuildConditionsParserInstance()
     {
-        $groupParser = $this->driver->groupParser();
-        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Parser\Group', $groupParser);
+        $conditionsParser = $this->driver->conditionsParser();
+        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Parser\Conditions', $conditionsParser);
     }
 
     /**
@@ -90,12 +90,12 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
      */
     public function testBuildParser()
     {
-        $parser = $this->driver->buildParser('config', 'groupParser');
+        $parser = $this->driver->buildParser('config', 'conditionsParser');
         $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Parser', $parser);
         $this->assertAttributeEquals($this->database, 'database', $parser);
         $this->assertAttributeEquals($this->driver, 'driver', $parser);
         $this->assertAttributeEquals('config', 'config', $parser);
-        $this->assertAttributeEquals('groupParser', 'groupParser', $parser);
+        $this->assertAttributeEquals('conditionsParser', 'conditionsParser', $parser);
     }
 
     /**
@@ -103,19 +103,19 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
      */
     public function testBuildParserInstance()
     {
-        $driver = $this->getMock('\PHPixie\Database\Driver\Mongo', array('groupParser'), array($this->database));
+        $driver = $this->getMock('\PHPixie\Database\Driver\Mongo', array('conditionsParser'), array($this->database));
         $driver
             ->expects($this->any())
-            ->method('groupParser')
+            ->method('conditionsParser')
             ->with()
-            ->will($this->returnValue('groupParser'));
+            ->will($this->returnValue('conditionsParser'));
 
         $parser = $driver->buildParserInstance('test');
         $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Parser', $parser);
         $this->assertAttributeEquals($this->database, 'database', $parser);
         $this->assertAttributeEquals($driver, 'driver', $parser);
         $this->assertAttributeEquals('config', 'config', $parser);
-        $this->assertAttributeEquals('groupParser', 'groupParser', $parser);
+        $this->assertAttributeEquals('conditionsParser', 'conditionsParser', $parser);
     }
 
     /**
@@ -134,12 +134,12 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
     public function testExpandedCondition()
     {
         $condition = $this->driver->expandedGroup();
-        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Parser\Group\ExpandedGroup', $condition);
+        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Parser\Conditions\ExpandedGroup', $condition);
         $this->assertEquals(array(), $condition->groups());
 
         $operator = new \PHPixie\Database\Conditions\Condition\Field\Operator('a', '=', array(1));
         $condition = $this->driver->expandedGroup($operator);
-        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Parser\Group\ExpandedGroup', $condition);
+        $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Parser\Conditions\ExpandedGroup', $condition);
         $this->assertEquals(array(array($operator)), $condition->groups());
     }
 

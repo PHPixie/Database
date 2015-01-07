@@ -2,9 +2,9 @@
 namespace PHPixieTests\Database\Driver\PDO\Adapter\Pgsql\Parser;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Driver\PDO\Adapter\Pgsql\Parser\Group
+ * @coversDefaultClass \PHPixie\Database\Driver\PDO\Adapter\Pgsql\Parser\Conditions
  */
-class GroupTest extends \PHPixieTests\Database\Type\SQL\Parser\GroupTest
+class ConditionsTest extends \PHPixieTests\Database\Type\SQL\Parser\ConditionsTest
 {
     protected $expected = array(
         array('"a" = ?', array(1)),
@@ -17,7 +17,7 @@ class GroupTest extends \PHPixieTests\Database\Type\SQL\Parser\GroupTest
         parent::setUp();
         $fragmentParser = $this->database->driver('PDO')->fragmentParser('Pgsql');
         $operatorParser = $this->database->driver('PDO')->operatorParser('Pgsql', $fragmentParser);
-        $this->groupParser = $this->database->driver('PDO')->groupParser('Pgsql', $operatorParser);
+        $this->conditionsParser = $this->database->driver('PDO')->conditionsParser('Pgsql', $operatorParser);
     }
 
 }

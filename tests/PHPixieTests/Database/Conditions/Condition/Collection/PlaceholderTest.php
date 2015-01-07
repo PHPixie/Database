@@ -16,8 +16,18 @@ class PlaceholderTest extends \PHPixieTests\Database\Conditions\Condition\Implem
     }
 
     /**
-     * @covers ::container
      * @covers ::__construct
+     * @covers ::<protected>
+     */
+    public function testConstruct()
+    {
+        
+    }
+
+    
+    /**
+     * @covers ::container
+     * @covers ::<protected>
      */
     public function testContainer()
     {

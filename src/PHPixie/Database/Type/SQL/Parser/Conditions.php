@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Type\SQL\Parser;
 
-abstract class Group
+abstract class Conditions
 {
     protected $database;
     protected $operatorParser;

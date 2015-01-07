@@ -2,6 +2,6 @@
 
 namespace PHPixie\Database\Driver\PDO\Adapter\Mysql\Parser;
 
-class Group extends \PHPixie\Database\Type\SQL\Parser\Group
+class Conditions extends \PHPixie\Database\Type\SQL\Parser\Conditions
 {
 }

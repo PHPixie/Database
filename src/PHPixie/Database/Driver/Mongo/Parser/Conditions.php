@@ -4,7 +4,7 @@ namespace PHPixie\Database\Driver\Mongo\Parser;
 
 use \PHPixie\Database\Type\Document\Conditions\Condition as DocumentCondition;
 
-class Group extends \PHPixie\Database\Conditions\Logic\Parser
+class Conditions extends \PHPixie\Database\Conditions\Logic\Parser
 {
     protected $driver;
     protected $conditions;

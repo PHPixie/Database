@@ -16,9 +16,9 @@ class PDO extends \PHPixie\Database\Type\SQL\Driver
         $config         = $connection->config();
         $fragmentParser = $this->fragmentParser($adapterName);
         $operatorParser = $this->operatorParser($adapterName, $fragmentParser);
-        $groupParser    = $this->groupParser($adapterName, $operatorParser);
+        $conditionsParser    = $this->conditionsParser($adapterName, $operatorParser);
 
-        return $this->buildParser($adapterName, $config, $fragmentParser, $groupParser);
+        return $this->buildParser($adapterName, $config, $fragmentParser, $conditionsParser);
     }
 
     public function adapter($name, $config, $connection)
@@ -28,11 +28,11 @@ class PDO extends \PHPixie\Database\Type\SQL\Driver
         return new $class($config, $connection);
     }
 
-    public function buildParser($adapterName, $config, $fragmentParser, $groupParser)
+    public function buildParser($adapterName, $config, $fragmentParser, $conditionsParser)
     {
         $class = '\PHPixie\Database\Driver\PDO\Adapter\\'.$adapterName.'\Parser';
 
-        return new $class($this->database, $this, $config, $fragmentParser, $groupParser);
+        return new $class($this->database, $this, $config, $fragmentParser, $conditionsParser);
     }
 
     public function fragmentParser($adapterName)
@@ -49,9 +49,9 @@ class PDO extends \PHPixie\Database\Type\SQL\Driver
         return new $class($this->database, $fragmentParser);
     }
 
-    public function groupParser($adapterName, $operatorParser)
+    public function conditionsParser($adapterName, $operatorParser)
     {
-        $class = '\PHPixie\Database\Driver\PDO\Adapter\\'.$adapterName.'\Parser\Group';
+        $class = '\PHPixie\Database\Driver\PDO\Adapter\\'.$adapterName.'\Parser\Conditions';
 
         return new $class($this->database, $operatorParser);
     }

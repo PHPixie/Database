@@ -96,19 +96,19 @@ class PDOTest extends \PHPixieTests\Database\DriverTest
     }
 
     /**
-     * @covers ::groupParser
+     * @covers ::conditionsParser
      */
-    public function testGroupParser()
+    public function testConditionsParser()
     {
         foreach($this->adapterList as $name)
-            $this->singleGroupParserTest($name);
+            $this->singleConditionsParserTest($name);
     }
 
-    protected function singleGroupParserTest($name)
+    protected function singleConditionsParserTest($name)
     {
-        $groupParser = $this->driver->groupParser($name, 'operatorParser');
-        $this->assertInstanceOf('PHPixie\Database\Driver\PDO\Adapter\\'.ucfirst($name).'\Parser\Group', $groupParser);
-        $this->assertAttributeEquals('operatorParser', 'operatorParser', $groupParser);
+        $conditionsParser = $this->driver->conditionsParser($name, 'operatorParser');
+        $this->assertInstanceOf('PHPixie\Database\Driver\PDO\Adapter\\'.ucfirst($name).'\Parser\Conditions', $conditionsParser);
+        $this->assertAttributeEquals('operatorParser', 'operatorParser', $conditionsParser);
     }
 
     /**
@@ -122,13 +122,13 @@ class PDOTest extends \PHPixieTests\Database\DriverTest
 
     protected function singleBuildParserTest($name)
     {
-        $parser = $this->driver->buildParser($name, 'config', 'fragmentParser', 'groupParser');
+        $parser = $this->driver->buildParser($name, 'config', 'fragmentParser', 'conditionsParser');
         $this->assertInstanceOf('PHPixie\Database\Driver\PDO\Adapter\\'.ucfirst($name).'\Parser', $parser);
         $this->assertAttributeEquals($this->database, 'database', $parser);
         $this->assertAttributeEquals($this->driver, 'driver', $parser);
         $this->assertAttributeEquals('config', 'config', $parser);
         $this->assertAttributeEquals('fragmentParser', 'fragmentParser', $parser);
-        $this->assertAttributeEquals('groupParser', 'groupParser', $parser);
+        $this->assertAttributeEquals('conditionsParser', 'conditionsParser', $parser);
     }
 
     /**
@@ -178,7 +178,7 @@ class PDOTest extends \PHPixieTests\Database\DriverTest
      */
     public function testBuildParserInstance()
     {
-        $driver = $this->getMock('\PHPixie\Database\Driver\PDO', array('fragmentParser', 'groupParser'), array($this->database));
+        $driver = $this->getMock('\PHPixie\Database\Driver\PDO', array('fragmentParser', 'conditionsParser'), array($this->database));
         $driver
             ->expects($this->any())
             ->method('fragmentParser')
@@ -186,9 +186,9 @@ class PDOTest extends \PHPixieTests\Database\DriverTest
             ->will($this->returnValue('fragmentParser'));
         $driver
             ->expects($this->any())
-            ->method('groupParser')
+            ->method('conditionsParser')
             ->with()
-            ->will($this->returnValue('groupParser'));
+            ->will($this->returnValue('conditionsParser'));
 
         $parser = $driver->buildParserInstance('test');
         $this->assertInstanceOf($this->parserClass, $parser);
@@ -196,7 +196,7 @@ class PDOTest extends \PHPixieTests\Database\DriverTest
         $this->assertAttributeEquals($driver, 'driver', $parser);
         $this->assertAttributeEquals('config', 'config', $parser);
         $this->assertAttributeEquals('fragmentParser', 'fragmentParser', $parser);
-        $this->assertAttributeEquals('groupParser', 'groupParser', $parser);
+        $this->assertAttributeEquals('conditionsParser', 'conditionsParser', $parser);
     }
     
     /**

@@ -7,6 +7,28 @@ namespace PHPixieTests\Database\Type\Document\Conditions\Condition\Collection;
  */
 class PlaceholderTest extends \PHPixieTests\Database\Conditions\Condition\Collection\PlaceholderTest
 {
+    /**
+     * @covers \PHPixie\Database\Conditions\Condition\Collection\Placeholder::__construct
+     * @covers \PHPixie\Database\Type\Document\Conditions\Condition\Collection\Placeholder::__construct
+     * @covers ::__construct
+     * @covers ::<protected>
+     */
+    public function testConstruct()
+    {
+        
+    }
+    
+    /**
+     * @covers \PHPixie\Database\Conditions\Condition\Collection\Placeholder::container
+     * @covers \PHPixie\Database\Type\Document\Conditions\Condition\Collection\Placeholder::container
+     * @covers ::container
+     * @covers ::<protected>
+     */
+    public function testContainer()
+    {
+        parent::testContainer();
+    }
+    
     protected function getContainer()
     {
         return $this->quickMock('\PHPixie\Database\Type\Document\Conditions\Builder\Container', array('getConditions'));

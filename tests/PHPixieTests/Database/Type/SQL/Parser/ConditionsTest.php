@@ -2,12 +2,12 @@
 namespace PHPixieTests\Database\Type\SQL\Parser;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Type\SQL\Parser\Group
+ * @coversDefaultClass \PHPixie\Database\Type\SQL\Parser\Conditions
  */
-abstract class GroupTest extends \PHPixieTests\Database\Type\SQL\AbstractParserTest
+abstract class ConditionsTest extends \PHPixieTests\Database\Type\SQL\AbstractParserTest
 {
     protected $database;
-    protected $groupParser;
+    protected $conditionsParser;
     protected $expected;
 
     public function setUp()
@@ -52,7 +52,7 @@ abstract class GroupTest extends \PHPixieTests\Database\Type\SQL\AbstractParserT
     public function testParse()
     {
         foreach ($this->groups() as $key => $group) {
-            $parsed = $this->groupParser->parse($group);
+            $parsed = $this->conditionsParser->parse($group);
             $this->assertExpression($parsed, $this->expected[$key]);
         }
     }
@@ -66,7 +66,7 @@ abstract class GroupTest extends \PHPixieTests\Database\Type\SQL\AbstractParserT
         foreach ($this->exceptionGroups() as $group) {
             $except = false;
             try {
-                $this->groupParser->parse($group);
+                $this->conditionsParser->parse($group);
             } catch (\PHPixie\Database\Exception\Parser $e) {
                 $except = true;
             }

@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPixie\Database\Driver\Mongo\Parser\Group;
+namespace PHPixie\Database\Driver\Mongo\Parser\Conditions;
 
 class ExpandedGroup extends \PHPixie\Database\Conditions\Condition\Implementation
 {

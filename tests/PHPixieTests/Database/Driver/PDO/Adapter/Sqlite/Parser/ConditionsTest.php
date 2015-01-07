@@ -2,9 +2,9 @@
 namespace PHPixieTests\Database\Driver\PDO\Adapter\Sqlite\Parser;
 
 /**
- * @coversDefaultClass \PHPixie\Database\Driver\PDO\Adapter\Sqlite\Parser\Group
+ * @coversDefaultClass \PHPixie\Database\Driver\PDO\Adapter\Sqlite\Parser\Conditions
  */
-class GroupTest extends \PHPixieTests\Database\Type\SQL\Parser\GroupTest
+class ConditionsTest extends \PHPixieTests\Database\Type\SQL\Parser\ConditionsTest
 {
     protected $expected = array(
         array('"a" = ?', array(1)),
@@ -17,7 +17,7 @@ class GroupTest extends \PHPixieTests\Database\Type\SQL\Parser\GroupTest
         parent::setUp();
         $fragmentParser = $this->database->driver('PDO')->fragmentParser('Sqlite');
         $operatorParser = $this->database->driver('PDO')->operatorParser('Sqlite', $fragmentParser);
-        $this->groupParser = $this->database->driver('PDO')->groupParser('Sqlite', $operatorParser);
+        $this->conditionsParser = $this->database->driver('PDO')->conditionsParser('Sqlite', $operatorParser);
     }
 
 }

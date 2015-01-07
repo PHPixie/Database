@@ -5,14 +5,14 @@ namespace PHPixie\Database\Type\SQL;
 abstract class Parser extends \PHPixie\Database\Parser
 {
     protected $fragmentParser;
-    protected $groupParser;
+    protected $conditionsParser;
     protected $supportedJoins;
 
-    public function __construct($database, $driver, $config, $fragmentParser, $groupParser)
+    public function __construct($database, $driver, $config, $fragmentParser, $conditionsParser)
     {
         parent::__construct($database, $driver, $config);
         $this->fragmentParser = $fragmentParser;
-        $this->groupParser = $groupParser;
+        $this->conditionsParser = $conditionsParser;
     }
 
     public function parse($query)
@@ -233,7 +233,7 @@ abstract class Parser extends \PHPixie\Database\Parser
             return;
 
         $expr->sql.= ' '.strtoupper($prefix).' ';
-        $expr->append($this->groupParser->parse($conditions));
+        $expr->append($this->conditionsParser->parse($conditions));
     }
 
     protected function appendGroupBy($query, $expr)

@@ -4,7 +4,7 @@ namespace PHPixie\Database\Driver;
 
 class Mongo extends \PHPixie\Database\Driver
 {
-    protected $groupParser;
+    protected $conditionsParser;
 
     public function buildConnection($connectionName, $config)
     {
@@ -15,14 +15,14 @@ class Mongo extends \PHPixie\Database\Driver
     {
         $connection      = $this->database->get($connectionName);
         $config          = $connection->config();
-        $groupParser     = $this->groupParser();
+        $conditionsParser     = $this->conditionsParser();
 
-        return $this->buildParser($config, $groupParser);
+        return $this->buildParser($config, $conditionsParser);
     }
 
-    public function buildParser($config, $groupParser)
+    public function buildParser($config, $conditionsParser)
     {
-        return new \PHPixie\Database\Driver\Mongo\Parser($this->database, $this, $config, $groupParser);
+        return new \PHPixie\Database\Driver\Mongo\Parser($this->database, $this, $config, $conditionsParser);
     }
 
     public function operatorParser()
@@ -30,13 +30,13 @@ class Mongo extends \PHPixie\Database\Driver
         return new \PHPixie\Database\Driver\Mongo\Parser\Operator;
     }
 
-    public function groupParser()
+    public function conditionsParser()
     {
-        if($this->groupParser === null) {
-            $this->groupParser = $this->buildGroupParserInstance();
+        if($this->conditionsParser === null) {
+            $this->conditionsParser = $this->buildConditionsParserInstance();
         }
 
-        return $this->groupParser;
+        return $this->conditionsParser;
     }
     
     public function queryBuilder()
@@ -47,11 +47,11 @@ class Mongo extends \PHPixie\Database\Driver
         return $this->buildQueryBuilder($documentConditions, $values);
     }
 
-    public function buildGroupParserInstance()
+    public function buildConditionsParserInstance()
     {
         $conditions = $this->database->conditions();
         $operatorParser  = $this->operatorParser();
-        return new \PHPixie\Database\Driver\Mongo\Parser\Group($this, $conditions, $operatorParser);
+        return new \PHPixie\Database\Driver\Mongo\Parser\Conditions($this, $conditions, $operatorParser);
     }
 
     public function buildQuery($type, $connection, $parser, $builder)
@@ -73,7 +73,7 @@ class Mongo extends \PHPixie\Database\Driver
 
     public function expandedGroup($condition = null)
     {
-        return new \PHPixie\Database\Driver\Mongo\Parser\Group\ExpandedGroup($condition);
+        return new \PHPixie\Database\Driver\Mongo\Parser\Conditions\ExpandedGroup($condition);
     }
 
     public function runner()

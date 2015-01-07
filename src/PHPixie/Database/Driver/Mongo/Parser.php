@@ -4,12 +4,12 @@ namespace PHPixie\Database\Driver\Mongo;
 
 class Parser extends \PHPixie\Database\Parser
 {
-    protected $groupParser;
+    protected $conditionsParser;
 
-    public function __construct($database, $driver, $config, $groupParser)
+    public function __construct($database, $driver, $config, $conditionsParser)
     {
         parent::__construct($database, $driver, $config);
-        $this->groupParser = $groupParser;
+        $this->conditionsParser = $conditionsParser;
     }
 
     public function parse($query)
@@ -37,7 +37,7 @@ class Parser extends \PHPixie\Database\Parser
     {
         $this->chainCollection($query, $runner);
         $fields = $query->getFields();
-        $conditions = $this->groupParser->parse($query->getWhereConditions());
+        $conditions = $this->conditionsParser->parse($query->getWhereConditions());
         $limit = $query->getLimit();
         $offset = $query->getOffset();
         $order  = $query->getOrderBy();
@@ -69,7 +69,7 @@ class Parser extends \PHPixie\Database\Parser
     {
         $this->chainCollection($query, $runner);
         $fields = $query->getFields();
-        $conditions = $this->groupParser->parse($query->getWhereConditions());
+        $conditions = $this->conditionsParser->parse($query->getWhereConditions());
         $fieldKeys = $this->fieldKeys($fields);
 
         $runner->chainMethod('findOne', array($conditions, $fieldKeys));
@@ -110,7 +110,7 @@ class Parser extends \PHPixie\Database\Parser
         if (empty($data))
             throw new \PHPixie\Database\Exception\Parser("No modifiers specified for update");
 
-        $conditions = $this->groupParser->parse($query->getWhereConditions());
+        $conditions = $this->conditionsParser->parse($query->getWhereConditions());
         $runner->chainMethod('update', array($conditions, $data, array('multiple' => true)));
 
         return $runner;
@@ -119,7 +119,7 @@ class Parser extends \PHPixie\Database\Parser
     protected function deleteQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
-        $conditions = $this->groupParser->parse($query->getWhereConditions());
+        $conditions = $this->conditionsParser->parse($query->getWhereConditions());
         $runner->chainMethod('remove', array($conditions));
 
         return $runner;
@@ -128,7 +128,7 @@ class Parser extends \PHPixie\Database\Parser
     protected function countQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
-        $conditions = $this->groupParser->parse($query->getWhereConditions());
+        $conditions = $this->conditionsParser->parse($query->getWhereConditions());
         if (!empty($conditions))
             $runner->chainMethod('find', array($conditions));
         $runner->chainMethod('count');
