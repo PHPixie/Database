@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPixieTests\Database\Conditions\Condition;
+namespace PHPixieTests\Database\Conditions\Condition\Field;
 
 /**
  * @coversDefaultClass \PHPixie\Database\Conditions\Condition\Field\Operator
