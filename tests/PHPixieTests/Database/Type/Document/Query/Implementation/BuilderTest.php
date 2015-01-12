@@ -50,7 +50,7 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
         $this->builder->addSubarrayItemPlaceholder('pixie', 'or', true, false, 'first');
     }
     
-    protected function containerBuilder()
+    protected function conditions()
     {
         return $this->quickMock('\PHPixie\Database\Type\Document\Conditions', array('container'));
     }
@@ -62,6 +62,6 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
     
     protected function builder()
     {
-        return new \PHPixie\Database\Type\Document\Query\Implementation\Builder($this->containerBuilderMock, $this->valuesMock);
+        return new \PHPixie\Database\Type\Document\Query\Implementation\Builder($this->conditionsMock, $this->valuesMock);
     }
 }

@@ -13,7 +13,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
         $this->database = new \PHPixie\Database(null);
         $driver = $this->database->driver('Mongo');
         $operatorParser = new \PHPixie\Database\Driver\Mongo\Parser\Operator();
-        $conditionsParser = new \PHPixie\Database\Driver\Mongo\Parser\Conditions($driver, $this->database->conditions(), $operatorParser);
+        $conditionsParser = new \PHPixie\Database\Driver\Mongo\Parser\Conditions($driver, $driver->conditions(), $operatorParser);
         $this->parser = new \PHPixie\Database\Driver\Mongo\Parser($this->database, $driver, 'default', $conditionsParser);
     }
 
@@ -343,9 +343,9 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
     {
         $class = '\PHPixie\Database\Driver\Mongo\Query\Type\\'.ucfirst($type);
         $builder = new \PHPixie\Database\Driver\Mongo\Query\Builder(
-                                                                    $this->database->conditions(),
-                                                                    $this->database->values()
-                                                                    );
+            $this->database->driver('Mongo')->conditions(),
+            $this->database->values()
+        );
         $query = new $class(null, null, $builder);
 
         return $query;

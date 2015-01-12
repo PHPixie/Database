@@ -2,21 +2,8 @@
 
 namespace PHPixie\Database\Type\Document;
 
-class Conditions implements \PHPixie\Database\Type\Document\Conditions\Builder\Container\Builder
+abstract class Conditions extends \PHPixie\Database\Conditions
 {
-    
-    protected $conditions;
-    
-    public function __construct($conditions)
-    {
-        $this->conditions = $conditions;
-    }
-    
-    public function container($defaultOperator = '=')
-    {
-        return new Conditions\Builder\Container($this->conditions, $this, $defaultOperator);
-    }
-
     public function subdocumentGroup($field)
     {
         return new Conditions\Condition\Collection\Embedded\Group\Subdocument($field);
@@ -44,4 +31,5 @@ class Conditions implements \PHPixie\Database\Type\Document\Conditions\Builder\C
         $container = $this->container($defaultOperator);
         return new Conditions\Condition\Collection\Embedded\Placeholder\SubarrayItem($container, $field, $allowEmpty);
     }
+    
 }

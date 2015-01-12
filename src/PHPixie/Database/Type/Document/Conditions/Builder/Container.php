@@ -2,28 +2,22 @@
 
 namespace PHPixie\Database\Type\Document\Conditions\Builder;
 
-class Container extends    \PHPixie\Database\Conditions\Builder\Container
-                implements \PHPixie\Database\Type\Document\Conditions\Builder
+abstract class Container extends    \PHPixie\Database\Conditions\Builder\Container
+                         implements \PHPixie\Database\Type\Document\Conditions\Builder
 {
-    protected $documentConditions;
-    
-    public function __construct($conditions, $documentConditions, $defaultOperator = '=')
+    public function __construct($conditions, $defaultOperator = '=')
     {
-        $this->documentConditions = $documentConditions;
         parent::__construct($conditions, $defaultOperator);
     }
     
     public function addPlaceholder($logic = 'and', $negate = false, $allowEmpty = true)
     {
-        $placeholder = $this->documentConditions->placeholder($this->defaultOperator, $allowEmpty);
-        $this->addCondition($logic, $negate, $placeholder);
-
-        return $placeholder->container();
+        return parent::addPlaceholder($logic, $negate, $allowEmpty);
     }
     
     public function addSubdocumentPlaceholder($field, $logic = 'and', $negate = false, $allowEmpty = true)
     {
-        $subdocument = $this->documentConditions->subdocumentPlaceholder($field, $this->defaultOperator, $allowEmpty);
+        $subdocument = $this->conditions->subdocumentPlaceholder($field, $this->defaultOperator, $allowEmpty);
         $this->addCondition($logic, $negate, $subdocument);
 
         return $subdocument->container();
@@ -31,7 +25,7 @@ class Container extends    \PHPixie\Database\Conditions\Builder\Container
     
     public function addSubarrayItemPlaceholder($field, $logic = 'and', $negate = false, $allowEmpty = true)
     {
-        $subdocument = $this->documentConditions->subarrayItemPlaceholder($field, $this->defaultOperator, $allowEmpty);
+        $subdocument = $this->conditions->subarrayItemPlaceholder($field, $this->defaultOperator, $allowEmpty);
         $this->addCondition($logic, $negate, $subdocument);
 
         return $subdocument->container();
@@ -39,7 +33,7 @@ class Container extends    \PHPixie\Database\Conditions\Builder\Container
     
     public function startSubdocumentConditionGroup($field, $logic = 'and', $negate = false)
     {
-        $group = $this->documentConditions->subdocumentGroup($field);
+        $group = $this->conditions->subdocumentGroup($field);
         $this->pushGroup($logic, $negate, $group);
 
         return $this;
@@ -47,7 +41,7 @@ class Container extends    \PHPixie\Database\Conditions\Builder\Container
     
     public function startSubarrayItemConditionGroup($field, $logic = 'and', $negate = false)
     {
-        $group = $this->documentConditions->subarrayItemGroup($field);
+        $group = $this->conditions->subarrayItemGroup($field);
         $this->pushGroup($logic, $negate, $group);
 
         return $this;

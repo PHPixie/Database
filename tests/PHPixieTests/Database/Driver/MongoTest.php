@@ -160,18 +160,15 @@ class MongoTest extends \PHPixieTests\Database\DriverTest
     }
 
     /**
-     * @covers ::buildQueryBuilder
+     * @covers ::queryBuilder
      */
-    public function testBuildQueryBuilder()
+    public function testQueryBuilder()
     {
-        $documentConditions = $this->quickMock('\PHPixie\Database\Type\Document\Conditions', array());
-        $values = $this->quickMock('\PHPixie\Database\Values', array());
-        
-        $builder = $this->driver->buildQueryBuilder($documentConditions, $values);
+        $builder = $this->driver->queryBuilder();
         $this->assertInstanceOf('\PHPixie\Database\Driver\Mongo\Query\Builder', $builder);
         
-        $this->assertAttributeSame($documentConditions, 'containerBuilder', $builder);
-        $this->assertAttributesame($values, 'valueBuilder', $builder);
+        $this->assertAttributeSame($this->driver->conditions(), 'conditions', $builder);
+        $this->assertAttributesame($this->database->values(), 'valueBuilder', $builder);
     }
 
 }

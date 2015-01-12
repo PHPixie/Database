@@ -5,7 +5,7 @@ namespace PHPixieTests\Database\Conditions\Builder;
 /**
  * @coversDefaultClass \PHPixie\Database\Conditions\Builder\Container
  */
-class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
+abstract class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $container;
     protected $conditions;
@@ -337,13 +337,6 @@ class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
         return end($conditions);
     }
     
-    protected function conditions()
-    {
-        return new \PHPixie\Database\Conditions;
-    }
-    
-    protected function container($defaultOperator = '=')
-    {
-        return new \PHPixie\Database\Conditions\Builder\Container($this->conditions, $defaultOperator);
-    }
+    abstract protected function conditions();
+    abstract protected function container($defaultOperator = '=');
 }

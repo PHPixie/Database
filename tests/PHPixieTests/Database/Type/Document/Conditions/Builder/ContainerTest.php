@@ -5,7 +5,7 @@ namespace PHPixieTests\Database\Type\Document\Conditions\Builder;
 /**
  * @coversDefaultClass \PHPixie\Database\Type\Document\Conditions\Builder\Container
  */
-class ContainerTest extends \PHPixieTests\Database\Conditions\Builder\ContainerTest
+abstract class ContainerTest extends \PHPixieTests\Database\Conditions\Builder\ContainerTest
 {
     protected $databaseConditions;
     
@@ -136,18 +136,5 @@ class ContainerTest extends \PHPixieTests\Database\Conditions\Builder\ContainerT
         } else {
             parent::assertCondition($condition, $expected);
         }
-    }
-    
-    protected function container($defaultOperator = '=')
-    {
-        if($this->databaseConditions === null) {
-            $this->databaseConditions = new \PHPixie\Database\Type\Document\Conditions($this->conditions);
-        }
-        
-        return new \PHPixie\Database\Type\Document\Conditions\Builder\Container(
-            $this->conditions,
-            $this->databaseConditions,
-            $defaultOperator
-        );
     }
 }

@@ -5,13 +5,13 @@ namespace PHPixieTests\Database;
 /**
  * @coversDefaultClass \PHPixie\Database\Conditions
  */
-class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
+abstract class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $conditions;
 
     public function setUp()
     {
-        $this->conditions = new \PHPixie\Database\Conditions();
+        $this->conditions = $this->conditions();
     }
 
     /**
@@ -59,5 +59,7 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
         $builder = $this->conditions->container('>');
         $this->assertAttributeEquals('>','defaultOperator',$builder);
     }
+    
+    abstract protected function conditions();
 
 }

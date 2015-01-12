@@ -200,17 +200,14 @@ class PDOTest extends \PHPixieTests\Database\DriverTest
     }
     
     /**
-     * @covers ::buildQueryBuilder
+     * @covers ::queryBuilder
      */
-    public function testBuildQueryBuilder()
+    public function testQueryBuilder()
     {
-        $conditions = $this->quickMock('\PHPixie\Database\Conditions', array());
-        $values = $this->quickMock('\PHPixie\Database\Values', array());
-        
-        $builder = $this->driver->buildQueryBuilder($conditions, $values);
+        $builder = $this->driver->queryBuilder();
         $this->assertInstanceOf('\PHPixie\Database\Driver\PDO\Query\Builder', $builder);
         
-        $this->assertAttributeSame($conditions, 'containerBuilder', $builder);
-        $this->assertAttributesame($values, 'valueBuilder', $builder);
+        $this->assertAttributeSame($this->driver->conditions(), 'conditions', $builder);
+        $this->assertAttributesame($this->database->values(), 'valueBuilder', $builder);
     }
 }

@@ -5,12 +5,21 @@ namespace PHPixie\Database;
 abstract class Driver
 {
     protected $database;
+    protected $conditions;
     protected $parsers =  array();
     protected $connections = array();
 
     public function __construct($database)
     {
         $this->database = $database;
+    }
+    
+    public function conditions()
+    {
+        if ($this->conditions === null)
+            $this->conditions = $this->buildConditions();
+
+        return $this->conditions;
     }
 
     public function parser($connectionName)
@@ -19,14 +28,6 @@ abstract class Driver
             $this->parsers[$connectionName] = $this->buildParserInstance($connectionName);
 
         return $this->parsers[$connectionName];
-    }
-
-    public function queryBuilder()
-    {
-        $conditions = $this->database->conditions();
-        $values = $this->database->values();
-
-        return $this->buildQueryBuilder($conditions, $values);
     }
 
     public function query($type = 'select', $connectionName = 'default')
@@ -39,9 +40,10 @@ abstract class Driver
         return $this->buildQuery($type, $connection, $parser, $builder);
     }
 
+    abstract public function queryBuilder();
+    abstract public function buildConditions();
     abstract public function buildConnection($name, $config);
     abstract public function buildParserInstance($connectionName);
-    abstract public function buildQueryBuilder($containerBuilder, $values);
     abstract public function buildQuery($type, $connection, $parser, $builder);
     abstract public function result($cursor);
 }

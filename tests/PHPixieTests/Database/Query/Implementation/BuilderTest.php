@@ -6,7 +6,7 @@ namespace PHPixieTests\Database\Query\Implementation;
  */
 class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
 {
-    protected $containerBuilderMock;
+    protected $conditionsMock;
     protected $valuesMock;
     
     protected $containers;
@@ -19,7 +19,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
             $this->container(),
         );
         
-        $this->containerBuilderMock = $this->containerBuilder();
+        $this->conditionsMock = $this->conditions();
         $this->valuesMock = $this->quickMock('\PHPixie\Database\Values', array());
         
         $this->builder = $this->builder();
@@ -178,7 +178,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->prepareContainer();
         $this
-            ->containerBuilderMock
+            ->conditionsMock
             ->expects($this->at(1))
             ->method('container')
             ->will($this->returnValue($this->containers[1]));
@@ -334,7 +334,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     
     protected function prepareContainer()
     {
-        $this->containerBuilderMock
+        $this->conditionsMock
                 ->expects($this->at(0))
                 ->method('container')
                 ->will($this->returnValue($this->containers[0]));
@@ -345,7 +345,7 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
         return $this->quickMock('\PHPixie\Database\Driver', array('valuesData'));
     }
     
-    protected function containerBuilder()
+    protected function conditions()
     {
         return $this->quickMock('\PHPixie\Database\Conditions', array('container'));
     }
@@ -357,6 +357,6 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
     
     protected function builder()
     {
-        return new \PHPixie\Database\Query\Implementation\Builder($this->containerBuilderMock, $this->valuesMock);
+        return new \PHPixie\Database\Query\Implementation\Builder($this->conditionsMock, $this->valuesMock);
     }
 }

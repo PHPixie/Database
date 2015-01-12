@@ -49,14 +49,5 @@ abstract class DriverTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertAttributeInstanceOf($this->builderClass, 'builder', $query);
     }
     
-    /**
-     * @covers ::queryBuilder
-     */
-    public function testQueryBuilder()
-    {
-        $builder = $this->driver->queryBuilder();
-        $this->assertInstanceOf($this->builderClass, $builder);
-    }
-    
-    abstract public function testBuildQueryBuilder();
+    abstract public function testQueryBuilder();
 }

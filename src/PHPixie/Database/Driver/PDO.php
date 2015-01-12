@@ -16,11 +16,16 @@ class PDO extends \PHPixie\Database\Type\SQL\Driver
         $config         = $connection->config();
         $fragmentParser = $this->fragmentParser($adapterName);
         $operatorParser = $this->operatorParser($adapterName, $fragmentParser);
-        $conditionsParser    = $this->conditionsParser($adapterName, $operatorParser);
+        $conditionsParser = $this->conditionsParser($adapterName, $operatorParser);
 
         return $this->buildParser($adapterName, $config, $fragmentParser, $conditionsParser);
     }
 
+    public function buildConditions()
+    {
+        return new \PHPixie\Database\Driver\PDO\Conditions();
+    }
+    
     public function adapter($name, $config, $connection)
     {
         $class = '\PHPixie\Database\Driver\PDO\Adapter\\'.ucfirst($name);
@@ -56,8 +61,11 @@ class PDO extends \PHPixie\Database\Type\SQL\Driver
         return new $class($this->database, $operatorParser);
     }
 
-    public function buildQueryBuilder($conditions, $values)
+    public function queryBuilder()
     {
+        $conditions = $this->conditions();
+        $values = $this->database->values();
+
         return new \PHPixie\Database\Driver\PDO\Query\Builder($conditions, $values);
     }
 

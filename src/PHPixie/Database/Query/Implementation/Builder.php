@@ -4,16 +4,16 @@ namespace PHPixie\Database\Query\Implementation;
 
 class Builder
 {
-    protected $containerBuilder;
+    protected $conditions;
     protected $valueBuilder;
     protected $values = array();
     protected $arrays = array();
     protected $conditionContainers = array();
     protected $defaultContainer;
 
-    public function __construct($containerBuilder, $valueBuilder)
+    public function __construct($conditions, $valueBuilder)
     {
-        $this->containerBuilder = $containerBuilder;
+        $this->conditions = $conditions;
         $this->valueBuilder = $valueBuilder;
     }
 
@@ -158,7 +158,7 @@ class Builder
         }
         
         if (!array_key_exists($name, $this->conditionContainers))
-            $this->conditionContainers[$name] = $this->containerBuilder->container();
+            $this->conditionContainers[$name] = $this->conditions->container();
         $this->defaultContainer = $this->conditionContainers[$name];
 
         return $this->defaultContainer;
@@ -202,6 +202,11 @@ class Builder
         return $this->conditionContainer($containerName)->addPlaceholder($logic, $negate, $allowEmpty);
     }
 
+    public function addInOperatorCondition($field, $values, $logic, $negate, $containerName)
+    {
+        $this->conditionContainer($containerName)->addInOperatorCondition($field, $values, $logic, $negate);
+    }
+    
     public function assert($condition, $exceptionMessage)
     {
         if(!$condition)

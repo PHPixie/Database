@@ -22,7 +22,7 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder
     public function addJoin($table, $alias, $type)
     {
         $this->addToArray('joins', array(
-            'container' => $this->containerBuilder->container('=*'),
+            'container' => $this->conditions->container('=*'),
             'table' => $table,
             'alias' => $alias,
             'type'  => $type
@@ -83,6 +83,11 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder
     public function addOnOperatorCondition($logic, $negate, $field, $operator, $values)
     {
         $this->lastOnContainer()->addOperatorCondition($logic, $negate, $field, $operator, $values);
+    }
+    
+    public function addOnInOperatorCondition($field, $values, $logic, $negate)
+    {
+        $this->lastOnContainer()->addInOperatorCondition($field, $values, $logic, $negate);
     }
     
     public function addOnPlaceholder($logic = 'and', $negate = false, $allowEmpty = true)

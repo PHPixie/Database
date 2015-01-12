@@ -19,5 +19,10 @@ class ConditionsTest extends \PHPixieTests\Database\Type\SQL\Parser\ConditionsTe
         $operatorParser = $this->database->driver('PDO')->operatorParser('Pgsql', $fragmentParser);
         $this->conditionsParser = $this->database->driver('PDO')->conditionsParser('Pgsql', $operatorParser);
     }
+    
+    protected function container()
+    {
+        return $this->database->driver('PDO')->conditions()->container();
+    }
 
 }

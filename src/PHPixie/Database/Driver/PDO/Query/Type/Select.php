@@ -95,6 +95,11 @@ class Select extends \PHPixie\Database\Driver\PDO\Query\Items implements \PHPixi
     {
         return $this->addContainerOperatorCondition($logic, $negate, $field, $operator, $values, 'having');
     }
+    
+    public function addHavingInOperatorCondition($field, $values, $logic = 'and', $negate = false)
+    {
+        return $this->addContainerInOperatorCondition($field, $values, $logic, $negate, 'having');
+    }
 
     public function startHavingConditionGroup($logic = 'and', $negate = false)
     {

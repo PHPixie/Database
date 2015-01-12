@@ -2,7 +2,9 @@
 
 namespace PHPixie\Database\Driver\PDO\Query;
 
-abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPixie\Database\Type\SQL\Query\Items
+abstract class Items extends \PHPixie\Database\Driver\PDO\Query
+                     implements \PHPixie\Database\Type\SQL\Query\Items,
+                                \PHPixie\Database\Driver\PDO\Conditions\Builder
 {
 
     public function __construct($connection, $parser, $builder)
@@ -109,6 +111,13 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
         
         return $this;
     }
+                                    
+    protected function addContainerInOperatorCondition($field, $values, $logic, $negate, $containerName = null)
+    {
+        $this->builder->addInOperatorCondition($field, $values, $logic, $negate, $containerName);
+
+        return $this;
+    }
     
     protected function buildContainerCondition($logic, $negate, $args, $containerName = null)
     {
@@ -161,6 +170,16 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
         return $this->addContainerOperatorCondition($logic, $negate, $field, $operator, $values);
     }
     
+    public function addInOperatorCondition($field, $values, $logic = 'and', $negate = false)
+    {
+        return $this->addContainerInOperatorCondition($field, $values, $logic, $negate);
+    }
+
+    public function addWhereInOperatorCondition($field, $values, $logic = 'and', $negate = false)
+    {
+        return $this->addContainerInOperatorCondition($field, $values, $logic, $negate, 'where');
+    }
+
     public function startConditionGroup($logic = 'and', $negate = false)
     {
         return $this->startContainerConditionGroup($logic, $negate);
@@ -184,6 +203,11 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query implements \PHPi
         $this->builder->addOnCondition($logic, $negate, $condition);
 
         return $this;
+    }
+    
+    public function addOnInOperatorCondition($field, $values, $logic = 'and', $negate = false)
+    {
+        return $this->builder->addOnInOperatorCondition($field, $values, $logic, $negate);
     }
     
     public function buildOnCondition($logic, $negate, $args)

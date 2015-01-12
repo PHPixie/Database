@@ -37,18 +37,6 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
     }
     
     /**
-     * @covers ::document
-     * @covers ::<protected>
-     */
-    public function testDocument()
-    {
-        $document = $this->database->document();
-        $this->assertInstanceOf('\PHPixie\Database\Type\Document', $document);
-        $this->assertAttributeSame($this->database, 'database', $document);
-        $this->assertSame($document, $this->database->document());
-    }
-    
-    /**
      * @covers ::sqlExpression
      * @covers ::<protected>
      */
@@ -165,17 +153,6 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals('query2', $database->query('delete', 'test'));
     }
 
-    /**
-     * @covers ::conditions
-     * @covers ::buildConditions
-     */
-    public function testConditions()
-    {
-        $conditions = $this->database->conditions();
-        $this->assertInstanceOf('\PHPixie\Database\Conditions', $conditions);
-        $this->assertEquals($conditions, $this->database->conditions());
-    }
-    
     /**
      * @covers ::values
      * @covers ::buildvalues

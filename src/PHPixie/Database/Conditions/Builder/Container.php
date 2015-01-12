@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Conditions\Builder;
 
-class Container implements \PHPixie\Database\Conditions\Builder
+abstract class Container implements \PHPixie\Database\Conditions\Builder
 {
     protected $conditions;
     protected $groupStack = array();

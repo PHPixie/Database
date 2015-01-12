@@ -5,18 +5,8 @@ namespace PHPixieTests\Database\Type\Document;
 /**
  * @coversDefaultClass \PHPixie\Database\Type\Document\Conditions
  */
-class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
+abstract class ConditionsTest extends \PHPixieTests\Database\ConditionsTest
 {
-    protected $databaseConditions;
-    
-    protected $conditions;
-    
-    public function setUp()
-    {
-        $this->databaseConditions = $this->quickMock('\PHPixie\Database\Conditions', array());
-        $this->conditions = new \PHPixie\Database\Type\Document\Conditions($this->databaseConditions);
-    }
-    
     /**
      * @covers ::__construct
      * @covers ::<protected>
@@ -26,22 +16,6 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     
     }
     
-    /**
-     * @covers ::container
-     * @covers ::<protected>
-     */
-    public function testContainer()
-    {
-        $container = $this->conditions->container();
-        $this->assertInstanceOf('\PHPixie\Database\Type\Document\Conditions\Builder\Container', $container);
-        $this->assertAttributeSame($this->databaseConditions, 'conditions', $container);
-        $this->assertAttributeSame($this->conditions, 'documentConditions', $container);
-        $this->assertAttributeSame('=', 'defaultOperator', $container);
-        
-        $container = $this->conditions->container('>');
-        $this->assertAttributeSame('>', 'defaultOperator', $container);
-    }
-
     /**
      * @covers ::subdocumentGroup
      * @covers ::<protected>

@@ -20,4 +20,9 @@ class ConditionsTest extends \PHPixieTests\Database\Type\SQL\Parser\ConditionsTe
         $this->conditionsParser = $this->database->driver('PDO')->conditionsParser('Sqlite', $operatorParser);
     }
 
+    protected function container()
+    {
+        return $this->database->driver('PDO')->conditions()->container();
+    }
+    
 }

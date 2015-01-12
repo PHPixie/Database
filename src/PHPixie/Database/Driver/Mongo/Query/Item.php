@@ -2,8 +2,8 @@
 
 namespace PHPixie\Database\Driver\Mongo\Query;
 
-abstract class Item extends \PHPixie\Database\Driver\Mongo\Query 
-                    implements \PHPixie\Database\Type\Document\Conditions\Builder
+abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
+                    implements \PHPixie\Database\Driver\Mongo\Conditions\Builder
 {
     public function __construct($connection, $parser, $builder)
     {
@@ -21,6 +21,13 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     {
         $this->builder->addOperatorCondition($logic, $negate, $field, $operator, $values, $containerName);
         
+        return $this;
+    }
+    
+    protected function addContainerInOperatorCondition($field, $values, $logic, $negate, $containerName = null)
+    {
+        $this->builder->addInOperatorCondition($field, $values, $logic, $negate, $containerName);
+
         return $this;
     }
 
@@ -121,6 +128,16 @@ abstract class Item extends \PHPixie\Database\Driver\Mongo\Query
     public function addWhereOperatorCondition($logic, $negate, $field, $operator, $values)
     {
         return $this->addContainerOperatorCondition($logic, $negate, $field, $operator, $values, 'where');
+    }
+    
+    public function addInOperatorCondition($field, $values, $logic = 'and', $negate = false)
+    {
+        return $this->addContainerInOperatorCondition($field, $values, $logic, $negate);
+    }
+
+    public function addWhereInOperatorCondition($field, $values, $logic = 'and', $negate = false)
+    {
+        return $this->addContainerInOperatorCondition($field, $values, $logic, $negate, 'where');
     }
 
     public function startConditionGroup($logic = 'and', $negate = false)

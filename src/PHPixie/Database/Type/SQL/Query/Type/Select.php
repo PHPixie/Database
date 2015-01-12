@@ -17,6 +17,7 @@ interface Select extends \PHPixie\Database\Type\SQL\Query\Items, \PHPixie\Databa
     public function getHavingConditions();
     
     public function addHavingOperatorCondition($logic, $negate, $field, $operator, $values);
+    public function addHavingInOperatorCondition($field, $values, $logic = 'and', $negate = false);
     public function addHavingPlaceholder($logic = 'and', $negate = false, $allowEmpty = true);
     public function startHavingConditionGroup($logic = 'and', $negate = false);
     public function buildHavingCondition($logic, $negate, $args);

@@ -26,7 +26,11 @@ abstract class ParserTest extends \PHPixieTests\Database\Type\SQL\ParserTest
 
     protected function query($type)
     {
-        $builder = new \PHPixie\Database\Driver\PDO\Query\Builder($this->database->conditions(), $this->database->values());
+        $builder = new \PHPixie\Database\Driver\PDO\Query\Builder(
+            $this->database->driver('PDO')->conditions(),
+            $this->database->values()
+        );
+        
         $query = $this->getMock('\PHPixie\Database\Driver\PDO\Query\Type\\'.ucfirst($type), array('parse'), array(null, null, $builder));
         $query
             ->expects($this->any())

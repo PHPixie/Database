@@ -83,9 +83,6 @@ abstract class ConditionsTest extends \PHPixieTests\Database\Type\SQL\AbstractPa
         return $conditions;
     }
 
-    protected function container()
-    {
-        return new \PHPixie\Database\Conditions\Builder\Container($this->database->conditions());
-    }
+    abstract protected function container();
 
 }

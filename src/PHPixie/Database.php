@@ -49,14 +49,6 @@ class Database
         return $this->get($connectionName)->query($type);
     }
 
-    public function conditions()
-    {
-        if ($this->conditions === null)
-            $this->conditions = $this->buildConditions();
-
-        return $this->conditions;
-    }
-    
     public function values()
     {
         if ($this->values === null)
@@ -93,19 +85,4 @@ class Database
         return new \PHPixie\Database\Type\SQL();
     }
     
-    public function document()
-    {
-        if ($this->document === null)
-            $this->document = $this->buildDocument();
-
-        return $this->document;
-    }
-    
-    protected function buildDocument()
-    {
-        return new \PHPixie\Database\Type\Document($this);
-    }
-    
-
-
 }

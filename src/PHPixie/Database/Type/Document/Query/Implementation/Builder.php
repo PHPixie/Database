@@ -4,9 +4,9 @@ namespace PHPixie\Database\Type\Document\Query\Implementation;
 
 class Builder extends \PHPixie\Database\Query\Implementation\Builder
 {
-    public function __construct($containerBuilder, $valueBuilder)
+    public function __construct($conditions, $valueBuilder)
     {
-        parent::__construct($containerBuilder, $valueBuilder);
+        parent::__construct($conditions, $valueBuilder);
     }
     
     public function conditionContainer($name = null)

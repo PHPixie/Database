@@ -83,6 +83,6 @@ class BuilderTest extends \PHPixieTests\Database\Type\Document\Query\Implementat
     
     protected function builder()
     {
-        return new \PHPixie\Database\Driver\Mongo\Query\Builder($this->containerBuilderMock, $this->valuesMock);
+        return new \PHPixie\Database\Driver\Mongo\Query\Builder($this->conditionsMock, $this->valuesMock);
     }
 }

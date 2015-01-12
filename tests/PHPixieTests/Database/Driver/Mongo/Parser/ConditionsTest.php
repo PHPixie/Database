@@ -13,9 +13,10 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->database = new \PHPixie\Database(null);
         $operatorParser = new \PHPixie\Database\Driver\Mongo\Parser\Operator();
+        $driver = $this->database->driver('Mongo');
         $this->conditionsParser = new \PHPixie\Database\Driver\Mongo\Parser\Conditions(
-            $this->database->driver('Mongo'),
-            $this->database->conditions(),
+            $driver,
+            $driver->conditions(),
             $operatorParser
         );
     }
@@ -303,7 +304,7 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     
     protected function getContainer()
     {
-        $container = $this->database->document()->conditions()->container();
+        $container = $this->database->driver('Mongo')->conditions()->container();
 
         return $container;
     }

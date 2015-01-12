@@ -259,7 +259,7 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
     protected function prepareJoinContainers()
     {
         for($i=0;$i<2;$i++){
-            $this->containerBuilderMock
+            $this->conditionsMock
                 ->expects($this->at($i))
                 ->method('container')
                 ->with('=*')
@@ -269,6 +269,6 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
     
     protected function builder()
     {
-        return new \PHPixie\Database\Type\SQL\Query\Implementation\Builder($this->containerBuilderMock, $this->valuesMock);
+        return new \PHPixie\Database\Type\SQL\Query\Implementation\Builder($this->conditionsMock, $this->valuesMock);
     }
 }
