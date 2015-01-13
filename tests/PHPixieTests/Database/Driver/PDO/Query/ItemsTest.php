@@ -118,6 +118,19 @@ abstract class ItemsTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
         $this->conditionMethodsTest(null, false);
     }
     
+    /*
+     * @covers ::<public>
+     * @covers ::<protected>
+     */
+    public function testOperatorConditions()
+    {
+        $this->testOperatorCondition(
+            'in',
+            array('pixie', array(1), 'or', true),
+            array('where', 'having')
+        );
+    }
+    
     /**
      * @covers ::__call
      */

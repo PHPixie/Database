@@ -8,15 +8,6 @@ namespace PHPixieTests\Database\Type\Document;
 abstract class ConditionsTest extends \PHPixieTests\Database\ConditionsTest
 {
     /**
-     * @covers ::__construct
-     * @covers ::<protected>
-     */
-    public function testConstruct()
-    {
-    
-    }
-    
-    /**
      * @covers ::subdocumentGroup
      * @covers ::<protected>
      */

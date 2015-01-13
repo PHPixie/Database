@@ -9,6 +9,7 @@ abstract class DriverTest extends \PHPixieTests\AbstractDatabaseTest
     protected $driver;
     protected $connectionStub;
     protected $database;
+    protected $conditionsClass;
     protected $queryClass;
     protected $parserClass;
     protected $builderClass;
@@ -26,7 +27,17 @@ abstract class DriverTest extends \PHPixieTests\AbstractDatabaseTest
         
     }
 
-
+    /**
+     * @covers ::conditions
+     * @covers ::buildConditions
+     */
+    public function testConditions()
+    {
+        $conditions = $this->driver->conditions();
+        $this->assertSame($conditions, $this->driver->conditions());
+        $this->assertInstanceOf($this->conditionsClass, $conditions);
+    }
+    
     /**
      * @covers ::parser
      */

@@ -6,6 +6,7 @@ namespace PHPixieTests\Database\Driver;
  */
 class PDOTest extends \PHPixieTests\Database\DriverTest
 {
+    protected $conditionsClass = 'PHPixie\Database\Driver\PDO\Conditions';
     protected $adapterList = array('mysql', 'pgsql', 'sqlite');
     protected $parserClass = '\PHPixie\Database\Driver\PDO\Adapter\Sqlite\Parser';
     protected $queryClass = '\PHPixie\Database\Driver\PDO\Query';

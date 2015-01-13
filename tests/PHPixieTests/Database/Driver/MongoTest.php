@@ -9,6 +9,7 @@ if(!class_exists('\MongoClient'))
  */
 class MongoTest extends \PHPixieTests\Database\DriverTest
 {
+    protected $conditionsClass = 'PHPixie\Database\Driver\Mongo\Conditions';
     protected $parserClass = 'PHPixie\Database\Driver\Mongo\Parser';
     protected $queryClass = 'PHPixie\Database\Driver\Mongo\Query';
     protected $builderClass = '\PHPixie\Database\Driver\Mongo\Query\Builder';

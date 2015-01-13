@@ -24,7 +24,6 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     /**
      * @covers ::parse
      * @covers ::<protected>
-     * @covers ::__construct
      */
     public function testParseSimple()
     {

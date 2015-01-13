@@ -20,8 +20,5 @@ abstract class Conditions
         return new Conditions\Condition\Collection\Group();
     }
 
-    public function container($defaultOperator = '=')
-    {
-        return new Conditions\Builder\Container($this, $defaultOperator);
-    }
+    abstract public function container($defaultOperator = '=');
 }
