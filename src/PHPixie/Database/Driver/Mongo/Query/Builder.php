@@ -23,4 +23,9 @@ class Builder extends \PHPixie\Database\Type\Document\Query\Implementation\Build
     {
         $this->setValue('batchData', $documents);
     }
+    
+    public function addInOperatorCondition($field, $values, $logic, $negate, $containerName)
+    {
+        $this->conditionContainer($containerName)->addInOperatorCondition($field, $values, $logic, $negate);
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Type\Document\Query\Implementation;
 
-class Builder extends \PHPixie\Database\Query\Implementation\Builder
+abstract class Builder extends \PHPixie\Database\Query\Implementation\Builder
 {
     public function __construct($conditions, $valueBuilder)
     {

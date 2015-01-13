@@ -4,7 +4,7 @@ namespace PHPixieTests\Database\Type\Document\Query\Implementation;
 /**
  * @coversDefaultClass \PHPixie\Database\Type\Document\Query\Implementation\Builder
  */
-class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTest
+abstract class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTest
 {
     /**
      * @covers ::startSubdocumentConditionGroup
@@ -60,8 +60,4 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
         return $this->quickMock('\PHPixie\Database\Type\Document\Conditions\Builder\Container', array());
     }
     
-    protected function builder()
-    {
-        return new \PHPixie\Database\Type\Document\Query\Implementation\Builder($this->conditionsMock, $this->valuesMock);
-    }
 }

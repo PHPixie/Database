@@ -22,6 +22,15 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     }
 
     /**
+     * @covers ::__construct
+     * @covers ::<protected>
+     */
+    public function testConstruct()
+    {
+    
+    }
+    
+    /**
      * @covers ::parse
      * @covers ::<protected>
      */

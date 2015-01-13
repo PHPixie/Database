@@ -27,15 +27,16 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
         $this->subdocumentMethodsTest();
     }
     
-    /*
-     * @covers ::<public>
+    /**
+     * @covers ::addInOperatorCondition
+     * @covers ::addWhereInOperatorCondition
      * @covers ::<protected>
      */
     public function testOperatorConditions()
     {
-        $this->testOperatorCondition(
+        $this->operatorConditionTest(
             'in',
-            array('pixie', array(1), 'or', true),
+            array('pixie', array(1)),
             array('where')
         );
     }

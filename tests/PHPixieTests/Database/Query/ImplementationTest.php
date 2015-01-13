@@ -193,16 +193,23 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
         
     }
     
-    protected function testOperatorCondition($operator, $params, $containers = array())
+    public function operatorConditionTest($operator, $params, $containers = array(), $prefix = '')
     {
+        $params[] = 'or';
+        $params[] = true;
+        
         $uName = ucfirst($operator);
-        $builderMethod = "addContainer".$uName."OperatorCondition";
+        $prefix = ucfirst($prefix);
+        $builderMethod = "add".$prefix.$uName."OperatorCondition";
         
         $containers[]='';
         
         foreach($containers as $container) {
-            $this->method($this->builder, $method, null, $params, 0);
-            $callback = array($this->query, "add".ucfirst($container).$uName."OperatorCondition");
+            $method = $this->builder
+                ->expects($this->at(0))
+                ->method($builderMethod);
+            call_user_func_array(array($method, 'with'), $params);
+            $callback = array($this->query, "add".$prefix.ucfirst($container).$uName."OperatorCondition");
             $this->assertSame($this->query, call_user_func_array($callback, $params));
         }
     }

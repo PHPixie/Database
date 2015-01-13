@@ -7,6 +7,6 @@ class Container extends    \PHPixie\Database\Type\Document\Conditions\Builder\Co
 {
     public function addInOperatorCondition($field, $values, $logic = 'and', $negate = false)
     {
-        return $this-addOperatorCondition($logic, $negate, $field, 'in', array($values));
+        return $this->addOperatorCondition($logic, $negate, $field, 'in', array($values));
     }
 }

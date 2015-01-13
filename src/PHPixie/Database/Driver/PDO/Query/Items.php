@@ -207,7 +207,9 @@ abstract class Items extends \PHPixie\Database\Driver\PDO\Query
     
     public function addOnInOperatorCondition($field, $values, $logic = 'and', $negate = false)
     {
-        return $this->builder->addOnInOperatorCondition($field, $values, $logic, $negate);
+        $this->builder->addOnInOperatorCondition($field, $values, $logic, $negate);
+        
+        return $this;
     }
     
     public function buildOnCondition($logic, $negate, $args)

@@ -7,5 +7,17 @@ namespace PHPixieTests\Database\Type\SQL\Conditions\Builder;
  */
 abstract class ContainerTest extends \PHPixieTests\Database\Conditions\Builder\ContainerTest
 {
+    /**
+     * @covers ::addInOperatorCondition
+     * @covers ::<protected>
+     */
+    public function testInOperator()
+    {
+        $this->operatorTest(
+            'addInOperatorCondition',
+            array('pixie', array(1)),
+            array('pixie', 'in', array(array(1)))
+        );
+    }
     
 }

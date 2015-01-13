@@ -117,7 +117,10 @@ abstract class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testAddCondition()
     {
+        $condition = $this->conditions->operator('pixie', '>', array(2));
+            
         $this->container
+                    ->addCondition('or', true, $condition)
                     ->buildCondition('and', false, array('a', 1))
                     ->buildCondition('or', false, array('a', '>', 1))
                     ->buildCondition('xor', false, array('a', 1))
@@ -132,6 +135,7 @@ abstract class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
                     ->endGroup();
 
         $this->assertConditions(array(
+            array('or', true, 'pixie', '>', array(2)),
             array('and', false, 'a', '=', array(1)),
             array('or', false, 'a', '>', array(1)),
             array('xor', false, 'a', '=', array(1)),
@@ -192,9 +196,13 @@ abstract class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testAddOperatorCondition()
     {
-        $this->container->addOperatorCondition('or', true, 'test', '>', array(5));
+        $return = $this->container
+            ->addOperatorCondition('or', true, 'test', '>', array(5))
+            ->addOperatorCondition('or', true, 'pixie', '<', array(5));
+        
         $this->assertConditions(array(
-            array('or', true, 'test', '>', array(5))
+            array('or', true, 'test', '>', array(5)),
+            array('or', true, 'pixie', '<', array(5))
         ));
     }
 
@@ -293,7 +301,22 @@ abstract class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
         $this->setExpectedException('\PHPixie\Database\Exception\Builder');
         $this->container->_and();
     }
-
+    
+    protected function operatorTest($method, $params, $operatorParams)
+    {
+        $callback = array($this->container, $method);
+        
+        $this->assertSame($this->container, call_user_func_array($callback, $params));
+        $fullParams = array(array_merge(array('and', false), $operatorParams));
+        $this->assertConditions($fullParams);
+        
+        $params[]= 'or';
+        $params[]= true;
+        $this->assertSame($this->container, call_user_func_array($callback, $params));
+        $fullParams[]= array_merge(array('or', true), $operatorParams);
+        $this->assertConditions($fullParams);
+    }
+    
     protected function assertConditions($expected)
     {
         $this->assertConditionArray($this->container->getConditions(), $expected);

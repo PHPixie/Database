@@ -4,9 +4,7 @@ namespace PHPixie;
 
 class Database
 {
-
     protected $config;
-    protected $conditions;
     protected $values;
     protected $sql;
     protected $document;
@@ -57,16 +55,6 @@ class Database
         return $this->values;
     }
     
-    protected function buildValues()
-    {
-        return new \PHPixie\Database\Values();
-    }
-
-    protected function buildConditions()
-    {
-        return new \PHPixie\Database\Conditions();
-    }
-
     public function sqlExpression($sql = '', $params = array())
     {
         return $this->sql()->expression($sql, $params);
@@ -78,6 +66,11 @@ class Database
             $this->sql = $this->buildSql();
 
         return $this->sql;
+    }
+    
+    protected function buildValues()
+    {
+        return new \PHPixie\Database\Values();
     }
 
     protected function buildSql()

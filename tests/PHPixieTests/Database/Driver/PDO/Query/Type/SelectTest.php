@@ -78,5 +78,17 @@ class SelectTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemsTest
         $this->conditionMethodsTest('having');
     }
     
+    /**
+     * @covers ::addHavingInOperatorCondition
+     * @covers ::<protected>
+     */
+    public function testHavingOperatorConditions()
+    {
+        $this->operatorConditionTest(
+            'in',
+            array('pixie', array(1)),
+            array('having')
+        );
+    }
 
 }

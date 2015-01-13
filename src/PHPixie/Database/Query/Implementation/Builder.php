@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Query\Implementation;
 
-class Builder
+abstract class Builder
 {
     protected $conditions;
     protected $valueBuilder;
@@ -202,11 +202,6 @@ class Builder
         return $this->conditionContainer($containerName)->addPlaceholder($logic, $negate, $allowEmpty);
     }
 
-    public function addInOperatorCondition($field, $values, $logic, $negate, $containerName)
-    {
-        $this->conditionContainer($containerName)->addInOperatorCondition($field, $values, $logic, $negate);
-    }
-    
     public function assert($condition, $exceptionMessage)
     {
         if(!$condition)

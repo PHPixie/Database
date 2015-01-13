@@ -5,7 +5,7 @@ namespace PHPixieTests\Database\Type\SQL\Query\Implementation;
 /**
  * @coversDefaultClass \PHPixie\Database\Type\SQL\Query\Implementation\Builder
  */
-class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTest
+abstract class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTest
 {
     
     /**
@@ -256,6 +256,39 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
         }
     }
     
+    /**
+     * @covers ::addInOperatorCondition
+     */
+    public function testAddInOperatorCondition()
+    {
+        $this->prepareContainer();
+        
+        $this->expectCalls($this->containers[0], array(
+            'addInOperatorCondition' => array('pixie',array(5), 'or', true)
+        ));
+        $this->builder->addInOperatorCondition('pixie',array(5), 'or', true, 'first');
+    }
+    
+    /**
+     * @covers ::addOnInOperatorCondition
+     */
+    public function testAddOnInOperatorCondition()
+    {
+        $builder = $this->builder;
+        $this->assertException(function() use($builder) {
+            $builder->addOnInOperatorCondition('pixie', array(), 'or', true);
+        });
+        
+        $params = array('pixie',array(5), 'or', true);
+        $this->prepareJoinContainers();
+        for($i=0;$i<2;$i++){
+            $builder->addJoin('test', 'pixie', 'inner');
+            $this->expectCalls($this->containers[$i], array(
+                'addInOperatorCondition' => array('pixie', array(5), 'or', true)
+            ));
+            call_user_func_array(array($builder, 'addOnInOperatorCondition'), $params);
+        }    }
+    
     protected function prepareJoinContainers()
     {
         for($i=0;$i<2;$i++){
@@ -265,10 +298,5 @@ class BuilderTest extends \PHPixieTests\Database\Query\Implementation\BuilderTes
                 ->with('=*')
                 ->will($this->returnValue($this->containers[$i]));
         }
-    }
-    
-    protected function builder()
-    {
-        return new \PHPixie\Database\Type\SQL\Query\Implementation\Builder($this->conditionsMock, $this->valuesMock);
     }
 }

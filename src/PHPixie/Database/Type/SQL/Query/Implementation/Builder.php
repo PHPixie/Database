@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Type\SQL\Query\Implementation;
 
-class Builder extends \PHPixie\Database\Query\Implementation\Builder
+abstract class Builder extends \PHPixie\Database\Query\Implementation\Builder
 {
     protected $joins = array();
 
@@ -47,6 +47,11 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder
     public function setBatchData($columns, $rows)
     {
         $this->setValue('batchData', array('columns' => $columns, 'rows' => $rows));
+    }
+    
+    public function addInOperatorCondition($field, $values, $logic, $negate, $containerName)
+    {
+        $this->conditionContainer($containerName)->addInOperatorCondition($field, $values, $logic, $negate);
     }
 
     protected function lastOnContainer()
@@ -94,6 +99,7 @@ class Builder extends \PHPixie\Database\Query\Implementation\Builder
     {
         $this->lastOnContainer()->addPlaceholder($logic, $negate, $allowEmpty);
     }
+    
     
 
 }

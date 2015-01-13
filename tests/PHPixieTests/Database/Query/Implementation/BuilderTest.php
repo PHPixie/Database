@@ -4,7 +4,7 @@ namespace PHPixieTests\Database\Query\Implementation;
 /**
  * @coversDefaultClass \PHPixie\Database\Query\Implementation\Builder
  */
-class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
+abstract class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $conditionsMock;
     protected $valuesMock;
@@ -355,8 +355,5 @@ class BuilderTest extends \PHPixieTests\AbstractDatabaseTest
         return $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array());
     }
     
-    protected function builder()
-    {
-        return new \PHPixie\Database\Query\Implementation\Builder($this->conditionsMock, $this->valuesMock);
-    }
+    abstract protected function builder();
 }

@@ -81,6 +81,24 @@ class BuilderTest extends \PHPixieTests\Database\Type\Document\Query\Implementat
         ), $this->builder->getValue('batchData'));
     }
     
+    /**
+     * @covers ::addInOperatorCondition
+     */
+    public function testAddInOperatorCondition()
+    {
+        $this->prepareContainer();
+        
+        $this->expectCalls($this->containers[0], array(
+            'addInOperatorCondition' => array('pixie',array(5), 'or', true)
+        ));
+        $this->builder->addInOperatorCondition('pixie',array(5), 'or', true, 'first');
+    }
+    
+    protected function container()
+    {
+        return $this->quickMock('\PHPixie\Database\Driver\Mongo\Conditions\Builder\Container', array());
+    }
+    
     protected function builder()
     {
         return new \PHPixie\Database\Driver\Mongo\Query\Builder($this->conditionsMock, $this->valuesMock);

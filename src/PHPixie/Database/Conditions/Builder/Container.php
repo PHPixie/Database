@@ -35,6 +35,8 @@ abstract class Container implements \PHPixie\Database\Conditions\Builder
     {
         $this->addCondition($logic, $negate, $group);
         $this->pushGroupToStack($group);
+        
+        return $this;
     }
     
     protected function pushGroupToStack($group)
@@ -89,7 +91,7 @@ abstract class Container implements \PHPixie\Database\Conditions\Builder
     public function addOperatorCondition($logic, $negate, $field, $operator, $values)
     {
         $condition = $this->conditions->operator($field, $operator, $values);
-        $this->addCondition($logic, $negate, $condition);
+        return $this->addCondition($logic, $negate, $condition);
     }
 
     public function addPlaceholder($logic = 'and', $negate = false, $allowEmpty = true)
@@ -108,6 +110,8 @@ abstract class Container implements \PHPixie\Database\Conditions\Builder
     public function addCondition($logic, $negate, $condition)
     {
         $this->addToGroup($this->currentGroup, $logic, $negate, $condition);
+        
+        return $this;
     }
     
     protected function addToGroup($group, $logic, $negate, $condition)
