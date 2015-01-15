@@ -25,7 +25,7 @@ class PDOConnectionTestStub extends \PHPixie\Database\Driver\PDO\Connection
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Connection
  */
-class ConnectionTest extends \PHPixieTests\Database\Connection\TransactableTest
+class ConnectionTest extends \PHPixieTests\Database\Type\SQL\ConnectionTest
 {
     protected $databaseFile;
     protected $config;

@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Driver\PDO;
 
-class Connection extends \PHPixie\Database\Connection\Transactable
+class Connection extends \PHPixie\Database\Type\SQL\Connection
 {
     protected $adapter;
     protected $adapterName;
