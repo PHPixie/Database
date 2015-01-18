@@ -5,9 +5,13 @@ namespace PHPixieTests\Database;
 /**
  * @coversDefaultClass \PHPixie\Database\Conditions
  */
-abstract class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
+class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $conditions;
+    protected $operatorClass    = '\PHPixie\Database\Conditions\Condition\Field\Operator';
+    protected $groupClass       = '\PHPixie\Database\Conditions\Condition\Collection\Group';
+    protected $placeholderClass = '\PHPixie\Database\Conditions\Condition\Collection\Placeholder';
+    protected $containerClass   = '\PHPixie\Database\Conditions\Builder\Container';
 
     public function setUp()
     {
@@ -20,7 +24,7 @@ abstract class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     public function testOperator()
     {
         $operator = $this->conditions->operator('a', '=', array(1));
-        $this->assertInstanceOf('PHPixie\Database\Conditions\Condition\Field\Operator', $operator);
+        $this->assertInstanceOf($this->operatorClass, $operator);
         $this->assertEquals('a', $operator->field());
         $this->assertEquals('=', $operator->operator());
         $this->assertEquals(array(1), $operator->values());
@@ -32,7 +36,7 @@ abstract class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     public function testGroup()
     {
         $group = $this->conditions->group();
-        $this->assertInstanceOf('PHPixie\Database\Conditions\Condition\Collection\Group', $group);
+        $this->assertInstanceOf($this->groupClass, $group);
     }
 
     /**
@@ -41,7 +45,7 @@ abstract class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     public function testPlaceholder()
     {
         $placeholder = $this->conditions->placeholder();
-        $this->assertInstanceOf('PHPixie\Database\Conditions\Condition\Collection\Placeholder', $placeholder);
+        $this->assertInstanceOf($this->placeholderClass, $placeholder);
         $this->assertAttributeEquals('=', 'defaultOperator', $placeholder->container());
 
         $placeholder = $this->conditions->placeholder('>');
@@ -53,13 +57,17 @@ abstract class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testContainer()
     {
-        $builder = $this->conditions->container();
-        $this->assertInstanceOf('PHPixie\Database\Conditions\Builder', $builder);
-        $this->assertAttributeEquals('=', 'defaultOperator', $builder);
-        $builder = $this->conditions->container('>');
-        $this->assertAttributeEquals('>','defaultOperator',$builder);
+        $container = $this->conditions->container();
+        $this->assertInstanceOf($this->containerClass, $container);
+        $this->assertAttributeEquals($this->conditions, 'conditions', $container);
+        $this->assertAttributeEquals('=', 'defaultOperator', $container);
+        
+        $container = $this->conditions->container('>');
+        $this->assertAttributeEquals('>','defaultOperator',$container);
     }
     
-    abstract protected function conditions();
-
+    protected function conditions()
+    {
+        return new \PHPixie\Database\Conditions();
+    }
 }
