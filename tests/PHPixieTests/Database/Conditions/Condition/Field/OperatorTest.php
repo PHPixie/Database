@@ -7,7 +7,10 @@ namespace PHPixieTests\Database\Conditions\Condition\Field;
  */
 class OperatorTest extends \PHPixieTests\Database\Conditions\Condition\ImplementationTest
 {
-    
+    protected $field = 'a';
+    protected $operator = '=';
+    protected $values = array(1);
+     
     /**
      * @covers ::__construct
      */
@@ -26,9 +29,9 @@ class OperatorTest extends \PHPixieTests\Database\Conditions\Condition\Implement
      */
     public function testProperties()
     {
-        $this->assertEquals('a', $this->condition->field());
-        $this->assertEquals('=', $this->condition->operator());
-        $this->assertEquals(array(1), $this->condition->values());
+        $this->assertEquals($this->field, $this->condition->field());
+        $this->assertEquals($this->operator, $this->condition->operator());
+        $this->assertEquals($this->values, $this->condition->values());
         
         $this->assertSame($this->condition, $this->condition->setField('b'));
         $this->assertSame($this->condition, $this->condition->setOperator('>'));
@@ -41,6 +44,10 @@ class OperatorTest extends \PHPixieTests\Database\Conditions\Condition\Implement
     
     protected function condition()
     {
-        return new \PHPixie\Database\Conditions\Condition\Field\Operator('a', '=', array(1));
+        return new \PHPixie\Database\Conditions\Condition\Field\Operator(
+            $this->field,
+            $this->operator,
+            $this->values
+        );
     }
 }
