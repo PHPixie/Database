@@ -8,6 +8,10 @@ class Database
     protected $values;
     protected $sql;
     protected $document;
+    protected $driverClasses = array(
+        'pdo'   => '\PHPixie\Database\Driver\PDO',
+        'mongo' => '\PHPixie\Database\Driver\Mongo',
+    );
     protected $drivers = array();
     protected $connections =  array();
 
@@ -20,25 +24,31 @@ class Database
     {
         if (!isset($this->connections[$connectionName])) {
             $config = $this->config->slice($connectionName);
-            $driver = $this->driver($config->get('driver'));
+            $driverName = $this->configDriverName($config);
+            $driver = $this->driver($driverName);
             $this->connections[$connectionName] = $driver->buildConnection($connectionName, $config);
         }
 
         return $this->connections[$connectionName];
     }
-
+    
+    public function connectionDriverName($connectionName)
+    {
+        $config = $this->config->slice($connectionName);
+        return $this->configDriverName($config);
+    }
+    
     public function driver($name)
     {
-        if (!isset($this->drivers[$name]))
+        if (!isset($this->drivers[$name])) {
             $this->drivers[$name] = $this->buildDriver($name);
-
+        }
         return $this->drivers[$name];
     }
 
     public function buildDriver($name)
     {
-        $class = '\PHPixie\Database\Driver\\'.$name;
-
+        $class = $this->driverClasses[$name];
         return new $class($this);
     }
 
@@ -66,6 +76,16 @@ class Database
             $this->sql = $this->buildSql();
 
         return $this->sql;
+    }
+    
+    protected function configDriverName($config)
+    {
+        $driverName = $config->get('driver');
+        if(!array_key_exists($driverName, $this->driverClasses)) {
+            throw new \PHPixie\Database\Exception\Driver("Driver '$driverName' does not exist");
+        }
+        
+        return $driverName;
     }
     
     protected function buildValues()

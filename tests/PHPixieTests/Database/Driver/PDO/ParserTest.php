@@ -16,7 +16,7 @@ abstract class ParserTest extends \PHPixieTests\Database\Type\SQL\ParserTest
 
     protected function parser()
     {
-        $driver = $this->database->driver('PDO');
+        $driver = $this->database->driver('pdo');
         $fragmentParser = $driver->fragmentParser($this->adapter);
         $operatorParser = $driver->operatorParser($this->adapter, $fragmentParser);
         $conditionsParser    = $driver->conditionsParser($this->adapter, $operatorParser);
@@ -27,7 +27,7 @@ abstract class ParserTest extends \PHPixieTests\Database\Type\SQL\ParserTest
     protected function query($type)
     {
         $builder = new \PHPixie\Database\Driver\PDO\Query\Builder(
-            $this->database->driver('PDO')->conditions(),
+            $this->database->driver('pdo')->conditions(),
             $this->database->values()
         );
         

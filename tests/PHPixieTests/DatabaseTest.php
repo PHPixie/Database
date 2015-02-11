@@ -50,7 +50,29 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertEquals('pixie', $expr->sql);
         $this->assertEquals(array('test'), $expr->params);
     }
-    
+
+    /**
+     * @covers ::connectionDriverName
+     * @covers ::<protected>
+     */
+    public function testConnectionDriverName()
+    {
+        foreach(array('pdo', 'PDO') as $key => $driverName) {
+            $slice = $this->sliceStub(array(
+                'driver' => $driverName,
+            ));
+            
+            $this->config
+                ->expects($this->at($key))
+                ->method('slice')
+                ->with ('default')
+                ->will($this->returnValue($slice));
+        }
+        
+        $this->assertSame('pdo', $this->database->connectionDriverName('default'));
+        $this->setExpectedException('\PHPixie\Database\Exception\Driver');
+        $this->database->connectionDriverName('default');
+    }
     
     /**
      * @covers ::driver
@@ -58,9 +80,9 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testDriver()
     {
-        foreach (array('PDO', 'Mongo') as $driverName) {
+        foreach (array('pdo', 'mongo') as $driverName) {
             $driver = $this->database->driver($driverName);
-            $this->assertInstanceOf('\PHPixie\Database\Driver\\'.$driverName, $driver);
+            $this->assertInstanceOf('\PHPixie\Database\Driver\\'.ucfirst($driverName), $driver);
             $this->assertAttributeEquals($this->database,'database',$driver);
             $driver2 = $this->database->driver($driverName);
             $this->assertEquals($driver, $driver2);
@@ -69,11 +91,12 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
 
     /**
      * @covers ::get
+     * @covers ::<protected>
      */
     public function testGet()
     {
         $slice = $this->sliceStub(array(
-            'driver' => 'PDO',
+            'driver' => 'pdo',
         ));
 
         $this->config
@@ -109,7 +132,7 @@ class DatabaseTest extends \PHPixieTests\AbstractDatabaseTest
         $database
             ->expects($this->exactly(2))
             ->method('driver')
-            ->with ('PDO')
+            ->with ('pdo')
             ->will($this->returnValue($driver));
 
         $this->assertEquals($conn1, $database->get());

@@ -15,13 +15,13 @@ class ConditionsTest extends \PHPixieTests\Database\Type\SQL\Parser\ConditionsTe
     public function setUp()
     {
         parent::setUp();
-        $fragmentParser = $this->database->driver('PDO')->fragmentParser('Mysql');
-        $operatorParser = $this->database->driver('PDO')->operatorParser('Mysql', $fragmentParser);
-        $this->conditionsParser = $this->database->driver('PDO')->conditionsParser('Mysql', $operatorParser);
+        $fragmentParser = $this->database->driver('pdo')->fragmentParser('Mysql');
+        $operatorParser = $this->database->driver('pdo')->operatorParser('Mysql', $fragmentParser);
+        $this->conditionsParser = $this->database->driver('pdo')->conditionsParser('Mysql', $operatorParser);
     }
 
     protected function container()
     {
-        return $this->database->driver('PDO')->conditions()->container();
+        return $this->database->driver('pdo')->conditions()->container();
     }
 }

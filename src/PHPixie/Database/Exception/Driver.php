@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Exception;
 
-class Builder extends \PHPixie\Database\Exception
+class Driver extends \PHPixie\Database\Exception
 {
 
 }

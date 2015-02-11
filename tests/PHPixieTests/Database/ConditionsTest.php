@@ -5,7 +5,7 @@ namespace PHPixieTests\Database;
 /**
  * @coversDefaultClass \PHPixie\Database\Conditions
  */
-class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
+abstract class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $conditions;
     protected $operatorClass    = '\PHPixie\Database\Conditions\Condition\Field\Operator';

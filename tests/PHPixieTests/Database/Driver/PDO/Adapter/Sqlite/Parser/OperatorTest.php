@@ -30,7 +30,7 @@ class OperatorTest extends \PHPixieTests\Database\Type\SQL\Parser\OperatorTest
     public function setUp()
     {
         parent::setUp();
-        $fragment = $this->database->driver('PDO')->fragmentParser('Sqlite');
-        $this->operatorParser = $this->database->driver('PDO')->operatorParser('Sqlite', $fragment);
+        $fragment = $this->database->driver('pdo')->fragmentParser('Sqlite');
+        $this->operatorParser = $this->database->driver('pdo')->operatorParser('Sqlite', $fragment);
     }
 }

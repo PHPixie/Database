@@ -1,4 +1,5 @@
 <?php
+
 namespace PHPixieTests\Database\Driver\Mongo;
 
 if(!class_exists('\MongoClient'))
@@ -129,7 +130,7 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
             'database' => 'test',
             'connection' => 'mongodatabase.://test:555/',
         ));
-        $connection = new \PHPixie\Database\Driver\Mongo\Connection($this->database->driver('PDO'), 'test', $config);
+        $connection = new \PHPixie\Database\Driver\Mongo\Connection($this->database->driver('pdo'), 'test', $config);
     }
 
 }

@@ -39,7 +39,7 @@ class ConnectionTest extends \PHPixieTests\Database\Type\SQL\ConnectionTest
             'connection' => 'sqlite:'.$this->databaseFile,
             'user'       => 'test',
             'password'   =>  5,
-            'driver'     => 'PDO',
+            'driver'     => 'pdo',
             'connectionOptions' => array(
                 'someOption' => 5
             ))
@@ -213,7 +213,7 @@ class ConnectionTest extends \PHPixieTests\Database\Type\SQL\ConnectionTest
             'password' => 5,
             'connectionOptions' => 5
         ));
-        $connection = new \PHPixie\Database\Driver\PDO\Connection($this->database->driver('PDO'), 'test', $config);
+        $connection = new \PHPixie\Database\Driver\PDO\Connection($this->database->driver('pdo'), 'test', $config);
     }
 
 }

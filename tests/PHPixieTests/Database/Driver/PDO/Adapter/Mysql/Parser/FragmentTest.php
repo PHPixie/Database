@@ -30,7 +30,7 @@ class FragmentTest extends \PHPixieTests\Database\Type\SQL\Parser\FragmentTest
     public function setUp()
     {
         parent::setUp();
-        $this->fragmentParser = $this->database->driver('PDO')->fragmentParser('Mysql');
+        $this->fragmentParser = $this->database->driver('pdo')->fragmentParser('Mysql');
     }
 
 }
