@@ -94,7 +94,15 @@ abstract class ParserTest extends AbstractParserTest
                                 ->orderAscendingBy('id')
                                 ->limit(6)
                                 ->offset(7),
-
+            
+            $this->query('delete')
+                                ->table('fairies')
+                                ->limit(6),
+            
+            $this->query('delete')
+                                ->table('fairies')
+                                ->offset(6),
+            
             $this->query('count')
                                 ->table('fairies')
                                 ->where('a', 1)

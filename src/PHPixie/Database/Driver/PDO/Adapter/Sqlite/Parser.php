@@ -23,4 +23,13 @@ class Parser extends \PHPixie\Database\Type\SQL\Parser
 
         return parent::deleteQuery($query, $expr);
     }
+    
+    protected function appendLimitOffsetValues($expr, $limit, $offset)
+    {
+        if($offset !== NULL && $limit === NULL) {
+            $limit = -1;
+        }
+        
+        parent::appendLimitOffsetValues($expr, $limit, $offset);
+    }
 }

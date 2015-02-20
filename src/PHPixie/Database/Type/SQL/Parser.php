@@ -277,11 +277,18 @@ abstract class Parser extends \PHPixie\Database\Parser
         $limit = $query->getLimit();
         $offset = $query->getOffset();
 
-        if ($limit !== null)
+        $this->appendLimitOffsetValues($expr, $limit, $offset);
+    }
+    
+    protected function appendLimitOffsetValues($expr, $limit, $offset)
+    {
+        if ($limit !== null) {
             $expr->sql.= " LIMIT $limit";
-
-        if ($offset !== null)
+        }
+        
+        if ($offset !== null) {
             $expr->sql.=" OFFSET $offset";
+        }
     }
 
     protected function appendUnion($query, $expr)
