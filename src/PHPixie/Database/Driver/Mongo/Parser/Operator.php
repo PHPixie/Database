@@ -49,7 +49,13 @@ class Operator extends \PHPixie\Database\Parser\Operator
     {
         if (count($value)!==1 && !is_array($value[0]))
             throw new \PHPixie\Database\Exception\Parser("The '$operator' operator requires a single array parameter to be passed");
-
+        
+        if($field === '_id') {
+            foreach($value[0] as $key => $id) {
+                $value[0][$key] = new \MongoId($id);
+            }
+        }
+        
         if ($operator == 'not in')
             $operator = 'nin';
 
@@ -60,7 +66,7 @@ class Operator extends \PHPixie\Database\Parser\Operator
     {
         if (!is_array($value) || count($value) !== 1)
             throw new \PHPixie\Database\Exception\Parser("The '$operator' operator requires a single array parameter to be passed");
-
+        
         if(isset($this->operatorMap[$operator]))
             $operator = $this->operatorMap[$operator];
         if ($negated && isset($this->negationMap[$operator])) {
@@ -69,6 +75,9 @@ class Operator extends \PHPixie\Database\Parser\Operator
         }
 
         $value = $value[0];
+        if($field === '_id' && is_string($value)) {
+            $value = new \MongoId($value);
+        }
 
         if ($operator === '=') {
             $condition = $value;

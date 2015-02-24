@@ -15,8 +15,9 @@ class Result extends \PHPixie\Database\Result
     {
         if (!$this->cursor->valid())
             return null;
-
-        return $this->cursor->current();
+        $current = (object) $this->cursor->current();
+        $current->{'_id'} = (string) $current->{'_id'};
+        return $current;
     }
 
     public function key()
@@ -60,7 +61,7 @@ class Result extends \PHPixie\Database\Result
                 return null;
             $current=$current->$step;
         }
-
+        
         return $current;
     }
 }

@@ -85,7 +85,6 @@ class ExpandedGroup extends \PHPixie\Database\Conditions\Condition\Implementatio
         for ($i = $count - 1; $i >= 0; $i--) {
 
             $group = $this->groups[$i];
-
             $merged = array();
 
             foreach ($group as $operator) {
@@ -96,18 +95,20 @@ class ExpandedGroup extends \PHPixie\Database\Conditions\Condition\Implementatio
                 }
 
                 foreach ($groups as $oldMerged) {
-                    if (!$this->conditioninArray($operator, $oldMerged)) {
+                    var_dump([$operator, $oldMerged, $this->conditionInArray($operator, $oldMerged)]);
+                    if (!$this->conditionInArray($operator, $oldMerged)) {
                         array_unshift($oldMerged, clone $operator);
                     }
                     $merged[] = $oldMerged;
 
                 }
             }
-
+            
             $groups = $this->optimize($merged);
         }
         $this->groups = $groups;
-
+        
+        print_r($this->groups);
         return $this;
     }
 
@@ -164,6 +165,7 @@ class ExpandedGroup extends \PHPixie\Database\Conditions\Condition\Implementatio
             if(
                 $condition->field() === $setCondition->field() &&
                 $condition->operator() === $setCondition->operator() &&
+                $condition->values() === $setCondition->values() &&
                 $condition->isNegated() === $setCondition->isNegated()
             )
                 return true;

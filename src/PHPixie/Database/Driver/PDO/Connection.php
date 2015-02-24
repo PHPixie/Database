@@ -40,6 +40,7 @@ class Connection extends \PHPixie\Database\Type\SQL\Connection
 
     public function execute($query, $params = array())
     {
+        var_dump($query);
         $cursor = $this->pdo->prepare($query);
         $cursor->execute($params);
 

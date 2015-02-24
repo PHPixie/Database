@@ -78,7 +78,8 @@ class Conditions extends \PHPixie\Database\Conditions\Logic\Parser
             return $left->add($right);
 
         } elseif ($right->logic() === 'or') {
-            return $left->add($right, 'or');
+            $p = $left->add($right, 'or');
+            return $p;
 
         } else {
             $merged = $this->driver->expandedGroup();
@@ -112,7 +113,7 @@ class Conditions extends \PHPixie\Database\Conditions\Logic\Parser
     public function parse($conditions)
     {
         $expanded = $this->parseLogic($conditions);
-
+        
         $andGroups = array();
         foreach ($expanded->groups() as $group) {
             $andGroup = array();

@@ -30,6 +30,7 @@ class Runner
     public function run($connection)
     {
         $current = $connection->database();
+        //print_r($this->chain);
         foreach ($this->chain as $step) {
             switch ($step['type']) {
                 case 'property':

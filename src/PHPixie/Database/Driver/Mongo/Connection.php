@@ -39,8 +39,9 @@ class Connection extends \PHPixie\Database\Connection
     public function run($runner)
     {
         $result = $runner->run($this);
-        if ($result instanceof \MongoCursor)
+        if ($result instanceof \MongoCursor) {
             return $this->driver->result($result);
+        }
         return $result;
     }
 
