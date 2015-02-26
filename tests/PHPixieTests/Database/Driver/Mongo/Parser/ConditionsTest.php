@@ -267,7 +267,7 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
 
         $this->assertGroup($container, array(
             'a' => array (
-                '$elemMatch' => array (
+                '$elemMatch' => (object) array (
                     'b.c' => 1,
                 ),
             )
@@ -298,7 +298,7 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
                 array (
                     'a.b' => 1,
                     'a.d' => array (
-                            '$elemMatch' => array (
+                            '$elemMatch' => (object) array (
                                     'e.f' => 1
                             )
                     )
@@ -320,8 +320,30 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     protected function assertGroup($container, $expect)
     {
         $parsed = $this->conditionsParser->parse($container->getConditions());
-        $this->assertSame($parsed, $this->conditionsParser->parse($container->getConditions()));
-        $this->assertEquals($expect, $parsed);
+        $this->assertSameGroup($parsed, $this->conditionsParser->parse($container->getConditions()));
+        $this->assertSameGroup($expect, (array) $parsed);
     }
+    
+    protected function assertSameGroup($left, $right)
+    {
+        
+        $this->assertEquals(gettype($left), gettype($right));
+        if(is_object($left)) {
+            $left = (array) $left;
+            $right = (array) $right;
+        }
+        
+        if(!is_array($left)) {
+            $this->assertEquals($left, $right);    
+            return;
+        }
+        
+        $this->assertEquals(array_keys($left), array_keys($right));
+        
+        foreach($left as $key => $value) {
+            $this->assertSameGroup($value, $right[$key]);
+        }
+    }
+    
 
 }

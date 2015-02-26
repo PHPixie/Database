@@ -1,19 +1,35 @@
 <?php
 namespace PHPixieTests\Database\Driver\Mongo;
 
+class MongoIdStub
+{
+    protected $id;
+    
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
+    
+    public function __toString()
+    {
+        return (string) $this->id;
+    }
+}
+
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Result
  */
 class ResultTest extends \PHPixieTests\Database\ResultTest
 {
+    protected $idField = '_id';
     protected $cursorStub;
 
     public function setUp()
     {
         $cursorStub = new \ArrayObject(array(
-            (object) array('id' => 1, 'name' => 'Tinkerbell'),
-            (object) array('id' => null, 'name' => null),
-            (object) array('id' => 3, 'name' => 'Trixie')
+            (object) array('_id' => new MongoIdStub(1), 'name' => 'Tinkerbell'),
+            (object) array('_id' => new MongoIdStub(2), 'name' => null),
+            (object) array('_id' => new MongoIdStub(3), 'name' => 'Trixie')
         ));
         $this->cursorStub = $cursorStub->getIterator();
         $this->result = new \PHPixie\Database\Driver\Mongo\Result($this->cursorStub);
@@ -34,12 +50,12 @@ class ResultTest extends \PHPixieTests\Database\ResultTest
      */
     public function testRewind()
     {
-        $this->assertEquals(array('id' => 1, 'name' => 'Tinkerbell'), (array) $this->result->current());
+        $this->assertEquals(array('_id' => 1, 'name' => 'Tinkerbell'), (array) $this->result->current());
         $this->result->next();
-        $this->assertEquals(array('id' => null, 'name' => null), (array) $this->result->current());
+        $this->assertEquals(array('_id' => 2, 'name' => null), (array) $this->result->current());
         $this->result->next();
         $this->result->rewind();
-        $this->assertEquals(array('id' => 1, 'name' => 'Tinkerbell'), (array) $this->result->current());
+        $this->assertEquals(array('_id' => 1, 'name' => 'Tinkerbell'), (array) $this->result->current());
         $this->result->next();
         $this->testAsArray();
         $this->result->next();
@@ -62,8 +78,10 @@ class ResultTest extends \PHPixieTests\Database\ResultTest
     public function testDeepGet()
     {
         $cursorStub = new \ArrayObject(array(
-            (object) array('nested' => (object) array(
-                    'deep' => (object) array(
+            (object) array(
+                '_id' => new MongoIdStub(1),
+                'nested' => array(
+                    'deep' => array(
                         'deeper' => 1
                     )
                 )
@@ -82,8 +100,8 @@ class ResultTest extends \PHPixieTests\Database\ResultTest
      */
     public function testDeepGetItemField()
     {
-        $item = (object) array('nested' => (object) array(
-                    'deep' => (object) array(
+        $item = (object) array('nested' => array(
+                    'deep' => array(
                         'deeper' => 1
                     )
                 )

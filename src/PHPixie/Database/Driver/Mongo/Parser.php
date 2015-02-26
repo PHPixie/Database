@@ -129,8 +129,16 @@ class Parser extends \PHPixie\Database\Parser
     {
         $this->chainCollection($query, $runner);
         $conditions = $this->conditionsParser->parse($query->getWhereConditions());
-        if (!empty($conditions))
+        
+        $empty = true;
+        foreach($conditions as $key => $value) {
+            $empty = false;
+            break;
+        }
+        
+        if (!$empty) {
             $runner->chainMethod('find', array($conditions));
+        }
         $runner->chainMethod('count');
 
         return $runner;

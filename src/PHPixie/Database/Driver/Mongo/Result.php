@@ -53,13 +53,12 @@ class Result extends \PHPixie\Database\Result
     {
         $path = explode('.', $field);
         $last = count($path) - 1;
-        $current = $item;
+        $current = (array) $item;
 
         foreach ($path as $key => $step) {
-            if(!property_exists($current, $step))
-
+            if(!array_key_exists($step, $current))
                 return null;
-            $current=$current->$step;
+            $current=$current[$step];
         }
         
         return $current;

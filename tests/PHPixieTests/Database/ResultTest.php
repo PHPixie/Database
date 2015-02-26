@@ -7,7 +7,8 @@ namespace PHPixieTests\Database;
 abstract class ResultTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $result;
-
+    protected $idField = 'id';
+    
     /**
      * @covers ::valid
      */
@@ -41,11 +42,11 @@ abstract class ResultTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testCurrent()
     {
-        $this->assertEquals(array('id' => 1, 'name' => 'Tinkerbell'), (array) $this->result->current());
+        $this->assertEquals(array($this->idField => 1, 'name' => 'Tinkerbell'), (array) $this->result->current());
         $this->result->next();
-        $this->assertEquals(array('id' => null, 'name' => null), (array) $this->result->current());
+        $this->assertEquals(array($this->idField => 2, 'name' => null), (array) $this->result->current());
         $this->result->next();
-        $this->assertEquals(array('id' => 3, 'name' => 'Trixie'), (array) $this->result->current());
+        $this->assertEquals(array($this->idField => 3, 'name' => 'Trixie'), (array) $this->result->current());
         $this->result->next();
         $this->assertEquals(null, $this->result->current());
         $this->result->next();
@@ -74,9 +75,9 @@ abstract class ResultTest extends \PHPixieTests\AbstractDatabaseTest
     public function testAsArray()
     {
         $expected = array(
-            array('id' => 1, 'name' => 'Tinkerbell'),
-            array('id' => null, 'name' => null),
-            array('id' => 3, 'name' => 'Trixie')
+            array($this->idField => 1, 'name' => 'Tinkerbell'),
+            array($this->idField => 2, 'name' => null),
+            array($this->idField => 3, 'name' => 'Trixie')
         );
 
         $arr = $this->result->asArray();
@@ -91,16 +92,16 @@ abstract class ResultTest extends \PHPixieTests\AbstractDatabaseTest
      */
     public function testGet()
     {
-        $this->assertEquals(1, $this->result->get('id'));
+        $this->assertEquals(1, $this->result->get($this->idField));
         $this->assertEquals(null, $this->result->get('not'));
         $this->result->next();
-        $this->assertEquals(null, $this->result->get('id'));
+        $this->assertEquals(2, $this->result->get($this->idField));
         $this->result->next();
-        $this->assertEquals(3, $this->result->get('id'));
+        $this->assertEquals(3, $this->result->get($this->idField));
         $this->result->next();
-        $this->assertEquals(null, $this->result->get('id'));
+        $this->assertEquals(null, $this->result->get($this->idField));
         $this->result->next();
-        $this->assertEquals(null, $this->result->get('id'));
+        $this->assertEquals(null, $this->result->get($this->idField));
     }
 
     /**
@@ -126,10 +127,10 @@ abstract class ResultTest extends \PHPixieTests\AbstractDatabaseTest
     public function testGetFields()
     {
         $this->assertEquals(array(
-            array('name' => 'Tinkerbell', 'id' => 1),
-            array('name' => null, 'id' => null),
-            array('name' => 'Trixie', 'id' => 3),
-        ), $this->result->getFields(array('name', 'id')));
+            array('name' => 'Tinkerbell', $this->idField => 1),
+            array('name' => null, $this->idField => 2),
+            array('name' => 'Trixie', $this->idField => 3),
+        ), $this->result->getFields(array('name', $this->idField)));
     }
 
     /**

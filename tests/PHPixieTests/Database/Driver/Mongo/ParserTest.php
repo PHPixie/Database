@@ -36,8 +36,8 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'find',
-                'args' =>array (
-                    array (
+                'args' => array (
+                    (object) array (
                         '$or' => array (
                             array (
                                 'name' => 1,
@@ -69,7 +69,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
                 'type' => 'method',
                 'name' => 'find',
                 'args' =>array (
-                    array (
+                    (object) array (
                         'name' => 1
                     ),
                     array(
@@ -100,7 +100,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'findOne',
-                'args' => array (array(), array())
+                'args' => array ( (object) array(), array())
             )
         ));
 
@@ -117,7 +117,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'find',
-                'args' => array (array(), array())
+                'args' => array ( (object) array(), array())
             ),
             array(
                 'type' => 'method',
@@ -198,7 +198,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'update',
-                'args' => array (array(), array(
+                'args' => array ( (object) array(), array(
                     '$set' => array('id'=>1, 'name'=>"Trixie"),
                     '$unset' => array('test' => true),
                     '$inc' => array('trees' => 1)
@@ -218,7 +218,18 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'update',
-                'args' => array (array('name' => 5), array('$set' => array('id'=>1, 'name'=>"Trixie")), array('multiple' => true))
+                'args' => array (
+                    (object) array('name' => 5),
+                    array(
+                        '$set' => array(
+                            'id'=>1,
+                            'name'=>"Trixie"
+                        )
+                    ), 
+                    array(
+                        'multiple' => true
+                    )
+                )
             )
         ));
     }
@@ -240,7 +251,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'remove',
-                'args' => array (array('id'=>7))
+                'args' => array ( (object) array('id'=>7))
             )
         ));
 
@@ -254,7 +265,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'remove',
-                'args' => array (array())
+                'args' => array ( (object) array())
             )
         ));
 
@@ -277,7 +288,7 @@ class ParserTest extends \PHPixieTests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'find',
-                'args' => array (array('id'=>7))
+                'args' => array ( (object) array('id'=>7))
             ),
             array (
                 'type' => 'method',

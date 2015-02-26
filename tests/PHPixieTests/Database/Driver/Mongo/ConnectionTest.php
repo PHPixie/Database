@@ -17,7 +17,7 @@ class ConnectionTest extends \PHPixieTests\Database\ConnectionTest
     {
         $this->database = $this->getMock('\PHPixie\Database', array('get'), array(null));
         $this->config = $this->sliceStub(array(
-            'connection' => 'mongodatabase.://test:555/',
+            'connection' => 'mongo://test:555/',
             'user'   => 'pixie',
             'password' => 5,
             'database' => 'test',
