@@ -95,7 +95,6 @@ class ExpandedGroup extends \PHPixie\Database\Conditions\Condition\Implementatio
                 }
 
                 foreach ($groups as $oldMerged) {
-                    var_dump([$operator, $oldMerged, $this->conditionInArray($operator, $oldMerged)]);
                     if (!$this->conditionInArray($operator, $oldMerged)) {
                         array_unshift($oldMerged, clone $operator);
                     }
@@ -108,7 +107,6 @@ class ExpandedGroup extends \PHPixie\Database\Conditions\Condition\Implementatio
         }
         $this->groups = $groups;
         
-        print_r($this->groups);
         return $this;
     }
 

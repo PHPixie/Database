@@ -143,26 +143,35 @@ abstract class Parser extends \PHPixie\Database\Parser
             $this->fragmentParser->appendColumn($column, $expr);
         }
 
-        $expr->sql .= ") VALUES ";
+        $expr->sql .= ") ";
 
-        $columnsCount = count($insertData['columns']);
+        if ($insertData['rows'] instanceof \PHPixie\Database\Type\SQL\Query && $insertData['rows']->type() === 'select') {
+            $expr->append($insertData['rows']->parse());
 
-        foreach ($insertData['rows'] as $rowKey => $row) {
+        } elseif ($insertData['rows'] instanceof \PHPixie\Database\Type\SQL\Expression) {
+            $expr->append($insertData['rows']);
 
-            if (count($row) != $columnsCount)
+        } else {
+            $expr->sql .="VALUES ";
+            $columnsCount = count($insertData['columns']);
+            
+            foreach ($insertData['rows'] as $rowKey => $row) {
+                
+                if (count($row) != $columnsCount)
                     throw new \PHPixie\Database\Exception\Parser("The number of keys does not match the number of values for bulk insert.");
-
-            if($rowKey > 0)
-                $expr->sql.= ', ';
-
-            $expr->sql.= '(';
-            foreach ($row as $valueKey => $value) {
-                if($valueKey > 0)
+                
+                if($rowKey > 0)
                     $expr->sql.= ', ';
-
-                $this->fragmentParser->appendValue($value, $expr);
+                
+                $expr->sql.= '(';
+                foreach ($row as $valueKey => $value) {
+                    if($valueKey > 0)
+                        $expr->sql.= ', ';
+                    
+                    $this->fragmentParser->appendValue($value, $expr);
+                }
+                $expr->sql.= ')';
             }
-            $expr->sql.= ')';
         }
 
     }

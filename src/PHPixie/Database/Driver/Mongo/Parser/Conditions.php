@@ -151,7 +151,7 @@ class Conditions extends \PHPixie\Database\Conditions\Logic\Parser
             $andGroups = array('$or' => $andGroups);
         }
 
-        return $andGroups;
+        return (object) $andGroups;
 
     }
     
