@@ -27,6 +27,8 @@ class ParserTest extends \PHPixieTests\Database\Driver\PDO\ParserTest
         array("INSERT INTO `fairies`(`pixie`, `fairy`) VALUES (?, ?)", array(1, 2)),
         array("INSERT INTO `fairies`(`pixie`, `fairy`) VALUES (?, ?), (?, ?)", array(1, 2, 1, 2)),
         array("INSERT INTO `fairies`() VALUES ()", array()),
+        array("INSERT INTO `fairies`(`pixie`, `fairy`) SELECT 1, 2", array()),
+        array("INSERT INTO `fairies`(`pixie`, `fairy`) SELECT * FROM `fairies`", array()),
         array("DELETE FROM `fairies` INNER JOIN `pixies` AS `a` ON `fairies`.`id` = `a`.`id` WHERE `id` = ? ORDER BY `id` ASC LIMIT 6 OFFSET 7", array(7)),
     );
 

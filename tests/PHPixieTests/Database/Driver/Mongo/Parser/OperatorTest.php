@@ -5,13 +5,17 @@ namespace PHPixieTests\Database\Driver\Mongo\Parser;
 if(!class_exists('\MongoRegex'))
     require_once(__DIR__.'/OperatorTestFiles/MongoRegex.php');
 
+if(!class_exists('\MongoId'))
+    require_once(__DIR__.'/OperatorTestFiles/MongoId.php');
+
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Parser\Operator
  */
 class OperatorTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $parser;
-
+    protected $mongoId = '49a702d5450046d3d515d10d';
+    
     protected function setUp()
     {
         $this->parser = new \PHPixie\Database\Driver\Mongo\Parser\Operator;
@@ -115,6 +119,65 @@ class OperatorTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertOperator(array('p' => array('$in' => array(6))), 'not in', true, array(array(6)));
         $this->assertOperator(array('p' => array('$nin' => array(6))), 'not in', false,  array(array(6)));
     }
+    
+    /**
+     * @covers ::parse
+     * @covers ::<protected>
+     */
+    public function testParseMongoId()
+    {
+        foreach(array(true, false) as $convertMongoId) {
+            
+            $mongoId = $this->mongoId;
+            if($convertMongoId) {
+                $mongoId =  new \MongoId($mongoId);
+            }
+            
+            
+            $this->assertIdOperator(
+                array(
+                    '_id' => $mongoId
+                ),
+                '=', false,  array($this->mongoId),
+                $convertMongoId
+            );
+
+            $this->assertIdOperator(
+                array(
+                    '_id' => array(
+                        '$nin' => array($mongoId)
+                    )
+                ),
+                'not in', false,  array(array($this->mongoId)),
+                $convertMongoId
+            );
+
+            $this->assertIdOperator(
+                array(
+                    '_id' => array(
+                        '$lt' => $mongoId,
+                        '$gt' => $mongoId,
+                    )
+                ),
+                'between', true, array($this->mongoId, $this->mongoId),
+                $convertMongoId
+            );
+        }
+    }
+    
+    /**
+     * @covers ::parse
+     * @covers ::<protected>
+     */
+    public function testParseMongoIdException()
+    {
+        $this->assertException('exists', array('test'), '_id');
+        
+        $this->assertIdOperator(
+            array('_id' => array('$exists' => 5)),
+            'exists', false, array(5), false
+        );
+    }
 
     /**
      * @covers ::parse
@@ -167,12 +230,12 @@ class OperatorTest extends \PHPixieTests\AbstractDatabaseTest
         $this->assertException('between', 'in', array(6),7);
     }
 
-    protected function assertException($operator, $value)
+    protected function assertException($operator, $value, $field = 'p', $convertMongoId = true)
     {
         $except = false;
-        $o = new \PHPixie\Database\Conditions\Condition\Field\Operator('p', $operator, $value);
+        $o = new \PHPixie\Database\Conditions\Condition\Field\Operator($field, $operator, $value);
         try {
-            $this->parser->parse($o);
+            $this->parser->parse($o, $convertMongoId);
         } catch (\PHPixie\Database\Exception\Parser $e) {
             $except = true;
         };
@@ -185,6 +248,34 @@ class OperatorTest extends \PHPixieTests\AbstractDatabaseTest
         if ($negated)
             $operator->negate();
         $this->assertEquals($result, $this->parser->parse($operator));
+    }
+    
+    protected function assertIdOperator($result, $operator, $negated, $value, $convertMongoId = true)
+    {
+        $operator = new \PHPixie\Database\Conditions\Condition\Field\Operator('_id', $operator, $value);
+        if ($negated)
+            $operator->negate();
+        
+        $this->assertEqualsWithMongoId($result, $this->parser->parse($operator, $convertMongoId));
+    }
+    
+    protected function assertEqualsWithMongoId($left, $right)
+    {
+        $this->assertSame(array_keys($left), array_keys($right));
+        
+        foreach($left as $key => $value) {
+            if($value instanceof \MongoId) {
+                $this->assertInstanceOf('\MongoId', $right[$key]);
+                $this->assertEquals((string) $value, (string) $right[$key]);
+                
+            }elseif(is_array($value)) {
+                $this->assertEquals(true, is_array($right[$key]));
+                $this->assertEqualsWithMongoId($value, $right[$key]);
+                
+            }else{
+                $this->assertEquals($value, $right[$key]);
+            }
+        }
     }
 
 }

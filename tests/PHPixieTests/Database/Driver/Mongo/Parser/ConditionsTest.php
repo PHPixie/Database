@@ -2,13 +2,17 @@
 
 namespace PHPixieTests\Database\Driver\Mongo\Parser;
 
+if(!class_exists('\MongoId'))
+    require_once(__DIR__.'/OperatorTestFiles/MongoId.php');
+
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Parser\Conditions
  */
 class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
 {
     protected $conditionsParser;
-
+    protected $mongoId = '49a702d5450046d3d515d10d';
+    
     protected function setUp()
     {
         $this->database = new \PHPixie\Database(null);
@@ -157,6 +161,34 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     {
         $this->setExpectedException('\PHPixie\Database\Exception\Parser');
         $this->conditionsParser->parse(array(new \stdClass()));
+    }
+    
+    /**
+     * @covers ::parse
+     * @covers ::<protected>
+     */
+    public function testParseMongoId()
+    {
+        $mongoId = new \MongoId($this->mongoId);
+        $container = $this->getContainer()
+                                    ->_and('_id', $this->mongoId);
+        
+        $this->assertGroup($container, array(
+            '_id' => $mongoId
+        ));
+        
+        $container = $this->getContainer()
+            ->startSubarrayItemGroup('a')
+                ->_and('_id', 1)
+            ->endGroup();
+        
+        $this->assertGroup($container, array(
+            'a' => array(
+                '$elemMatch' => (object) array(
+                    '_id' => 1
+                )
+            )
+        ));
     }
 
     /**
@@ -328,6 +360,13 @@ class ConditionsTest extends \PHPixieTests\AbstractDatabaseTest
     {
         
         $this->assertEquals(gettype($left), gettype($right));
+
+        if($left instanceof \MongoId) {
+            $this->assertInstanceOf('\MongoId', $right);
+            $this->assertEquals((string) $left, (string) $right);
+            return;
+        }
+        
         if(is_object($left)) {
             $left = (array) $left;
             $right = (array) $right;

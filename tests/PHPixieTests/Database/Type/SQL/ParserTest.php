@@ -125,6 +125,17 @@ abstract class ParserTest extends AbstractParserTest
             $this->query('insert')
                                 ->table('fairies')
                                 ->batchData(array(), array()),
+            
+            $this->query('insert')
+                                ->table('fairies')
+                                ->batchData(array('pixie', 'fairy'), $this->database->sqlExpression('SELECT 1, 2')),
+            
+            $this->query('insert')
+                                ->table('fairies')
+                                ->batchData(
+                                    array('pixie', 'fairy'),
+                                    $this->query('select')->table('fairies')
+                                ),
 
         );
 

@@ -121,41 +121,43 @@ abstract class Parser extends \PHPixie\Database\Parser
 
     protected function appendInsertValues($query, $expr)
     {
-         if (($insertData = $query->getBatchData()) === null) {
-
-            if (($data = $query->getData()) === null)
-                $data = array();
-
-            $insertData = array(
-                'columns' => array_keys($data),
-                'rows' => array(array_values($data))
-            );
+        if (($insertData = $query->getBatchData()) !== null) {
+            $columns = $insertData['columns'];
+            $rows    = $insertData['rows'];
+        
+        }elseif(($data = $query->getData()) !== null) {
+            $columns = array_keys($data);
+            $rows    = array(array_values($data));
+             
+        }else{
+            $columns  = array();
+            $rows     = array();
         }
-
-        if (empty($insertData['columns']))
+        
+        if (empty($columns) && empty($rows) ) {
             return $this->appendEmptyInsertValues($expr);
-
-        $expr->sql .= "(";
-
-        foreach ($insertData['columns'] as $key => $column) {
-            if($key > 0)
-                $expr->sql.= ', ';
-            $this->fragmentParser->appendColumn($column, $expr);
         }
 
-        $expr->sql .= ") ";
-
-        if ($insertData['rows'] instanceof \PHPixie\Database\Type\SQL\Query && $insertData['rows']->type() === 'select') {
-            $expr->append($insertData['rows']->parse());
-
-        } elseif ($insertData['rows'] instanceof \PHPixie\Database\Type\SQL\Expression) {
-            $expr->append($insertData['rows']);
-
-        } else {
-            $expr->sql .="VALUES ";
-            $columnsCount = count($insertData['columns']);
+        if (!empty($columns)) {
+            $expr->sql .= "(";
             
-            foreach ($insertData['rows'] as $rowKey => $row) {
+            foreach ($columns as $key => $column) {
+                if($key > 0)
+                    $expr->sql.= ', ';
+                $this->fragmentParser->appendColumn($column, $expr);
+            }
+            
+            $expr->sql .= ")";
+            
+        }
+        
+        $expr->sql .= " ";
+
+        if (!$this->appendSubquery($expr, $rows)) {
+            $expr->sql .="VALUES ";
+            $columnsCount = count($columns);
+            
+            foreach ($rows as $rowKey => $row) {
                 
                 if (count($row) != $columnsCount)
                     throw new \PHPixie\Database\Exception\Parser("The number of keys does not match the number of values for bulk insert.");
@@ -308,19 +310,28 @@ abstract class Parser extends \PHPixie\Database\Parser
             $expr->sql.= " UNION ";
             if ($all)
                 $expr->sql.= "ALL ";
-
-            if ($query instanceof \PHPixie\Database\Type\SQL\Query && $query->type() === 'select') {
-                $expr->append($query->parse());
-
-            } elseif ($query instanceof \PHPixie\Database\Type\SQL\Expression) {
-                $expr->append($query);
-
-            } else {
+            
+            if (!$this->appendSubquery($expr, $query)) {
                 throw new \PHPixie\Database\Exception\Parser("Union parameter must be either a SELECT Query object or SQL expression object");
             }
         }
     }
-
+    
+    protected function appendSubquery($expr, $query)
+    {
+        if ($query instanceof \PHPixie\Database\Type\SQL\Query && $query->type() === 'select') {
+            $expr->append($query->parse());
+            
+        } elseif ($query instanceof \PHPixie\Database\Type\SQL\Expression) {
+            $expr->append($query);
+            
+        }else{
+            return false;
+        }
+        
+        return true;
+    }
+    
     protected function appendFields($query, $expr)
     {
         $fields = $query->getFields();

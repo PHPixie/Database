@@ -21,7 +21,7 @@ class Conditions extends \PHPixie\Database\Conditions\Logic\Parser
     {
         if($condition instanceof \PHPixie\Database\Type\Document\Conditions\Condition\Collection\Embedded\SubarrayItem) {
             $conditions = $condition->conditions();
-            $parsed = $this->parse($conditions);
+            $parsed = $this->parse($conditions, false);
             
             $field = $this->prefixField($prefix, $condition->field());
             $operatorCondition = $this->conditions->operator($field, 'elemMatch', array($parsed));
@@ -110,7 +110,7 @@ class Conditions extends \PHPixie\Database\Conditions\Logic\Parser
         return $expanded;
     }
 
-    public function parse($conditions)
+    public function parse($conditions, $convertMongoId = true)
     {
         $expanded = $this->parseLogic($conditions);
         
@@ -118,7 +118,8 @@ class Conditions extends \PHPixie\Database\Conditions\Logic\Parser
         foreach ($expanded->groups() as $group) {
             $andGroup = array();
             foreach ($group as $condition) {
-                $condition = $this->operatorParser->parse($condition);
+                $condition = $this->operatorParser->parse($condition, $convertMongoId);
+                
                 foreach ($condition as $field => $fieldConditions) {
                     $appended = false;
                     foreach ($andGroup as $key=>$merged) {

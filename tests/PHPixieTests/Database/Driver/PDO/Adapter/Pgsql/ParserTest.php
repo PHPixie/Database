@@ -27,6 +27,8 @@ class ParserTest extends \PHPixieTests\Database\Driver\PDO\ParserTest
         array('INSERT INTO "fairies"("pixie", "fairy") VALUES (?, ?)', array(1, 2)),
         array('INSERT INTO "fairies"("pixie", "fairy") VALUES (?, ?), (?, ?)', array(1, 2, 1, 2)),
         array('INSERT INTO "fairies" DEFAULT VALUES', array()),
+        array('INSERT INTO "fairies"("pixie", "fairy") SELECT 1, 2', array()),
+        array('INSERT INTO "fairies"("pixie", "fairy") SELECT * FROM "fairies"', array()),
     );
 
 }
