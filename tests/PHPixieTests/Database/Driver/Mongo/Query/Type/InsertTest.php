@@ -4,7 +4,7 @@ namespace PHPixieTests\Database\Driver\Mongo\Query\Type;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Query\Type\Insert
  */
-class InsertTest extends \PHPixieTests\Database\Driver\Mongo\Query\ItemsTest
+class InsertTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
 {
     protected $queryClass = '\PHPixie\Database\Driver\Mongo\Query\Type\Insert';
     protected $type = 'insert';

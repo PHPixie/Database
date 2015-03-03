@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Query\Type;
 
-interface Insert extends \PHPixie\Database\Query\Items
+interface Insert extends \PHPixie\Database\Query
 {
     public function data($data);
     public function clearData();

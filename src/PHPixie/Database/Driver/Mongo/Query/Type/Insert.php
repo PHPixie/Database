@@ -2,7 +2,8 @@
 
 namespace PHPixie\Database\Driver\Mongo\Query\Type;
 
-class Insert extends \PHPixie\Database\Driver\Mongo\Query\Items implements \PHPixie\Database\Query\Type\Insert
+class Insert extends    \PHPixie\Database\Driver\Mongo\Query
+             implements \PHPixie\Database\Query\Type\Insert
 {
     public function data($data)
     {

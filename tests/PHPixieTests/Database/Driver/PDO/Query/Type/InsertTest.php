@@ -4,7 +4,7 @@ namespace PHPixieTests\Database\Driver\PDO\Query\Type;
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\PDO\Query\Type\Insert
  */
-class InsertTest extends \PHPixieTests\Database\Driver\PDO\Query\ItemsTest
+class InsertTest extends \PHPixieTests\Database\Driver\PDO\QueryTest
 {
     protected $queryClass = '\PHPixie\Database\Driver\PDO\Query\Type\Insert';
     protected $type = 'insert';

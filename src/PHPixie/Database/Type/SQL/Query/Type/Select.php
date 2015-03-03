@@ -2,7 +2,8 @@
 
 namespace PHPixie\Database\Type\SQL\Query\Type;
 
-interface Select extends \PHPixie\Database\Type\SQL\Query\Items, \PHPixie\Database\Query\Type\Select
+interface Select extends \PHPixie\Database\Type\SQL\Query\Items,
+                         \PHPixie\Database\Query\Type\Select
 {
 
     public function groupBy($field);
