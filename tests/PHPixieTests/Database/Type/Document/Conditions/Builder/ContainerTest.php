@@ -5,7 +5,7 @@ namespace PHPixieTests\Database\Type\Document\Conditions\Builder;
 /**
  * @coversDefaultClass \PHPixie\Database\Type\Document\Conditions\Builder\Container
  */
-abstract class ContainerTest extends \PHPixieTests\Database\Conditions\Builder\ContainerTest
+abstract class ContainerTest extends \PHPixieTests\Database\Conditions\Builder\Container\ConditionsTest
 {
     protected $databaseConditions;
     

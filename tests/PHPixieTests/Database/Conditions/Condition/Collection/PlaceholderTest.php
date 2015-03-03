@@ -68,7 +68,7 @@ class PlaceholderTest extends \PHPixieTests\Database\Conditions\Condition\Implem
     
     protected function getContainer()
     {
-        return $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array('getConditions'));
+        return $this->quickMock('\PHPixie\Database\Conditions\Builder\Container\Conditions', array('getConditions'));
     }
     
     protected function placeholder($allowEmpty = true)

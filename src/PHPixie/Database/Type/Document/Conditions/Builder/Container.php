@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Type\Document\Conditions\Builder;
 
-abstract class Container extends    \PHPixie\Database\Conditions\Builder\Container
+abstract class Container extends    \PHPixie\Database\Conditions\Builder\Container\Conditions
                          implements \PHPixie\Database\Type\Document\Conditions\Builder
 {
     public function __construct($conditions, $defaultOperator = '=')

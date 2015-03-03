@@ -78,7 +78,7 @@ abstract class ItemTest extends \PHPixieTests\Database\Driver\Mongo\QueryTest
                 }
             }
             
-            $container = $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array());
+            $container = $this->quickMock('\PHPixie\Database\Conditions\Builder\Container\Conditions', array());
             $params = array('pixie', 'or', true, false);
             $builderParams = $params;
             if($builderName !== null)

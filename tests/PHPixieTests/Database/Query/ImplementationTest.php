@@ -178,7 +178,7 @@ abstract class ImplementationTest extends \PHPixieTests\AbstractDatabaseTest
             $this->builderMethodTest($method, $params, $this->query, null, $builderParams, $methodMap[$builderMethod]);
         }
         
-        $container = $this->quickMock('\PHPixie\Database\Conditions\Builder\Container', array());
+        $container = $this->quickMock('\PHPixie\Database\Conditions\Builder\Container\Conditions', array());
         $params = array('or', true, false);
         $builderParams = $params;
             if($passBuilderName)

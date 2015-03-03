@@ -2,7 +2,7 @@
 
 namespace PHPixie\Database\Type\SQL\Conditions\Builder;
 
-abstract class Container extends    \PHPixie\Database\Conditions\Builder\Container
+abstract class Container extends    \PHPixie\Database\Conditions\Builder\Container\Conditions
                 implements \PHPixie\Database\Type\SQL\Conditions\Builder
 {
     public function addInOperatorCondition($field, $values, $logic = 'and', $negate = false)

@@ -4,7 +4,6 @@ namespace PHPixie\Database\Conditions\Builder;
 
 abstract class Container implements \PHPixie\Database\Conditions\Builder
 {
-    protected $conditions;
     protected $groupStack = array();
     protected $currentGroup;
     protected $defaultOperator;
@@ -15,17 +14,16 @@ abstract class Container implements \PHPixie\Database\Conditions\Builder
         'not' => '_not',
     );
 
-    public function __construct($conditions, $defaultOperator = '=') {
-        $this->conditions = $conditions;
+    public function __construct($defaultOperator = '=') {
         $this->defaultOperator = $defaultOperator;
         
-        $group = $this->conditions->group();
+        $group = $this->buildGroupCondition();
         $this->pushGroupToStack($group);
     }
 
     public function startConditionGroup($logic = 'and', $negate = false)
     {
-        $group = $this->conditions->group();
+        $group = $this->buildGroupCondition();
         $this->pushGroup($logic, $negate, $group);
 
         return $this;
@@ -90,13 +88,13 @@ abstract class Container implements \PHPixie\Database\Conditions\Builder
 
     public function addOperatorCondition($logic, $negate, $field, $operator, $values)
     {
-        $condition = $this->conditions->operator($field, $operator, $values);
+        $condition = $this->buildOperatorCondition($field, $operator, $values);
         return $this->addCondition($logic, $negate, $condition);
     }
 
     public function addPlaceholder($logic = 'and', $negate = false, $allowEmpty = true)
     {
-        $placeholder = $this->conditions->placeholder($this->defaultOperator, $allowEmpty);
+        $placeholder = $this->buildPlaceholderCondition($allowEmpty);
         $this->addCondition($logic, $negate, $placeholder);
 
         return $placeholder->container();
@@ -204,4 +202,8 @@ abstract class Container implements \PHPixie\Database\Conditions\Builder
     {
         return $this->startConditionGroup('xor', true);
     }
+    
+    abstract protected function buildGroupCondition();
+    abstract protected function buildOperatorCondition($field, $operator, $values);
+    abstract protected function buildPlaceholderCondition($allowEmpty);
 }
