@@ -243,6 +243,7 @@ abstract class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 
     /**
      * @covers ::addPlaceholder
+     * @covers ::<protected>
      */
     public function testAddPlaceholder()
     {
@@ -255,6 +256,7 @@ abstract class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 
     /**
      * @covers ::startConditionGroup
+     * @covers ::<protected>
      */
     public function testStartConditionGroupException()
     {
@@ -264,6 +266,7 @@ abstract class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 
     /**
      * @covers ::endGroup
+     * @covers ::<protected>
      */
     public function testEndGroupException()
     {
@@ -273,6 +276,7 @@ abstract class ContainerTest extends \PHPixieTests\AbstractDatabaseTest
 
     /**
      * @covers ::endGroup
+     * @covers ::<protected>
      */
     public function testNestedEndGroupException()
     {
