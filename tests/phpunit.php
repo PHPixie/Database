@@ -1,4 +1,2 @@
 <?php
-$root = dirname(__DIR__);
-$loader = require $root.'/vendor/autoload.php';
-$loader->add('', $root.'/tests/');
+require_once(__DIR__.'/../vendor/autoload.php');
