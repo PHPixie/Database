@@ -16,4 +16,15 @@ class Parser extends \PHPixie\Database\Type\SQL\Parser
         'natural_left outer' => 'NATURAL LEFT OUTER',
         'natural_right outer' => 'NATURAL RIGHT OUTER'
     );
+    
+    protected function appendLimitOffsetValues($expr, $limit, $offset)
+    {
+        if($offset !== NULL && $limit === NULL) {
+            
+            //Taken from the manual
+            $limit = '18446744073709551615';
+        }
+        
+        parent::appendLimitOffsetValues($expr, $limit, $offset);
+    }
 }
