@@ -22,7 +22,7 @@ class ParserTest extends \PHPixie\Tests\Database\Driver\PDO\ParserTest
         array('DELETE FROM "fairies" WHERE "id" = ? ORDER BY "id" ASC LIMIT 6 OFFSET 7', array(7)),
         array('DELETE FROM "fairies" LIMIT 6', array()),
         array('DELETE FROM "fairies" OFFSET 6', array()),
-        array('SELECT COUNT (1) AS "count" FROM "fairies" WHERE "a" = ?', array(1)),
+        array('SELECT COUNT(1) AS "count" FROM "fairies" WHERE "a" = ?', array(1)),
         array('INSERT INTO "fairies" DEFAULT VALUES', array()),
         array('INSERT INTO "fairies"("pixie", "fairy") VALUES (?, ?)', array(1, 2)),
         array('INSERT INTO "fairies"("pixie", "fairy") VALUES (?, ?), (?, ?)', array(1, 2, 1, 2)),

@@ -99,7 +99,7 @@ abstract class Parser extends \PHPixie\Database\Parser
 
     protected function countQuery($query, $expr)
     {
-        $expr->sql .= "SELECT COUNT (1) AS ";
+        $expr->sql .= "SELECT COUNT(1) AS ";
         $this->fragmentParser->appendColumn('count', $expr);
         $expr->sql .= " FROM ";
         $this->appendTable($query, $expr, true);
