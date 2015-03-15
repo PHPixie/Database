@@ -2,29 +2,17 @@
 
 namespace PHPixie\Database\Conditions\Condition\Field;
 
-class Operator extends \PHPixie\Database\Conditions\Condition\Implementation
+class Operator extends    Implementation
                implements \PHPixie\Database\Conditions\Condition\Field
 {
-    protected $field;
     protected $operator;
     protected $values;
     
     public function __construct($field, $operator, $values)
     {
-        $this->field = $field;
+        parent::__construct($field);
         $this->operator = $operator;
         $this->values = $values;
-    }
-    
-    public function field()
-    {
-        return $this->field;
-    }
-    
-    public function setField($field)
-    {
-        $this->field = $field;
-        return $this;
     }
     
     public function operator()
