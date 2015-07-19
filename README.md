@@ -12,6 +12,17 @@ Supports a common query interface for MySQL, PostgreSQl, SQLite and MongoDB
 [![Software License](https://img.shields.io/badge/license-BSD-brightgreen.svg?style=flat-square)](https://github.com/phpixie/database/blob/master/LICENSE)
 [![Total Downloads](https://img.shields.io/packagist/dt/phpixie/database.svg?style=flat-square)](https://packagist.org/packages/phpixie/database)
 
+- [PHPixie Database](#phpixie-database)
+    - [Initializing](#initializing)
+    - [Querying](#querying)
+        - [Operators](#operators)
+        - [Tables and JOINs](#tables-and-joins)
+        - [Aggregation](#aggregation)
+        - [Other types of queries](#other-types-of-queries)
+        - [Placeholders](#placeholders)
+    - [Transactions](#transactions)
+    - [MongoDB](#mongodb)
+
 ## Initializing
 
 ```php
@@ -57,7 +68,7 @@ return array(
 );
 ```
 
-## Selecting
+## Querying
 
 Querying relational database and MongoDB collections is very similar in PHPixie. Let's look at relational databases first
 
