@@ -16,7 +16,7 @@ Supports a common query interface for MySQL, PostgreSQl, SQLite and MongoDB
     - [Initializing](#initializing)
     - [Querying](#querying)
         - [Operators](#operators)
-        - [Tables and JOINs](#tables-and-joins)
+        - [Tables, Subqueries and JOINs](#tables-subqueries-and-joins)
         - [Aggregation](#aggregation)
         - [Other types of queries](#other-types-of-queries)
         - [Placeholders](#placeholders)
@@ -184,7 +184,7 @@ $query->fields(array(
 ));
 ```
 
-### Tables and JOINs
+### Tables, Subqueries and JOINs
 
 ```php
 // When specofying a table
@@ -209,6 +209,14 @@ $query
         ->or('p.parentCategoryId', 'c.id')
     ->join('authors')
         ->on('p.authorId', 'authors.id');
+        
+// You can use subqueries as tables,
+// but you must supply the alias parameter
+
+$query->join($subqeury, 'c', 'left')
+
+//UNIONs
+$query->union($subquery, $all = true);
 ```
 
 ### Aggregation
