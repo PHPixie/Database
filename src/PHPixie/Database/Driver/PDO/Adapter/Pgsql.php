@@ -7,7 +7,7 @@ class Pgsql extends \PHPixie\Database\Driver\PDO\Adapter
     public function __construct($config, $connection)
     {
         parent::__construct($config, $connection);
-        $this->connection->execute("SET NAMES utf8");
+        $this->connection->execute("SET NAMES 'utf8'");
     }
 
     public function insertId()
