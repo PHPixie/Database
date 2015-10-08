@@ -102,7 +102,12 @@ abstract class Operator extends \PHPixie\Database\Parser\Operator
     protected function parseIn($field, $operator, $values)
     {
         $value = $this->singleValue($values, $operator);
-
+        
+        if(count($value) === 0) {
+            $condition = $operator === 'in' ? 'FALSE' : 'TRUE';
+            return $this->database->sqlExpression($condition);
+        }
+        
         $expr = $this->prefix($field, $operator);
         if (is_array($value)) {
             $listSql = str_pad('', count($value) * 3 - 2, '?, ');
