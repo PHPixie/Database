@@ -143,40 +143,6 @@ class DatabaseTest extends \PHPixie\Tests\AbstractDatabaseTest
     }
 
     /**
-     * @covers ::query
-     */
-    public function testQuery()
-    {
-        $database = $this->getMock('\PHPixie\Database', array('get'), array(null));
-        $conn = $this->getMock('\PHPixie\Database\Driver\PDO', array(), array(), '', null, false);
-        $database
-            ->expects($this->at(0))
-            ->method('get')
-            ->with ('default')
-            ->will($this->returnValue($conn));
-        $database
-            ->expects($this->at(1))
-            ->method('get')
-            ->with ('test')
-            ->will($this->returnValue($conn));
-
-        $conn
-            ->expects($this->at(0))
-            ->method('query')
-            ->with('select')
-            ->will($this->returnValue('query1'));
-
-        $conn
-            ->expects($this->at(1))
-            ->method('query')
-            ->with('delete')
-            ->will($this->returnValue('query2'));
-
-        $this->assertEquals('query1', $database->query());
-        $this->assertEquals('query2', $database->query('delete', 'test'));
-    }
-
-    /**
      * @covers ::values
      * @covers ::buildvalues
      */

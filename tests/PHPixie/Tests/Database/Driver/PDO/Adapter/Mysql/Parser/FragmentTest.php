@@ -16,6 +16,7 @@ class FragmentTest extends \PHPixie\Tests\Database\Type\SQL\Parser\FragmentTest
 
     protected $expectedTables = array(
         array('`a`', array()),
+        array('`a`.`b`', array()),
         array('`a` AS `b`', array()),
         array('( la ) AS `b`', array(1)),
         array('( fairy ) AS `b`', array(1)),

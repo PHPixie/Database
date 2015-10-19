@@ -16,7 +16,7 @@ class PgsqlTest extends \PHPixie\Tests\Database\Driver\PDO\AdapterTest
         $this->connection
                         ->expects($this->at(0))
                         ->method('execute')
-                        ->with('SET NAMES utf8')
+                        ->with("SET NAMES 'utf8'")
                         ->will($this->returnValue(null));
         $this->adapter = new \PHPixie\Database\Driver\PDO\Adapter\Pgsql('test', $this->connection);
     }

@@ -46,19 +46,22 @@ class PDOTest extends \PHPixie\Tests\Database\DriverTest
      */
     public function testAdapter()
     {
-        foreach($this->adapterList as $name)
+        foreach($this->adapterList as $name) {
             $this->singleAdapterTest($name);
+        }
     }
 
     protected function singleAdapterTest($name)
     {
         $connection = $this->getMock('\PHPixie\Database\Driver\PDO\Connection', array('execute'), array(), '', false);
-        if($name != 'sqlite')
+        if($name != 'sqlite') {
+            $query = $name === 'pgsql' ? "SET NAMES 'utf8'" : "SET NAMES utf8";
             $connection
-                        ->expects($this->once())
-                        ->method('execute')
-                        ->with('SET NAMES utf8')
-                        ->will($this->returnValue(null));
+                ->expects($this->once())
+                ->method('execute')
+                ->with($query)
+                ->will($this->returnValue(null));
+        }
         $adapter = $this->driver->adapter($name, 'config', $connection);
         $this->assertInstanceOf('PHPixie\Database\Driver\PDO\Adapter\\'.ucfirst($name), $adapter);
         $this->assertAttributeEquals('config', 'config', $adapter);

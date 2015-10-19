@@ -33,9 +33,18 @@ abstract class Fragment
     public function appendTable($table, $expr, $alias = null)
     {
         if (is_string($table)) {
-            $expr->sql.= $this->quote($table);
-
-        } elseif ( ($isQuery = $table instanceof \PHPixie\Database\Type\SQL\Query) || $table instanceof \PHPixie\Database\Type\SQL\Expression) {
+            $table = explode('.', $table);
+            foreach($table as $key => $part) {
+                if($key !== 0) {
+                    $expr->sql.= '.';    
+                }
+                $expr->sql.= $this->quote($part);
+            }
+        
+        } elseif ( 
+            ($isQuery = $table instanceof \PHPixie\Database\Type\SQL\Query) || 
+            $table instanceof \PHPixie\Database\Type\SQL\Expression
+        ) {
 
             if ($isQuery)
                 $table = $table->parse();
@@ -44,7 +53,8 @@ abstract class Fragment
             $expr->append($table);
             $expr->sql.= " )";
         } else {
-            throw new \PHPixie\Database\Exception\Parser("Parameter type ".get_class($table)." cannot be used as a table");
+            $class = get_class($table);
+            throw new \PHPixie\Database\Exception\Parser("Parameter type '$class' cannot be used as a table");
         }
 
         if ($alias !== null)

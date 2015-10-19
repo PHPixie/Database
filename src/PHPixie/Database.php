@@ -52,11 +52,6 @@ class Database
         return new $class($this);
     }
 
-    public function query($type = 'select', $connectionName = 'default')
-    {
-        return $this->get($connectionName)->query($type);
-    }
-
     public function values()
     {
         if ($this->values === null)

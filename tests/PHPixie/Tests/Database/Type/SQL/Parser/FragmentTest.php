@@ -53,6 +53,7 @@ abstract class FragmentTest extends \PHPixie\Tests\Database\Type\SQL\AbstractPar
     {
         $tables = array(
             array('a', null),
+            array('a.b', null),
             array('a', 'b'),
             array($this->database->sqlExpression('la', array(1)), 'b'),
             array($this->queryStub('fairy', array(1)), 'b')
