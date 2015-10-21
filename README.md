@@ -248,10 +248,10 @@ $count = $connection->countQuery()
 
 // Inserting
 $insertQuery = $connection->insertQuery();
-$insertQuery->data(
+$insertQuery->data(array(
     'id'    => 1,
     'title' => 'Hello'
-)->execute();
+))->execute();
 
 // Insert multiple rows
 $insertQuery->batchData(
