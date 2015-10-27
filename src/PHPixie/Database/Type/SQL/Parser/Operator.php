@@ -103,7 +103,7 @@ abstract class Operator extends \PHPixie\Database\Parser\Operator
     {
         $value = $this->singleValue($values, $operator);
         
-        if(count($value) === 0) {
+        if(is_array($value) && count($value) === 0) {
             $condition = $operator === 'in' ? 'FALSE' : 'TRUE';
             return $this->database->sqlExpression($condition);
         }
@@ -114,7 +114,7 @@ abstract class Operator extends \PHPixie\Database\Parser\Operator
             $expr->sql.= "($listSql)";
             $expr->params = array_merge($expr->params, $value);
         } elseif ($value instanceof \PHPixie\Database\Type\SQL\Query) {
-            $subquery = $value-> parse();
+            $subquery = $value->parse();
             $expr->sql.= "( ";
             $expr->append($subquery);
             $expr->sql.= " )";
