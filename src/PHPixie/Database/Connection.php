@@ -13,6 +13,8 @@ abstract class Connection
         $this->driver = $driver;
         $this->name   = $name;
         $this->config = $config;
+        
+        $this->connect();
     }
 
     public function selectQuery()
@@ -40,10 +42,19 @@ abstract class Connection
         return $this->driver->query('count', $this->name);
     }
 
-    abstract public function insertId();
-
     public function config()
     {
         return $this->config;
     }
+    
+    abstract public function insertId();
+    
+    public function reconnect()
+    {
+        $this->disconnect();
+        $this->connect();
+    }
+    
+    abstract public function connect();
+    abstract public function disconnect();
 }

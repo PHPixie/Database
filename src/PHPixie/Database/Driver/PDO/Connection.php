@@ -8,15 +8,20 @@ class Connection extends \PHPixie\Database\Type\SQL\Connection
     protected $adapterName;
     protected $pdo;
     
-    public function __construct($driver, $name, $config)
+    public function insertId()
     {
-        parent::__construct($driver, $name, $config);
-
+        return $this->adapter->insertId();
+    }
+    
+    public function connect()
+    {
+        $config = $this->config;
+        
         $options = $config->get('connectionOptions', array());
         if (!is_array($options))
             throw new \PHPixie\Database\Exception("PDO 'connectionOptions' configuration parameter must be an array");
 
-        $this->pdo = $this->connect(
+        $this->pdo = $this->buildPdo(
             $config->get('connection'),
             $config->get('user',''),
             $config->get('password', ''),
@@ -25,12 +30,13 @@ class Connection extends \PHPixie\Database\Type\SQL\Connection
 
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $this->adapterName = strtolower(str_replace('PDO_', '', $this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME)));
-        $this->adapter = $driver->adapter($this->adapterName, $config, $this);
+        $this->adapter = $this->driver->adapter($this->adapterName, $config, $this);
     }
-
-    public function insertId()
+    
+    public function disconnect()
     {
-        return $this->adapter->insertId();
+        $this->adapter = null;
+        $this->pdo = null;
     }
 
     public function listColumns($table)
@@ -56,7 +62,7 @@ class Connection extends \PHPixie\Database\Type\SQL\Connection
         return $this->adapterName;
     }
 
-    protected function connect($connection, $user, $password, $connectionOptions)
+    protected function buildPdo($connection, $user, $password, $connectionOptions)
     {
         return new \PDO($connection, $user, $password, $connectionOptions);
     }

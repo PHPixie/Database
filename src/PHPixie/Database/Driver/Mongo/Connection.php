@@ -9,10 +9,10 @@ class Connection extends \PHPixie\Database\Connection
     protected $database;
     protected $lastInsertId;
 
-    public function __construct($driver, $name, $config)
+    public function connect()
     {
-        parent::__construct($driver, $name, $config);
-
+        $config = $this->config;
+        
         $options = $config->get('connectionOptions', array());
         if (!is_array($options))
             throw new \PHPixie\Database\Exception("Mongo 'connectionOptions' configuration parameter must be an array");
@@ -23,7 +23,13 @@ class Connection extends \PHPixie\Database\Connection
         $this->databaseName = $config->get('database');
         $options['db'] = $this->databaseName;
 
-        $this->client = $this->connect($config->get('connection'), $options);
+        $this->client = $this->buildMongoClient($config->get('connection'), $options);
+    }
+    
+    public function disconnect()
+    {
+        $this->client->close();
+        $this->client = null;
     }
 
     public function selectSingleQuery()
@@ -50,7 +56,7 @@ class Connection extends \PHPixie\Database\Connection
         $this->lastInsertId = $id;
     }
 
-    protected function connect($connection, $options)
+    protected function buildMongoClient($connection, $options)
     {
         return new \MongoClient($connection, $options);
     }

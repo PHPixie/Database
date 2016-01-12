@@ -3,12 +3,12 @@ namespace PHPixie\Tests\Database\Driver\PDO;
 
 class PDOConnectionTestStub extends \PHPixie\Database\Driver\PDO\Connection
 {
-    protected function connect($connection, $user, $password, $options)
+    protected function buildPdo($connection, $user, $password, $options)
     {
         if (substr($connection, 0, 7) != 'sqlite:' || $user != 'test' || $password != 5 || $options !== array('someOption' => 5))
             throw new \Exception("Parameters don't match expected");
 
-        return parent::connect($connection, $user, $password, array());
+        return parent::buildPdo($connection, $user, $password, array());
     }
 
     public function setPdo($pdo)
@@ -31,33 +31,6 @@ class ConnectionTest extends \PHPixie\Tests\Database\Type\SQL\ConnectionTest
     protected $config;
     protected $queryClass = 'PHPixie\Database\Driver\PDO\Query';
     protected $pdoProperty;
-
-    public function setUp()
-    {
-        $this->databaseFile = tempnam(sys_get_temp_dir(), 'test.sqlite');
-        $this->config = $this->getSliceData(array(
-            'connection' => 'sqlite:'.$this->databaseFile,
-            'user'       => 'test',
-            'password'   =>  5,
-            'driver'     => 'pdo',
-            'connectionOptions' => array(
-                'someOption' => 5
-            ))
-        );
-        $this->database = $this->getMock('\PHPixie\Database', array('get'), array(null));
-        $reflection = new \ReflectionClass("\PHPixie\Database\Driver\PDO\Connection");
-        $this->pdoProperty = $reflection->getProperty('pdo');
-        $this->pdoProperty->setAccessible(true);
-
-        $this->driver = $this->getMock('\PHPixie\Database\Driver\PDO', array('query'), array($this->database));
-        $this->connection = new PDOConnectionTestStub($this->driver, 'test', $this->config);
-        $this->connection->execute("CREATE TABLE fairies(id INT PRIMARY_KEY,name VARCHAR(255))");
-        $this->database
-                ->expects($this->any())
-                ->method('get')
-                ->with ('test')
-                ->will($this->returnValue($this->connection));
-    }
 
     public function tearDown()
     {
@@ -83,6 +56,15 @@ class ConnectionTest extends \PHPixie\Tests\Database\Type\SQL\ConnectionTest
         $this->connection->execute("INSERT INTO fairies(id,name) VALUES (1,'Tinkerbell')");
         $result = $this->connection->execute("Select * from fairies where id = ?", array(1));
         $this->assertEquals(array((object) array('id'=>1, 'name'=>'Tinkerbell')), $result->asArray());
+    }
+    
+    /**
+     * @covers ::disconnect
+     */
+    public function testDisconnect()
+    {
+        $this->connection->disconnect();
+        $this->assertSame(null, $this->connection->pdo());
     }
 
     /**
@@ -192,6 +174,33 @@ class ConnectionTest extends \PHPixie\Tests\Database\Type\SQL\ConnectionTest
             ->expects($this->at(0))
             ->method('createTransactionSavepoint')
             ->with($name);
+    }
+    
+    protected function prepareConnect()
+    {
+        $this->databaseFile = tempnam(sys_get_temp_dir(), 'test.sqlite');
+        $this->config = $this->getSliceData(array(
+            'connection' => 'sqlite:'.$this->databaseFile,
+            'user'       => 'test',
+            'password'   =>  5,
+            'driver'     => 'pdo',
+            'connectionOptions' => array(
+                'someOption' => 5
+            ))
+        );
+        $this->database = $this->getMock('\PHPixie\Database', array('get'), array(null));
+        $reflection = new \ReflectionClass("\PHPixie\Database\Driver\PDO\Connection");
+        $this->pdoProperty = $reflection->getProperty('pdo');
+        $this->pdoProperty->setAccessible(true);
+
+        $this->driver = $this->getMock('\PHPixie\Database\Driver\PDO', array('query'), array($this->database));
+        $this->connection = new PDOConnectionTestStub($this->driver, 'test', $this->config);
+        $this->connection->execute("CREATE TABLE fairies(id INT PRIMARY_KEY,name VARCHAR(255))");
+        $this->database
+                ->expects($this->any())
+                ->method('get')
+                ->with ('test')
+                ->will($this->returnValue($this->connection));
     }
     
     protected function prepareAdapter()

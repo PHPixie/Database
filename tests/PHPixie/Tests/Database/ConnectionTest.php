@@ -12,8 +12,14 @@ abstract class ConnectionTest extends \PHPixie\Tests\AbstractDatabaseTest
     protected $config;
     protected $driver;
 
+    public function setUp()
+    {
+        $this->prepareConnect();
+    }
+    
     /**
      * @covers ::__construct
+     * @covers ::connect
      * @covers ::<protected>
      */
     public function testConstruct()
@@ -53,4 +59,5 @@ abstract class ConnectionTest extends \PHPixie\Tests\AbstractDatabaseTest
             $this->assertEquals('query', $this->connection->$method());
         }
     }
+    
 }
