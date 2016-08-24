@@ -68,6 +68,23 @@ abstract class ResultTest extends \PHPixie\Tests\AbstractDatabaseTest
         $this->result->next();
         $this->assertEquals(null, $this->result->key());
     }
+    
+    /**
+     * @covers ::asArray
+     */
+    public function testAsArrayAssoc()
+    {
+        $expected = array(
+            array($this->idField => 1, 'name' => 'Tinkerbell'),
+            array($this->idField => 2, 'name' => null),
+            array($this->idField => 3, 'name' => 'Trixie')
+        );
+        $arr = $this->result->asArray($this->idField);
+        $arrKeys = [];
+        foreach($expected as $key=>$value)
+            $arrKeys[] = $value[$this->idField];
+        $this->assertEquals($arrKeys, array_keys($arr));
+    }
 
     /**
      * @covers ::asArray
