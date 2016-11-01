@@ -41,12 +41,17 @@ class Runner
                     $args = $step['args'];
                     $current = call_user_func_array(array($current, $step['name']), $args);
 
-                    if ($step['name'] === 'insertOne')
-                        $connection->setInsertId((string) $current->getInsertedId());
+                    if ($step['name'] === 'insertOne') {
+                        $last = (string) $current->getInsertedId();
+                        $connection->setInsertId($last);
+                        return $last;
+                    }
 
                     if ($step['name'] === 'insertMany') {
-                        $ids = $current->insertedIds();
-                        $connection->setInsertId((string) end($ids));
+                        $ids = $current->getInsertedIds();
+                        $last = (string) end($ids);
+                        $connection->setInsertId($last);
+                        return $last;
                     }
 
                     break;

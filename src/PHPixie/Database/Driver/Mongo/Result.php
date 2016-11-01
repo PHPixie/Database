@@ -5,48 +5,51 @@ namespace PHPixie\Database\Driver\Mongo;
 class Result extends \PHPixie\Database\Result
 {
     protected $cursor;
+    protected $iterator;
 
     public function __construct($cursor)
     {
-        $this->cursor = new \IteratorIterator($cursor);
+        $this->cursor = $cursor;
+        $this->iterator = new \IteratorIterator($cursor);
+        $this->rewind();
     }
 
     public function current()
     {
-        if (!$this->cursor->valid())
+        if (!$this->iterator->valid())
             return null;
-        $current = (object) $this->cursor->current();
+        $current = (object) $this->iterator->current();
         $current->{'_id'} = (string) $current->{'_id'};
         return $current;
     }
 
     public function key()
     {
-        if (!$this->cursor->valid())
+        if (!$this->iterator->valid())
             return null;
 
-        return $this->cursor->key();
+        return $this->iterator->key();
     }
 
     public function valid()
     {
-        return $this->cursor->valid();
+        return $this->iterator->valid();
     }
 
     public function next()
     {
-        if($this->cursor->valid())
-            $this->cursor->next();
+        if($this->iterator->valid())
+            $this->iterator->next();
     }
 
     public function rewind()
     {
-        $this->cursor->rewind();
+        $this->iterator->rewind();
     }
 
     public function cursor()
     {
-        return $this->cursor;
+        return $this->iterator;
     }
 
     public function getItemField($item, $field)

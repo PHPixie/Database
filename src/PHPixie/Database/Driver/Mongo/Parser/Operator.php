@@ -66,7 +66,7 @@ class Operator extends \PHPixie\Database\Parser\Operator
         if (count($value)!==1 && !is_string($value[0]))
             throw new \PHPixie\Database\Exception\Parser("The '$operator' operator requires a single string parameter to be passed");
 
-        $value[0] = new \MongoDB\BSON\Regex($value[0]);
+        $value[0] = new \MongoDB\BSON\Regex($value[0], '');
 
         if ($operator == 'not regex') {
             $negated = !$negated;

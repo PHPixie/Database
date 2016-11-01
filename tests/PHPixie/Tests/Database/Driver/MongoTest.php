@@ -124,9 +124,10 @@ class MongoTest extends \PHPixie\Tests\Database\DriverTest
      */
     public function testResult()
     {
-        $result = $this->driver->result('cursor');
+        $cursor = new \ArrayIterator(array());
+        $result = $this->driver->result($cursor);
         $this->assertInstanceOf('PHPixie\Database\Driver\Mongo\Result', $result);
-        $this->assertAttributeEquals('cursor', 'cursor', $result);
+        $this->assertAttributeEquals($cursor, 'cursor', $result);
     }
 
     /**

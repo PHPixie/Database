@@ -31,8 +31,8 @@ class ResultTest extends \PHPixie\Tests\Database\ResultTest
             (object) array('_id' => new MongoIdStub(2), 'name' => null),
             (object) array('_id' => new MongoIdStub(3), 'name' => 'Trixie')
         ));
-        $this->cursorStub = $cursorStub->getIterator();
-        $this->result = new \PHPixie\Database\Driver\Mongo\Result($this->cursorStub);
+        
+        $this->result = new \PHPixie\Database\Driver\Mongo\Result($cursorStub);
     }
 
     /**
@@ -68,7 +68,7 @@ class ResultTest extends \PHPixie\Tests\Database\ResultTest
      */
     public function testCursor()
     {
-        $this->assertEquals($this->cursorStub, $this->result->cursor());
+        $this->assertInstanceOf('IteratorIterator', $this->result->cursor());
     }
     
     /**

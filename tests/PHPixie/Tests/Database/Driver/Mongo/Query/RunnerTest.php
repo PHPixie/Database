@@ -2,16 +2,29 @@
 
 namespace PHPixie\Tests\Database\Driver\Mongo\Query;
 
+class InsertStub
+{
+    public function getInsertedIds()
+    {
+        return array(8);
+    }
+    
+    public function getInsertedId()
+    {
+        return 7;
+    }
+}
+
 class MongoRunnerStub
 {
     public $a;
-    public function insert($b)
+    public function insertOne($b)
     {
-        return 5;
+        return new InsertStub();
     }
-    public function batchInsert($b)
+    public function insertMany($b)
     {
-        return 5;
+        return new InsertStub();
     }
 }
 
@@ -75,11 +88,12 @@ class RunnerTest extends \PHPixie\Tests\AbstractDatabaseTest
     public function testRun()
     {
         $this->runner->chainProperty('a');
-        $this->runner->chainMethod('insert', array(array('_id'=>7)));
+        $this->runner->chainMethod('insertOne', array(array('_id'=>7)));
         $conn = new MongoRunnerConnectionTestStub();
+        
         $conn->setClientStub(new MongoRunnerStub());
         $conn->database()->a = new MongoRunnerStub();
-        $this->assertEquals(5, $this->runner->run($conn));
+        $this->assertEquals(7, $this->runner->run($conn));
         $this->assertEquals(7, $conn->insertId());
     }
 
@@ -89,11 +103,11 @@ class RunnerTest extends \PHPixie\Tests\AbstractDatabaseTest
     public function testRunBatchInsert()
     {
         $this->runner->chainProperty('a');
-        $this->runner->chainMethod('batchInsert', array(array(array('_id'=>7), array('_id'=>8))));
+        $this->runner->chainMethod('insertMany', array(array(array('_id'=>7), array('_id'=>8))));
         $conn = new MongoRunnerConnectionTestStub();
         $conn->setClientStub(new MongoRunnerStub());
         $conn->database()->a = new MongoRunnerStub();
-        $this->assertEquals(5, $this->runner->run($conn));
+        $this->assertEquals(8, $this->runner->run($conn));
         $this->assertEquals(8, $conn->insertId());
     }
 
