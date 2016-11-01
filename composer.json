@@ -18,6 +18,9 @@
     "require-dev": {
         "phpixie/test": "~3.0"
     },
+    "suggest": {
+        "mongodb/mongodb": "Required for MongoDB support",
+    },
     "autoload": {
         "psr-4": {
             "PHPixie\\": "src/PHPixie",

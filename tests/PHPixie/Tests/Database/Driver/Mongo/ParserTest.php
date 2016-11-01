@@ -73,20 +73,14 @@ class ParserTest extends \PHPixie\Tests\Database\ParserTest
                         'name' => 1
                     ),
                     array(
-                        'id' => true,
-                        'name' => true
+                        'projection' => array(
+                            'id' => true,
+                            'name' => true
+                        ),
+                        'limit' => 4,
+                        'skip' => 10
                     )
                 )
-            ),
-            array(
-                'type' => 'method',
-                'name' => 'limit',
-                'args' => array(4)
-            ),
-            array(
-                'type' => 'method',
-                'name' => 'skip',
-                'args' => array(10)
             )
         ));
 
@@ -117,21 +111,14 @@ class ParserTest extends \PHPixie\Tests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'find',
-                'args' => array ( (object) array(), array())
-            ),
-            array(
-                'type' => 'method',
-                'name' => 'sort',
-                'args' => array(array(
-                    'name' => 1,
-                    'id' => -1
-                )
-            )),
-            array(
-                'type' => 'method',
-                'name' => 'limit',
-                'args' => array(1)
-            ),
+                'args' => array ( (object) array(), array(
+                    'sort' => array(
+                        'name' => 1,
+                        'id' => -1
+                    ),
+                    'limit' => 1
+                ))
+            )
         ));
     }
 
@@ -151,7 +138,7 @@ class ParserTest extends \PHPixie\Tests\Database\ParserTest
             ),
             array (
                 'type' => 'method',
-                'name' => 'insert',
+                'name' => 'insertOne',
                 'args' => array (array('id'=>1, 'name'=>"Trixie"))
             )
         ));
@@ -169,7 +156,7 @@ class ParserTest extends \PHPixie\Tests\Database\ParserTest
             ),
             array (
                 'type' => 'method',
-                'name' => 'batchInsert',
+                'name' => 'insertMany',
                 'args' => array(array(
                             array('id' => 1, 'name' => "Trixie"),
                             array('id' => 2, 'name' => "Tinkerbell")
@@ -197,12 +184,12 @@ class ParserTest extends \PHPixie\Tests\Database\ParserTest
             ),
             array (
                 'type' => 'method',
-                'name' => 'update',
+                'name' => 'updateMany',
                 'args' => array ( (object) array(), array(
                     '$set' => array('id'=>1, 'name'=>"Trixie"),
                     '$unset' => array('test' => true),
                     '$inc' => array('trees' => 1)
-                ), array('multiple' => true))
+                ))
             )
         ));
 
@@ -217,7 +204,7 @@ class ParserTest extends \PHPixie\Tests\Database\ParserTest
             ),
             array (
                 'type' => 'method',
-                'name' => 'update',
+                'name' => 'updateMany',
                 'args' => array (
                     (object) array('name' => 5),
                     array(
@@ -225,9 +212,6 @@ class ParserTest extends \PHPixie\Tests\Database\ParserTest
                             'id'=>1,
                             'name'=>"Trixie"
                         )
-                    ), 
-                    array(
-                        'multiple' => true
                     )
                 )
             )
@@ -250,7 +234,7 @@ class ParserTest extends \PHPixie\Tests\Database\ParserTest
             ),
             array (
                 'type' => 'method',
-                'name' => 'remove',
+                'name' => 'deleteMany',
                 'args' => array ( (object) array('id'=>7))
             )
         ));
@@ -264,7 +248,7 @@ class ParserTest extends \PHPixie\Tests\Database\ParserTest
             ),
             array (
                 'type' => 'method',
-                'name' => 'remove',
+                'name' => 'deleteMany',
                 'args' => array ( (object) array())
             )
         ));
@@ -287,13 +271,8 @@ class ParserTest extends \PHPixie\Tests\Database\ParserTest
             ),
             array (
                 'type' => 'method',
-                'name' => 'find',
-                'args' => array ( (object) array('id'=>7))
-            ),
-            array (
-                'type' => 'method',
                 'name' => 'count',
-                'args' => array()
+                'args' => array((object) array('id'=>7))
             )
         ));
 
@@ -307,7 +286,7 @@ class ParserTest extends \PHPixie\Tests\Database\ParserTest
             array (
                 'type' => 'method',
                 'name' => 'count',
-                'args' => array()
+                'args' => array((object) array())
             )
         ));
 

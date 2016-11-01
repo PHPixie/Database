@@ -2,8 +2,9 @@
 
 namespace PHPixie\Tests\Database\Driver\Mongo;
 
-if(!class_exists('\MongoClient'))
+if(!class_exists('\MongoDB\Client')) {
     require_once(__DIR__.'/ConnectionTestFiles/MongoClient.php');
+}
 
 /**
  * @coversDefaultClass \PHPixie\Database\Driver\Mongo\Connection
@@ -17,7 +18,7 @@ class ConnectionTest extends \PHPixie\Tests\Database\ConnectionTest
     {
         $this->database = $this->getMock('\PHPixie\Database', array('get'), array(null));
         $this->config = $this->getSliceData(array(
-            'connection' => 'mongo://test:555/',
+            'connection' => 'mongodb://test:555/',
             'user'   => 'pixie',
             'password' => 5,
             'database' => 'test',
@@ -52,27 +53,6 @@ class ConnectionTest extends \PHPixie\Tests\Database\ConnectionTest
         $this->queryTest(array('selectSingle'));
     }
     
-    /**
-     * @covers ::run
-     * @covers ::connect
-     */
-    public function testRunCursor()
-    {
-        $runner = $this->getMock('\PHPixie\Database\Driver\Mongo\Query\Runner');
-        $cursor = $this->getMock('\MongoCursor', array(), array(), '', null, false);
-        $runner
-                ->expects($this->once())
-                ->method('run')
-                ->with($this->connection)
-                ->will($this->returnValue($cursor));
-        $this->driver
-                ->expects($this->once())
-                ->method('result')
-                ->with ($cursor)
-                ->will($this->returnValue(1));
-        $this->assertEquals(1, $this->connection->run($runner));
-    }
-
     /**
      * @covers ::run
      */
@@ -120,11 +100,27 @@ class ConnectionTest extends \PHPixie\Tests\Database\ConnectionTest
     /**
      * @covers ::__construct
      */
-    public function testWrongOptionsException()
+    public function testWrongUriOptionsException()
     {
         $this->setExpectedException('\PHPixie\Database\Exception');
         $config = $this->getSliceData(array(
-            'connectionOptions' => 5,
+            'uriOptions' => 5,
+            'user'   => 'pixie',
+            'password' => 5,
+            'database' => 'test',
+            'connection' => 'mongodatabase.://test:555/',
+        ));
+        $connection = new \PHPixie\Database\Driver\Mongo\Connection($this->database->driver('pdo'), 'test', $config);
+    }
+    
+    /**
+     * @covers ::__construct
+     */
+    public function testWrongDriverOptionsException()
+    {
+        $this->setExpectedException('\PHPixie\Database\Exception');
+        $config = $this->getSliceData(array(
+            'driverOptions' => 5,
             'user'   => 'pixie',
             'password' => 5,
             'database' => 'test',

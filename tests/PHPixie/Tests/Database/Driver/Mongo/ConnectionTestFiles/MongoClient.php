@@ -1,8 +1,10 @@
 <?php
 
-class MongoClient
+namespace MongoDB;
+
+class Client
 {
-    public function __construct($connection, $options){
+    public function __construct($connection, $uriOptions, $driverOptions){
     
     }
 }

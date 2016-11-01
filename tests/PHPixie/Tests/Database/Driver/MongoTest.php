@@ -1,7 +1,7 @@
 <?php
 namespace PHPixie\Tests\Database\Driver;
 
-if(!class_exists('\MongoClient'))
+if(!class_exists('\MongoDB\Client'))
     require_once(__DIR__.'/Mongo/ConnectionTestFiles/MongoClient.php');
 
 /**
