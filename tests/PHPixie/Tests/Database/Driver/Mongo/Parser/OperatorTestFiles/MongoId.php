@@ -2,7 +2,7 @@
 
 namespace MongoDB\BSON;
 
-class ObjectId;
+class ObjectId
 {
     public $value;
     public function __construct($value){
