@@ -2,7 +2,7 @@
 
 namespace PHPixie\Tests\Database\Driver\Mongo\Parser;
 
-if(!class_exists('\MongoId'))
+if(!class_exists('\MongoDB\BSON\ObjectID'))
     require_once(__DIR__.'/OperatorTestFiles/MongoId.php');
 
 /**
@@ -169,7 +169,7 @@ class ConditionsTest extends \PHPixie\Tests\AbstractDatabaseTest
      */
     public function testParseMongoId()
     {
-        $mongoId = new \MongoId($this->mongoId);
+        $mongoId = new \MongoDB\BSON\ObjectID($this->mongoId);
         $container = $this->getContainer()
                                     ->_and('_id', $this->mongoId);
         
@@ -361,8 +361,8 @@ class ConditionsTest extends \PHPixie\Tests\AbstractDatabaseTest
         
         $this->assertEquals(gettype($left), gettype($right));
 
-        if($left instanceof \MongoId) {
-            $this->assertInstanceOf('\MongoId', $right);
+        if($left instanceof \MongoDB\BSON\ObjectID) {
+            $this->assertInstanceOf('\MongoDB\BSON\ObjectID', $right);
             $this->assertEquals((string) $left, (string) $right);
             return;
         }

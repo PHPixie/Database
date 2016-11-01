@@ -2,10 +2,10 @@
 
 namespace PHPixie\Tests\Database\Driver\Mongo\Parser;
 
-if(!class_exists('\MongoRegex'))
+if(!class_exists('\MongoDB\BSON\Regex'))
     require_once(__DIR__.'/OperatorTestFiles/MongoRegex.php');
 
-if(!class_exists('\MongoId'))
+if(!class_exists('\MongoDB\BSON\ObjectID'))
     require_once(__DIR__.'/OperatorTestFiles/MongoId.php');
 
 /**
@@ -130,7 +130,7 @@ class OperatorTest extends \PHPixie\Tests\AbstractDatabaseTest
             
             $mongoId = $this->mongoId;
             if($convertMongoId) {
-                $mongoId =  new \MongoId($mongoId);
+                $mongoId =  new \MongoDB\BSON\ObjectID($mongoId);
             }
             
             
@@ -190,7 +190,7 @@ class OperatorTest extends \PHPixie\Tests\AbstractDatabaseTest
         $this->assertEquals('p', key($parsed));
         $parsed = $parsed['p'];
         $this->assertEquals('$regex', key($parsed));
-        $this->assertEquals('MongoRegex', get_class(current($parsed)));
+        $this->assertEquals('MongoDB\BSON\Regex', get_class(current($parsed)));
 
         $operator = new \PHPixie\Database\Conditions\Condition\Field\Operator('p', 'regex', array('/la/'));
         $operator->negate();
@@ -199,7 +199,7 @@ class OperatorTest extends \PHPixie\Tests\AbstractDatabaseTest
         $parsed = $parsed['p'];
         $parsed = $parsed['$not'];
         $this->assertEquals('$regex', key($parsed));
-        $this->assertEquals('MongoRegex', get_class(current($parsed)));
+        $this->assertEquals('MongoDB\BSON\Regex', get_class(current($parsed)));
 
         $operator = new \PHPixie\Database\Conditions\Condition\Field\Operator('p', 'not regex', array('/la/'));
         $parsed = $this->parser->parse($operator);
@@ -207,7 +207,7 @@ class OperatorTest extends \PHPixie\Tests\AbstractDatabaseTest
         $parsed = $parsed['p'];
         $parsed = $parsed['$not'];
         $this->assertEquals('$regex', key($parsed));
-        $this->assertEquals('MongoRegex', get_class(current($parsed)));
+        $this->assertEquals('MongoDB\BSON\Regex', get_class(current($parsed)));
 
         $operator = new \PHPixie\Database\Conditions\Condition\Field\Operator('p', 'not regex', array('/la/'));
         $operator->negate();
@@ -215,7 +215,7 @@ class OperatorTest extends \PHPixie\Tests\AbstractDatabaseTest
         $this->assertEquals('p', key($parsed));
         $parsed = $parsed['p'];
         $this->assertEquals('$regex', key($parsed));
-        $this->assertEquals('MongoRegex', get_class(current($parsed)));
+        $this->assertEquals('MongoDB\BSON\Regex', get_class(current($parsed)));
     }
 
     /**
@@ -264,8 +264,8 @@ class OperatorTest extends \PHPixie\Tests\AbstractDatabaseTest
         $this->assertSame(array_keys($left), array_keys($right));
         
         foreach($left as $key => $value) {
-            if($value instanceof \MongoId) {
-                $this->assertInstanceOf('\MongoId', $right[$key]);
+            if($value instanceof \MongoDB\BSON\ObjectID) {
+                $this->assertInstanceOf('\MongoDB\BSON\ObjectID', $right[$key]);
                 $this->assertEquals((string) $value, (string) $right[$key]);
                 
             }elseif(is_array($value)) {

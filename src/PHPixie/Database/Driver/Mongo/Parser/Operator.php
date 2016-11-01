@@ -66,7 +66,7 @@ class Operator extends \PHPixie\Database\Parser\Operator
         if (count($value)!==1 && !is_string($value[0]))
             throw new \PHPixie\Database\Exception\Parser("The '$operator' operator requires a single string parameter to be passed");
 
-        $value[0] = new \MongoRegex($value[0]);
+        $value[0] = new \MongoDB\BSON\Regex($value[0]);
 
         if ($operator == 'not regex') {
             $negated = !$negated;
@@ -83,7 +83,7 @@ class Operator extends \PHPixie\Database\Parser\Operator
         
         if($convertMongoId) {
             foreach($value[0] as $key => $id) {
-                $value[0][$key] = new \MongoId($id);
+                $value[0][$key] = new \MongoDB\BSON\ObjectID($id);
             }
         }
         
@@ -108,7 +108,7 @@ class Operator extends \PHPixie\Database\Parser\Operator
         $value = $value[0];
         
         if($convertMongoId) {
-            $value = new \MongoId($value);
+            $value = new \MongoDB\BSON\ObjectID($value);
         }
 
         if ($operator === '=') {
@@ -131,7 +131,7 @@ class Operator extends \PHPixie\Database\Parser\Operator
         
         if($convertMongoId) {
             foreach($range as $key => $id) {
-                $range[$key] = new \MongoId($id);
+                $range[$key] = new \MongoDB\BSON\ObjectID($id);
             }
         }
         

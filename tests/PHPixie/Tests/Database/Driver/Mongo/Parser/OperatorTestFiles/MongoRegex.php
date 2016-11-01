@@ -1,6 +1,8 @@
 <?php
 
-class MongoRegex
+namespace MongoDB\BSON;
+
+class Regex
 {
     public function __construct($regex){
     

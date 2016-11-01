@@ -1,6 +1,8 @@
 <?php
 
-class MongoId
+namespace MongoDB\BSON;
+
+class ObjectId;
 {
     public $value;
     public function __construct($value){

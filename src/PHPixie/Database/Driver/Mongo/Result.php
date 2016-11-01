@@ -8,7 +8,7 @@ class Result extends \PHPixie\Database\Result
 
     public function __construct($cursor)
     {
-        $this->cursor = $cursor;
+        $this->cursor = new \IteratorIterator($cursor);
     }
 
     public function current()
