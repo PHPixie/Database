@@ -111,6 +111,7 @@ class ConnectionTest extends \PHPixie\Tests\Database\ConnectionTest
             'connection' => 'mongodatabase.://test:555/',
         ));
         $connection = new \PHPixie\Database\Driver\Mongo\Connection($this->database->driver('pdo'), 'test', $config);
+        $connection->client();
     }
     
     /**
@@ -127,6 +128,7 @@ class ConnectionTest extends \PHPixie\Tests\Database\ConnectionTest
             'connection' => 'mongodatabase.://test:555/',
         ));
         $connection = new \PHPixie\Database\Driver\Mongo\Connection($this->database->driver('pdo'), 'test', $config);
+        $connection->client();
     }
 
 }

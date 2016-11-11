@@ -3,12 +3,12 @@ namespace PHPixie\Tests\Database\Driver\PDO;
 
 class PDOConnectionTestStub extends \PHPixie\Database\Driver\PDO\Connection
 {
-    protected function buildPdo($connection, $user, $password, $options)
+    protected function buildPdoInstance($connection, $user, $password, $options)
     {
         if (substr($connection, 0, 7) != 'sqlite:' || $user != 'test' || $password != 5 || $options !== array('someOption' => 5))
             throw new \Exception("Parameters don't match expected");
 
-        return parent::buildPdo($connection, $user, $password, array());
+        return parent::buildPdoInstance($connection, $user, $password, array());
     }
 
     public function setPdo($pdo)
@@ -19,6 +19,11 @@ class PDOConnectionTestStub extends \PHPixie\Database\Driver\PDO\Connection
     public function setAdapter($adapter)
     {
         $this->adapter = $adapter;
+    }
+    
+    public function getPdoProperty()
+    {
+        return $this->pdo;
     }
 }
 
@@ -64,7 +69,7 @@ class ConnectionTest extends \PHPixie\Tests\Database\Type\SQL\ConnectionTest
     public function testDisconnect()
     {
         $this->connection->disconnect();
-        $this->assertSame(null, $this->connection->pdo());
+        $this->assertSame(null, $this->connection->getPdoProperty());
     }
 
     /**
@@ -223,6 +228,7 @@ class ConnectionTest extends \PHPixie\Tests\Database\Type\SQL\ConnectionTest
             'connectionOptions' => 5
         ));
         $connection = new \PHPixie\Database\Driver\PDO\Connection($this->database->driver('pdo'), 'test', $config);
+        $connection->pdo();
     }
 
 }

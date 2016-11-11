@@ -9,7 +9,7 @@ class Connection extends \PHPixie\Database\Connection
     protected $database;
     protected $lastInsertId;
 
-    public function connect()
+    protected function buildClient()
     {
         $config = $this->config;
         
@@ -30,7 +30,7 @@ class Connection extends \PHPixie\Database\Connection
         $this->databaseName = $config->get('database', null);
         $uriOptions['database'] = $this->databaseName;
         
-        $this->client = $this->buildMongoClient($config->get('connection'), $uriOptions, $driverOptions);
+        return $this->buildMongoClient($config->get('connection'), $uriOptions, $driverOptions);
     }
     
     public function disconnect()
@@ -70,6 +70,10 @@ class Connection extends \PHPixie\Database\Connection
 
     public function client()
     {
+        if($this->client === null) {
+            $this->client = $this->buildClient();
+        }
+        
         return $this->client;
     }
 

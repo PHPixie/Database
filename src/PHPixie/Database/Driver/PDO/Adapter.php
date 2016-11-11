@@ -35,6 +35,12 @@ abstract class Adapter
         $this->connection->execute('SAVEPOINT '.$name);
     }
     
+    public function preparePdo($pdo)
+    {
+        
+    }
+    
     abstract public function listColumns($table);
-
+    abstract public function dsn($withDatabase = true);
+    abstract public function name();
 }
