@@ -94,22 +94,22 @@ class Connection extends \PHPixie\Database\Type\SQL\Connection
     
     public function beginTransaction()
     {
-        $this->pdo->beginTransaction();
+        $this->pdo()->beginTransaction();
     }
     
     public function commitTransaction()
     {
-        $this->pdo->commit();
+        $this->pdo()->commit();
     }
     
     public function rollbackTransaction()
     {
-        $this->pdo->rollBack();
+        $this->pdo()->rollBack();
     }
     
     public function inTransaction()
     {
-        return $this->pdo->inTransaction();
+        return $this->pdo()->inTransaction();
     }
     
     public function rollbackTransactionTo($savepoint)
