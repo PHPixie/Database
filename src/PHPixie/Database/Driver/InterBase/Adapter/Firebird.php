@@ -32,6 +32,9 @@ class Firebird extends \PHPixie\Database\Driver\PDO\Adapter
             if($withDatabase) {
                 $dsn .= $this->config->getRequired('database');
             }
+            if($charset = $this->config->get('charset')) {
+                $dsn .= ';charset=' . $charset;
+            }
         }
 
         return $dsn;
