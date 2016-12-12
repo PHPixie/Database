@@ -39,6 +39,14 @@ abstract class Driver
     }
 
     /**
+     * @return \Psr\Log\LoggerInterface|null
+     */
+    public function logger()
+    {
+        return $this->database->logger();
+    }
+    
+    /**
      * @return Conditions
      */
     public function conditions()

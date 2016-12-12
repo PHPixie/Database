@@ -67,6 +67,11 @@ class Connection extends \PHPixie\Database\Type\SQL\Connection
 
     public function execute($query, $params = array())
     {
+        $logger = $this->driver->logger();
+        if($logger !== null) {
+            $logger->debug($query, $params);
+        }
+        
         $cursor = $this->pdo()->prepare($query);
         $cursor->execute($params);
 

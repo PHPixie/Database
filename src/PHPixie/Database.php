@@ -8,6 +8,11 @@ class Database
      * @var \PHPixie\Slice\Type\ArrayData
      */
     protected $config;
+    
+    /**
+     * @var \Psr\Log\LoggerInterface|null
+     */
+    protected $logger;
 
     /**
      * @var Database\Values
@@ -38,10 +43,12 @@ class Database
 
     /**
      * @param \PHPixie\Slice\Type\ArrayData $config
+     * @param \Psr\Log\LoggerInterface
      */
-    public function __construct($config)
+    public function __construct($config, $logger = null)
     {
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     /**
@@ -124,6 +131,14 @@ class Database
             $this->sql = $this->buildSql();
 
         return $this->sql;
+    }
+    
+    /**
+     * @return \Psr\Log\LoggerInterface|null
+     */
+    public function logger()
+    {
+        return $this->logger;
     }
 
     /**

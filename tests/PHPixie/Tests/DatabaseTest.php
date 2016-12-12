@@ -9,11 +9,13 @@ class DatabaseTest extends \PHPixie\Tests\AbstractDatabaseTest
 {
     protected $config;
     protected $database;
+    protected $logger;
 
     public function setUp()
     {
         $this->config = $this->getSliceData();
-        $this->database = new \PHPixie\Database($this->config);
+        $this->logger = $this->quickMock('\Psr\Log\LoggerInterface');
+        $this->database = new \PHPixie\Database($this->config, $this->logger);
     }
     
     /**
@@ -23,6 +25,15 @@ class DatabaseTest extends \PHPixie\Tests\AbstractDatabaseTest
     public function testConstruct()
     {
     
+    }
+    
+    /**
+     * @covers ::logger
+     * @covers ::<protected>
+     */
+    public function testLogger()
+    {
+        $this->assertSame($this->logger, $this->database->logger());
     }
     
     /**

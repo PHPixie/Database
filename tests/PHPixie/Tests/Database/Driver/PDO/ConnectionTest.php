@@ -64,6 +64,24 @@ class ConnectionTest extends \PHPixie\Tests\Database\Type\SQL\ConnectionTest
     }
     
     /**
+     * @covers ::execute
+     */
+    public function testExecuteLogger()
+    {
+        $logger = $this->quickMock('\Psr\Log\LoggerInterface');
+        $this->method($this->driver, 'logger', $logger);
+        
+        $query = "INSERT INTO fairies(id,name) VALUES (1,'Tinkerbell')";
+        $this->method($logger, 'debug', null, array($query, array()), 0);
+        $this->connection->execute($query);
+        
+        $query = "Select * from fairies where id = ?";
+        $this->method($logger, 'debug', null, array($query, array(1)), 0);
+        $result = $this->connection->execute($query, array(1));
+        $this->assertEquals(array((object) array('id'=>1, 'name'=>'Tinkerbell')), $result->asArray());
+    }
+    
+    /**
      * @covers ::disconnect
      */
     public function testDisconnect()
@@ -198,7 +216,7 @@ class ConnectionTest extends \PHPixie\Tests\Database\Type\SQL\ConnectionTest
         $this->pdoProperty = $reflection->getProperty('pdo');
         $this->pdoProperty->setAccessible(true);
 
-        $this->driver = $this->getMock('\PHPixie\Database\Driver\PDO', array('query'), array($this->database));
+        $this->driver = $this->getMock('\PHPixie\Database\Driver\PDO', array('query', 'logger'), array($this->database));
         $this->connection = new PDOConnectionTestStub($this->driver, 'test', $this->config);
         $this->connection->execute("CREATE TABLE fairies(id INT PRIMARY_KEY,name VARCHAR(255))");
         $this->database

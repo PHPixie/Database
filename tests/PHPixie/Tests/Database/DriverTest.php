@@ -16,7 +16,7 @@ abstract class DriverTest extends \PHPixie\Tests\AbstractDatabaseTest
 
     public function setUp()
     {
-        $this->database = $this->getMock('\PHPixie\Database', array('get', 'parser'), array(null));
+        $this->database = $this->getMock('\PHPixie\Database', array('get', 'parser', 'logger'), array(null));
     }
     
     /**
@@ -26,7 +26,18 @@ abstract class DriverTest extends \PHPixie\Tests\AbstractDatabaseTest
     {
         
     }
-
+    
+    /**
+     * @covers ::logger
+     * @covers ::<protected>
+     */
+    public function testLogger()
+    {
+        $logger = $this->quickMock('\Psr\Log\LoggerInterface');
+        $this->method($this->database, 'logger', $logger);
+        $this->assertSame($logger, $this->database->logger());
+    }
+    
     /**
      * @covers ::conditions
      * @covers ::buildConditions
