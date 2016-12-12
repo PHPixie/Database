@@ -14,22 +14,24 @@ abstract class Driver
      * @var Database
      */
     protected $database;
+
     /**
-     * @var mixed
+     * @var Conditions
      */
     protected $conditions;
+
     /**
-     * @var array
+     * @var Parser[]
      */
     protected $parsers =  array();
     /**
-     * @var array
+     * @var Connection[] ???
      */
     protected $connections = array();
 
     /**
      * Driver constructor.
-     * @param $database Database
+     * @param Database $database
      */
     public function __construct($database)
     {
@@ -37,7 +39,7 @@ abstract class Driver
     }
 
     /**
-     * @return mixed
+     * @return Conditions
      */
     public function conditions()
     {
@@ -48,7 +50,7 @@ abstract class Driver
     }
 
     /**
-     * @param $connectionName string
+     * @param string $connectionName
      * @return Parser
      */
     public function parser($connectionName)
@@ -62,7 +64,7 @@ abstract class Driver
     /**
      * @param string $type
      * @param string $connectionName
-     * @return mixed
+     * @return Query\Implementation
      */
     public function query($type = 'select', $connectionName = 'default')
     {
@@ -74,40 +76,40 @@ abstract class Driver
     }
 
     /**
-     * @return mixed
+     * @return Query\Implementation\Builder
      */
     abstract public function queryBuilder();
 
     /**
-     * @return mixed
+     * @return Conditions
      */
     abstract public function buildConditions();
 
     /**
-     * @param $name string
-     * @param $config array
-     * @return mixed
+     * @param string $name
+     * @param \PHPixie\Slice\Type\ArrayData\Slice $config
+     * @return Connection
      */
     abstract public function buildConnection($name, $config);
 
     /**
-     * @param $connectionName string
+     * @param string $connectionName
      * @return mixed
      */
     abstract public function buildParserInstance($connectionName);
 
     /**
-     * @param $type string
-     * @param $connection
-     * @param $parser
-     * @param $builder
-     * @return mixed
+     * @param string $type
+     * @param Connection $connection
+     * @param Parser $parser
+     * @param Query\Implementation\Builder $builder
+     * @return Query\Implementation
      */
     abstract public function buildQuery($type, $connection, $parser, $builder);
 
     /**
      * @param $cursor
-     * @return mixed
+     * @return Result
      */
     abstract public function result($cursor);
 }

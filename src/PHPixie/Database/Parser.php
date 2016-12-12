@@ -15,6 +15,10 @@ abstract class Parser
         $this->config = $config;
     }
 
+    /**
+     * @param Query $query
+     * @return \PHPixie\Database\Type\SQL\Expression
+     */
     abstract public function parse($query);
 
 }
