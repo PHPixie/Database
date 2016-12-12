@@ -12,6 +12,7 @@ interface Items extends \PHPixie\Database\Query, \PHPixie\Database\Conditions\Bu
     public function clearOffset();
     public function getOffset();
 
+    public function orderBy($field, $direction);
     public function orderAscendingBy($field);
     public function orderDescendingBy($field);
     public function clearOrderBy();

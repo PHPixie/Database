@@ -34,6 +34,11 @@ abstract class Builder
         $this->setValue('offset', $offset);
     }
 
+    public function addOrderBy($field, $direction)
+    {
+        $this->addToArray('orderBy', $this->valueBuilder->orderBy($field, $direction));
+    }
+
     public function addOrderAscendingBy($field)
     {
         $this->addToArray('orderBy', $this->valueBuilder->orderBy($field, 'asc'));

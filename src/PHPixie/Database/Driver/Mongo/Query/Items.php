@@ -42,6 +42,13 @@ abstract class Items extends Item implements \PHPixie\Database\Type\Document\Que
         return $this->builder->getValue('offset');
     }
 
+    public function orderBy($field, $direction)
+    {
+        $this->builder->addOrderBy($field, $direction);
+
+        return $this;
+    }
+
     public function orderAscendingBy($field)
     {
         $this->builder->addOrderAscendingBy($field);
