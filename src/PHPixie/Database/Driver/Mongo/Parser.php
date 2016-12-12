@@ -6,12 +6,26 @@ class Parser extends \PHPixie\Database\Parser
 {
     protected $conditionsParser;
 
+    /**
+     * Parser constructor.
+     *
+     * @param $database
+     * @param $driver
+     * @param $config
+     * @param $conditionsParser
+     */
     public function __construct($database, $driver, $config, $conditionsParser)
     {
         parent::__construct($database, $driver, $config);
         $this->conditionsParser = $conditionsParser;
     }
 
+    /**
+     * @param \PHPixie\Database\Query $query
+     *
+     * @return mixed
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     public function parse($query)
     {
         $runner = $this->driver->runner();;
@@ -33,6 +47,13 @@ class Parser extends \PHPixie\Database\Parser
         }
     }
 
+    /**
+     * @param $query
+     * @param $runner
+     *
+     * @return mixed
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function selectQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
@@ -65,11 +86,23 @@ class Parser extends \PHPixie\Database\Parser
         return $runner;
     }
 
+    /**
+     * @param $fields
+     *
+     * @return array
+     */
     protected function fieldKeys($fields)
     {
         return array_fill_keys($fields, 1);
     }
 
+    /**
+     * @param $query
+     * @param $runner
+     *
+     * @return mixed
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function selectSingleQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
@@ -83,6 +116,13 @@ class Parser extends \PHPixie\Database\Parser
         return $runner;
     }
 
+    /**
+     * @param $query
+     * @param $runner
+     *
+     * @return mixed
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function insertQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
@@ -97,6 +137,13 @@ class Parser extends \PHPixie\Database\Parser
         return $runner;
     }
 
+    /**
+     * @param $query
+     * @param $runner
+     *
+     * @return mixed
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function updateQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
@@ -122,6 +169,13 @@ class Parser extends \PHPixie\Database\Parser
         return $runner;
     }
 
+    /**
+     * @param $query
+     * @param $runner
+     *
+     * @return mixed
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function deleteQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
@@ -131,6 +185,13 @@ class Parser extends \PHPixie\Database\Parser
         return $runner;
     }
 
+    /**
+     * @param $query
+     * @param $runner
+     *
+     * @return mixed
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function countQuery($query, $runner)
     {
         $this->chainCollection($query, $runner);
@@ -140,6 +201,12 @@ class Parser extends \PHPixie\Database\Parser
         return $runner;
     }
 
+    /**
+     * @param $query
+     * @param $runner
+     *
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function chainCollection($query, $runner)
     {
         if (($collection = $query->getCollection()) !== null) {
