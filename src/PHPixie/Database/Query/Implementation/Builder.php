@@ -4,62 +4,130 @@ namespace PHPixie\Database\Query\Implementation;
 
 abstract class Builder
 {
+
     protected $conditions;
+
     protected $valueBuilder;
-    protected $values = array();
-    protected $arrays = array();
+
+    /**
+     * @var array
+     */
+    protected $values              = array();
+
+    /**
+     * @var array
+     */
+    protected $arrays              = array();
+
+    /**
+     * @var array
+     */
     protected $conditionContainers = array();
+
+    /**
+     * @var
+     */
     protected $defaultContainer;
 
+    /**
+     * Builder constructor.
+     *
+     * @param $conditions
+     * @param $valueBuilder
+     */
     public function __construct($conditions, $valueBuilder)
     {
         $this->conditions = $conditions;
         $this->valueBuilder = $valueBuilder;
     }
 
+    /**
+     * @param $args
+     */
     public function addFields($args)
     {
         $this->addValuesToArray('fields', $args, true);
     }
 
+    /**
+     * @param $limit
+     *
+     * @throws \PHPixie\Database\Exception\Builder
+     */
     public function setLimit($limit)
     {
         $this->assert(is_numeric($limit), "Limit must be a number");
         $this->setValue('limit', $limit);
     }
 
+    /**
+     * @param $offset
+     *
+     * @throws \PHPixie\Database\Exception\Builder
+     */
     public function setOffset($offset)
     {
         $this->assert(is_numeric($offset), "Offset must be a number");
         $this->setValue('offset', $offset);
     }
 
+    /**
+     * @param $field
+     * @param $direction
+     */
+    public function addOrderBy($field, $direction)
+    {
+        $this->addToArray('orderBy', $this->valueBuilder->orderBy($field, $direction));
+    }
+
+    /**
+     * @param $field
+     */
     public function addOrderAscendingBy($field)
     {
         $this->addToArray('orderBy', $this->valueBuilder->orderBy($field, 'asc'));
     }
 
+    /**
+     * @param $field
+     */
     public function addOrderDescendingBy($field)
     {
         $this->addToArray('orderBy', $this->valueBuilder->orderBy($field, 'desc'));
     }
 
+    /**
+     * @param $args
+     */
     public function addSet($args)
     {
         $this->addKeyValuesToArray('set', $args, true);
     }
 
+    /**
+     * @param $data
+     *
+     * @throws \PHPixie\Database\Exception\Builder
+     */
     public function setData($data)
     {
         $this->assert(is_array($data), "Data must be an array");
         $this->setValue('data', $data);
     }
 
+    /**
+     * @param $name
+     */
     public function clearValue($name)
     {
         $this->values[$name] = null;
     }
 
+    /**
+     * @param $name
+     *
+     * @return mixed|null
+     */
     public function getValue($name)
     {
         if(!array_key_exists($name, $this->values))
@@ -69,17 +137,29 @@ abstract class Builder
         return $this->values[$name];
     }
 
+    /**
+     * @param $name
+     * @param $value
+     */
     protected function setValue($name, $value)
     {
         $this->values[$name] = $value;
     }
 
+    /**
+     * @param $name
+     */
     public function clearArray($name)
     {
         if(array_key_exists($name, $this->arrays))
             unset($this->arrays[$name]);
     }
 
+    /**
+     * @param $name
+     *
+     * @return array|mixed
+     */
     public function getArray($name)
     {
         if(!array_key_exists($name, $this->arrays))
@@ -89,18 +169,30 @@ abstract class Builder
         return $this->arrays[$name];
     }
 
+    /**
+     * @param $name
+     */
     protected function ensureArray($name)
     {
         if(!array_key_exists($name, $this->arrays))
             $this->arrays[$name] = array();
     }
 
+    /**
+     * @param $name
+     * @param $value
+     */
     protected function addToArray($name, $value)
     {
         $this->ensureArray($name);
         $this->arrays[$name][]= $value;
     }
 
+    /**
+     * @param      $name
+     * @param      $args
+     * @param bool $unique
+     */
     protected function addValuesToArray($name, $args, $unique = false)
     {
         $values = $args[0];
@@ -114,6 +206,15 @@ abstract class Builder
                 $this->arrays[$name][]= $value;
     }
 
+    /**
+     * @param      $name
+     * @param      $args
+     * @param bool $requireKeys
+     * @param bool $firstParameterIsKey
+     * @param bool $assertIsNumeric
+     *
+     * @throws \PHPixie\Database\Exception\Builder
+     */
     protected function addKeyValuesToArray($name, $args, $requireKeys = false, $firstParameterIsKey = true, $assertIsNumeric = false)
     {
         $array = $args[0];
@@ -147,6 +248,11 @@ abstract class Builder
         }
     }
 
+    /**
+     * @param null $name
+     *
+     * @return mixed
+     */
     public function conditionContainer($name = null)
     {
         if ($name === null) {
@@ -164,6 +270,11 @@ abstract class Builder
         return $this->defaultContainer;
     }
 
+    /**
+     * @param $name
+     *
+     * @return array
+     */
     public function getConditions($name)
     {
         if (!isset($this->conditionContainers[$name]))
@@ -172,36 +283,78 @@ abstract class Builder
         return $this->conditionContainers[$name]->getConditions();
     }
 
+    /**
+     * @param      $logic
+     * @param      $negate
+     * @param      $condition
+     * @param null $containerName
+     */
     public function addCondition($logic, $negate, $condition, $containerName = null)
     {
         $this->conditionContainer($containerName)->addCondition($logic, $negate, $condition);
     }
-    
+
+    /**
+     * @param      $logic
+     * @param      $negate
+     * @param      $args
+     * @param null $containerName
+     */
     public function buildCondition($logic, $negate, $args, $containerName = null)
     {
         $this->conditionContainer($containerName)->buildCondition($logic, $negate, $args);
     }
 
+    /**
+     * @param      $logic
+     * @param      $negate
+     * @param      $field
+     * @param      $operator
+     * @param      $values
+     * @param null $containerName
+     */
     public function addOperatorCondition($logic, $negate, $field, $operator, $values, $containerName = null)
     {
         $this->conditionContainer($containerName)->addOperatorCondition($logic, $negate, $field, $operator, $values);
     }
-    
+
+    /**
+     * @param string $logic
+     * @param bool   $negate
+     * @param null   $containerName
+     */
     public function startConditionGroup($logic = 'and', $negate = false, $containerName = null)
     {
         $this->conditionContainer($containerName)->startConditionGroup($logic, $negate);
     }
 
+    /**
+     * @param null $containerName
+     */
     public function endConditionGroup($containerName = null)
     {
         $this->conditionContainer($containerName)->endGroup();
     }
-    
+
+    /**
+     * @param string $logic
+     * @param bool   $negate
+     * @param bool   $allowEmpty
+     * @param null   $containerName
+     *
+     * @return mixed
+     */
     public function addPlaceholder($logic = 'and', $negate = false, $allowEmpty = true, $containerName = null)
     {
         return $this->conditionContainer($containerName)->addPlaceholder($logic, $negate, $allowEmpty);
     }
 
+    /**
+     * @param $condition
+     * @param $exceptionMessage
+     *
+     * @throws \PHPixie\Database\Exception\Builder
+     */
     public function assert($condition, $exceptionMessage)
     {
         if(!$condition)

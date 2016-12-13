@@ -8,6 +8,15 @@ abstract class Parser extends \PHPixie\Database\Parser
     protected $conditionsParser;
     protected $supportedJoins;
 
+    /**
+     * Parser constructor.
+     *
+     * @param $database
+     * @param $driver
+     * @param $config
+     * @param $fragmentParser
+     * @param $conditionsParser
+     */
     public function __construct($database, $driver, $config, $fragmentParser, $conditionsParser)
     {
         parent::__construct($database, $driver, $config);
@@ -15,6 +24,12 @@ abstract class Parser extends \PHPixie\Database\Parser
         $this->conditionsParser = $conditionsParser;
     }
 
+    /**
+     * @param \PHPixie\Database\Query $query
+     *
+     * @return mixed
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     public function parse($query)
     {
         $expr = $this->database->sqlExpression();
@@ -43,6 +58,12 @@ abstract class Parser extends \PHPixie\Database\Parser
         return $expr;
     }
 
+    /**
+     * @param $query
+     * @param $expr
+     *
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function selectQuery($query, $expr)
     {
         $expr->sql = "SELECT ";
@@ -62,6 +83,12 @@ abstract class Parser extends \PHPixie\Database\Parser
         $this->appendUnion($query, $expr);
     }
 
+    /**
+     * @param $query
+     * @param $expr
+     *
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function insertQuery($query, $expr)
     {
         $expr->sql = "INSERT INTO ";
@@ -70,6 +97,13 @@ abstract class Parser extends \PHPixie\Database\Parser
         $this->appendInsertValues($query, $expr);
     }
 
+    /**
+     * @param $query
+     * @param $expr
+     *
+     * @return mixed
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function updateQuery($query, $expr)
     {
         $expr->sql = "UPDATE ";
@@ -84,6 +118,13 @@ abstract class Parser extends \PHPixie\Database\Parser
         return $expr;
     }
 
+    /**
+     * @param $query
+     * @param $expr
+     *
+     * @return mixed
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function deleteQuery($query, $expr)
     {
         $expr->sql = "DELETE FROM ";
@@ -97,6 +138,12 @@ abstract class Parser extends \PHPixie\Database\Parser
         return $expr;
     }
 
+    /**
+     * @param $query
+     * @param $expr
+     *
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function countQuery($query, $expr)
     {
         $expr->sql .= "SELECT COUNT(1) AS ";
@@ -107,6 +154,13 @@ abstract class Parser extends \PHPixie\Database\Parser
         $this->appendConditions('where', $query->getWhereConditions(), $expr);
     }
 
+    /**
+     * @param      $query
+     * @param      $expr
+     * @param bool $required
+     *
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function appendTable($query, $expr, $required = false)
     {
         $table = $query->getTable();
@@ -119,6 +173,12 @@ abstract class Parser extends \PHPixie\Database\Parser
         $this->fragmentParser->appendTable($table['table'], $expr, $table['alias']);
     }
 
+    /**
+     * @param $query
+     * @param $expr
+     *
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function appendInsertValues($query, $expr)
     {
         if (($insertData = $query->getBatchData()) !== null) {
@@ -178,11 +238,20 @@ abstract class Parser extends \PHPixie\Database\Parser
 
     }
 
+    /**
+     * @param $expr
+     */
     protected function appendEmptyInsertValues($expr)
     {
         $expr->sql.= "() VALUES ()";
     }
 
+    /**
+     * @param $query
+     * @param $expr
+     *
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function appendUpdateValues($query, $expr)
     {
         $expr->sql .= " SET ";
@@ -224,6 +293,12 @@ abstract class Parser extends \PHPixie\Database\Parser
         }
     }
 
+    /**
+     * @param $query
+     * @param $expr
+     *
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function appendJoins($query, $expr)
     {
         foreach ($query->getJoins() as $join) {
@@ -237,6 +312,11 @@ abstract class Parser extends \PHPixie\Database\Parser
         }
     }
 
+    /**
+     * @param $prefix
+     * @param $conditions
+     * @param $expr
+     */
     protected function appendConditions($prefix, $conditions, $expr)
     {
         if(empty($conditions))
@@ -247,6 +327,10 @@ abstract class Parser extends \PHPixie\Database\Parser
         $expr->append($this->conditionsParser->parse($conditions));
     }
 
+    /**
+     * @param $query
+     * @param $expr
+     */
     protected function appendGroupBy($query, $expr)
     {
         $groupBy = $query->getGroupBy();
@@ -263,6 +347,10 @@ abstract class Parser extends \PHPixie\Database\Parser
         }
     }
 
+    /**
+     * @param $query
+     * @param $expr
+     */
     protected function appendOrderBy($query, $expr)
     {
         $order = $query->getOrderBy();
@@ -283,6 +371,10 @@ abstract class Parser extends \PHPixie\Database\Parser
         }
     }
 
+    /**
+     * @param $query
+     * @param $expr
+     */
     protected function appendLimitOffset($query, $expr)
     {
         $limit = $query->getLimit();
@@ -290,7 +382,12 @@ abstract class Parser extends \PHPixie\Database\Parser
 
         $this->appendLimitOffsetValues($expr, $limit, $offset);
     }
-    
+
+    /**
+     * @param $expr
+     * @param $limit
+     * @param $offset
+     */
     protected function appendLimitOffsetValues($expr, $limit, $offset)
     {
         if ($limit !== null) {
@@ -302,6 +399,12 @@ abstract class Parser extends \PHPixie\Database\Parser
         }
     }
 
+    /**
+     * @param $query
+     * @param $expr
+     *
+     * @throws \PHPixie\Database\Exception\Parser
+     */
     protected function appendUnion($query, $expr)
     {
         foreach ($query->getUnions() as $union) {
@@ -316,7 +419,13 @@ abstract class Parser extends \PHPixie\Database\Parser
             }
         }
     }
-    
+
+    /**
+     * @param $expr
+     * @param $query
+     *
+     * @return bool
+     */
     protected function appendSubquery($expr, $query)
     {
         if ($query instanceof \PHPixie\Database\Type\SQL\Query && $query->type() === 'select') {
@@ -331,7 +440,11 @@ abstract class Parser extends \PHPixie\Database\Parser
         
         return true;
     }
-    
+
+    /**
+     * @param $query
+     * @param $expr
+     */
     protected function appendFields($query, $expr)
     {
         $fields = $query->getFields();
