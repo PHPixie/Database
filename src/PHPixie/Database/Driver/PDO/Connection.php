@@ -69,7 +69,7 @@ class Connection extends \PHPixie\Database\Type\SQL\Connection
     {
         $logger = $this->driver->logger();
         if($logger !== null) {
-            $logger->debug($query, $params);
+            $logger->debug("[Query {$this->name}]: ".$query, $params);
         }
         
         $cursor = $this->pdo()->prepare($query);

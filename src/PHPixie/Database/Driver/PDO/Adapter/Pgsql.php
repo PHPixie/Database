@@ -31,11 +31,15 @@ class Pgsql extends \PHPixie\Database\Driver\PDO\Adapter
         $dsn = 'pgsql:';
         
         $dsn.='host='.$this->config->get('host', 'localhost');
-        $dsn.=';port='.$this->config->get('port', '3306');
+        $dsn.=';port='.$this->config->get('port', '5432');
+        
+        $database = 'postgres';
         
         if($withDatabase) {
-            $dsn.=';dbname='.$this->config->getRequired('database');
+            $database = $this->config->getRequired('database');
         }
+        
+        $dsn.=';dbname='.$database;
         
         return $dsn;
     }
