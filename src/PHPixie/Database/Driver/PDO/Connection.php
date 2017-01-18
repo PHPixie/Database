@@ -2,6 +2,15 @@
 
 namespace PHPixie\Database\Driver\PDO;
 
+use PHPixie\Database\Driver\PDO\Query\Type as QueryType;
+
+/**
+ * @method QueryType\Select selectQuery()
+ * @method QueryType\Update updateQuery()
+ * @method QueryType\Insert insertQuery()
+ * @method QueryType\Delete deleteQuery()
+ * @method QueryType\Count  countQuery()
+ */
 class Connection extends \PHPixie\Database\Type\SQL\Connection
 {
     protected $adapter;
