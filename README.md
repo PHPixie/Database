@@ -1,6 +1,6 @@
 # PHPixie Database
 
-Supports a common query interface for MySQL, PostgreSQl, SQLite and MongoDB
+Supports a common query interface for MySQL, PostgreSQL, SQLite and MongoDB
 
 [![Build Status](https://travis-ci.org/PHPixie/Database.svg?branch=master)](https://travis-ci.org/PHPixie/Database)
 [![Test Coverage](https://codeclimate.com/github/PHPixie/Database/badges/coverage.svg)](https://codeclimate.com/github/PHPixie/Database)
