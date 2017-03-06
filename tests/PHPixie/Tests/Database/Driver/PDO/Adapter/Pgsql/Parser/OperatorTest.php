@@ -6,6 +6,11 @@ namespace PHPixie\Tests\Database\Driver\PDO\Adapter\Pgsql\Parser;
  */
 class OperatorTest extends \PHPixie\Tests\Database\Type\SQL\Parser\OperatorTest
 {
+    /**
+     * List of expected results from parser
+     *
+     * @var array
+     */
     protected $expected = array(
         array('"a" = ?', array(1)),
         array('"a" = la', array()),
@@ -25,8 +30,32 @@ class OperatorTest extends \PHPixie\Tests\Database\Type\SQL\Parser\OperatorTest
         array('"a" BETWEEN ? AND ?', array(1, 2)),
         array('"a" NOT BETWEEN ? AND ?', array(1, 2)),
         array('"a"."b" = b', array(1)),
-        array('a + b = ?', array(1))
+        array('a + b = ?', array(1)),
+        array('"a" >> ?', array(1)),
+        array('"a" >>= ?', array(1)),
+        array('"a" << ?', array(1)),
+        array('"a" <<= ?', array(1)),
     );
+
+    /**
+     * @inheritdoc
+     */
+    protected function conditions()
+    {
+        return array_merge(
+            parent::conditions(),
+            array(
+                $this->operator('a', '>>', array(1)),
+                $this->operator('a', '>>=', array(1)),
+                $this->operator('a', '<<', array(1)),
+                $this->operator('a', '<<=', array(1)),
+            )
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function setUp()
     {
         parent::setUp();

@@ -20,5 +20,10 @@ abstract class OperatorTest extends \PHPixie\Tests\AbstractDatabaseTest
         }
     }
 
+    /**
+     * List of conditions to parse
+     *
+     * @return array
+     */
     abstract protected function conditions();
 }
