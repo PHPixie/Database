@@ -6,7 +6,7 @@ class Mysql extends \PHPixie\Database\Driver\PDO\Adapter
 {
     public function preparePdo($pdo)
     {
-        $pdo->exec("SET NAMES utf8");
+        $pdo->exec("SET NAMES " . $this->config->get('charset', 'utf8'));
     }
 
     public function listColumns($table)
