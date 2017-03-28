@@ -13,10 +13,13 @@
         }
     ],
     "require": {
+        "php": ">=5.4.0",
         "phpixie/slice": "~3.0",
         "psr/log": "~1.0.2"
     },
     "require-dev": {
+        "ext-pdo": "*",
+        "ext-pdo_sqlite": "*",
         "phpixie/test": "~3.0"
     },
     "suggest": {
