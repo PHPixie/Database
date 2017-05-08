@@ -35,6 +35,7 @@ class OperatorTest extends \PHPixie\Tests\Database\Type\SQL\Parser\OperatorTest
         array('"a" >>= ?', array(1)),
         array('"a" << ?', array(1)),
         array('"a" <<= ?', array(1)),
+        array('"a" && ?', array('{1}')),
     );
 
     /**
@@ -49,6 +50,7 @@ class OperatorTest extends \PHPixie\Tests\Database\Type\SQL\Parser\OperatorTest
                 $this->operator('a', '>>=', array(1)),
                 $this->operator('a', '<<', array(1)),
                 $this->operator('a', '<<=', array(1)),
+                $this->operator('a', '&&', array('{1}')),
             )
         );
     }

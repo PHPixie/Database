@@ -10,7 +10,7 @@ class Operator extends \PHPixie\Database\Type\SQL\Parser\Operator
      * @var array
      */
     protected $additionalOperators = array(
-        'compare'   => array('>>', '>>=', '<<', '<<=',),
+        'compare'   => array('>>', '>>=', '<<', '<<=', '&&',),
     );
 
     /**
