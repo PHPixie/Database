@@ -35,8 +35,26 @@ class OperatorTest extends \PHPixie\Tests\Database\Type\SQL\Parser\OperatorTest
         array('"a" >>= ?', array(1)),
         array('"a" << ?', array(1)),
         array('"a" <<= ?', array(1)),
-        array('"a" && ?', array('{1}')),
+        array('"a" && ?', array('{1}')), // single value instead of array
+        array('"a" && ?', array('{1,2,3}')),
+        array('"a" && ?', array('{1,2,3}')),
+        array('"a" @> ?', array('{1,2,3}')),
+        array('"a" @> ?', array('{1,2,3}')),
+        array('"a" <@ ?', array('{1,2,3}')),
+        array('"a" <@ ?', array('{1,2,3}')),
     );
+
+    /**
+     * @inheritdoc
+     */
+    protected function exceptionConditions()
+    {
+        return array_merge(parent::exceptionConditions(),
+            array(
+                $this->operator('a', '&&', array(array('text not supported'))),
+            )
+        );
+    }
 
     /**
      * @inheritdoc
@@ -50,7 +68,13 @@ class OperatorTest extends \PHPixie\Tests\Database\Type\SQL\Parser\OperatorTest
                 $this->operator('a', '>>=', array(1)),
                 $this->operator('a', '<<', array(1)),
                 $this->operator('a', '<<=', array(1)),
-                $this->operator('a', '&&', array('{1}')),
+                $this->operator('a', '&&', array(1)), // single value instead of array
+                $this->operator('a', '&&', array(array(1, 2, 3))),
+                $this->operator('a', 'overlap', array(array(1, 2, 3))),
+                $this->operator('a', '@>', array(array(1, 2, 3))),
+                $this->operator('a', 'contains', array(array(1, 2, 3))),
+                $this->operator('a', '<@', array(array(1, 2, 3))),
+                $this->operator('a', 'contained', array(array(1, 2, 3))),
             )
         );
     }
