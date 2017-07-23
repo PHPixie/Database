@@ -4,7 +4,14 @@ namespace PHPixie\Database\Type\SQL\Parser;
 
 abstract class Operator extends \PHPixie\Database\Parser\Operator
 {
+    /**
+     * @var \PHPixie\Database
+     */
     protected $database;
+
+    /**
+     * @var \PHPixie\Database\Type\SQL\Parser\Fragment
+     */
     protected $fragmentParser;
 
     protected $operators = array(
