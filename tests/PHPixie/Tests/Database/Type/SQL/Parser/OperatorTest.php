@@ -31,6 +31,11 @@ abstract class OperatorTest extends \PHPixie\Tests\Database\Parser\OperatorTest
         }
     }
 
+    /**
+     * Prepare conditions that should fire \PHPixie\Database\Exception\Parser
+     *
+     * @return array
+     */
     protected function exceptionConditions()
     {
         $conditions = array(
