@@ -21,6 +21,8 @@ abstract class Parser extends \PHPixie\Database\Parser
     {
         parent::__construct($database, $driver, $config);
         $this->fragmentParser = $fragmentParser;
+        if(is_object($config)) // while unittest, $config is a string 'config' and $fragmentParser is 'fragmentParser'
+            $fragmentParser->setPrefix($config->get('prefix'));
         $this->conditionsParser = $conditionsParser;
     }
 
@@ -32,6 +34,17 @@ abstract class Parser extends \PHPixie\Database\Parser
      */
     public function parse($query)
     {
+        // this prevent fails while unittest, because thile testing, $this->fragmentParser is a string 'fragmentParser'
+        if(is_object($this->fragmentParser) and method_exists($query,'getJoins')) {
+            // build "real" table names list. They will be prepended with prefix. All other names are alias, they won't be changed
+            $tables=array();
+            $tables[]=$query->getTable('table')['table'];
+            foreach($query->getJoins() as $joinTable){
+                $tables[]=$joinTable['table'];
+            }
+            $this->fragmentParser->setTables($tables);
+        }
+
         $expr = $this->database->sqlExpression();
         $type = $query->type();
 
@@ -184,52 +197,52 @@ abstract class Parser extends \PHPixie\Database\Parser
         if (($insertData = $query->getBatchData()) !== null) {
             $columns = $insertData['columns'];
             $rows    = $insertData['rows'];
-        
+
         }elseif(($data = $query->getData()) !== null) {
             $columns = array_keys($data);
             $rows    = array(array_values($data));
-             
+
         }else{
             $columns  = array();
             $rows     = array();
         }
-        
+
         if (empty($columns) && empty($rows) ) {
             return $this->appendEmptyInsertValues($expr);
         }
 
         if (!empty($columns)) {
             $expr->sql .= "(";
-            
+
             foreach ($columns as $key => $column) {
                 if($key > 0)
                     $expr->sql.= ', ';
                 $this->fragmentParser->appendColumn($column, $expr);
             }
-            
+
             $expr->sql .= ")";
-            
+
         }
-        
+
         $expr->sql .= " ";
 
         if (!$this->appendSubquery($expr, $rows)) {
             $expr->sql .="VALUES ";
             $columnsCount = count($columns);
-            
+
             foreach ($rows as $rowKey => $row) {
-                
+
                 if (count($row) != $columnsCount)
                     throw new \PHPixie\Database\Exception\Parser("The number of keys does not match the number of values for bulk insert.");
-                
+
                 if($rowKey > 0)
                     $expr->sql.= ', ';
-                
+
                 $expr->sql.= '(';
                 foreach ($row as $valueKey => $value) {
                     if($valueKey > 0)
                         $expr->sql.= ', ';
-                    
+
                     $this->fragmentParser->appendValue($value, $expr);
                 }
                 $expr->sql.= ')';
@@ -393,7 +406,7 @@ abstract class Parser extends \PHPixie\Database\Parser
         if ($limit !== null) {
             $expr->sql.= " LIMIT $limit";
         }
-        
+
         if ($offset !== null) {
             $expr->sql.=" OFFSET $offset";
         }
@@ -413,7 +426,7 @@ abstract class Parser extends \PHPixie\Database\Parser
             $expr->sql.= " UNION ";
             if ($all)
                 $expr->sql.= "ALL ";
-            
+
             if (!$this->appendSubquery($expr, $query)) {
                 throw new \PHPixie\Database\Exception\Parser("Union parameter must be either a SELECT Query object or SQL expression object");
             }
@@ -430,14 +443,14 @@ abstract class Parser extends \PHPixie\Database\Parser
     {
         if ($query instanceof \PHPixie\Database\Type\SQL\Query && $query->type() === 'select') {
             $expr->append($query->parse());
-            
+
         } elseif ($query instanceof \PHPixie\Database\Type\SQL\Expression) {
             $expr->append($query);
-            
+
         }else{
             return false;
         }
-        
+
         return true;
     }
 

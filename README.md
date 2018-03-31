@@ -44,26 +44,41 @@ return array(
     //each with a different name
     'default' => array(
         'driver'     => 'pdo',
-        
+
         //MySQL
         'connection' => 'mysql:host=localhost;dbname=phpixie',
-        
+
         //or SQLite
         'connection' => 'sqlite:/some/file',
-        
+
         //or Postgres
         'connection' => 'pgsql:dbname=exampledb',
-        
+
         'user'       => 'root',
-        'password'   => 'password'
+        'password'   => 'password',
+
+        // if non-standart port used
+        'port'       => 3306,
+
+        // if non-UTF-8 charset used
+        'charset'    => 'utf8',
+
+        // if you use unix sockets to connect to your MySQL database
+        'unixSocket' => '...',
+
+        // prefix for all tables, useful, if you have only one DB and more than one project
+        'prefix'     => 'prefix_',
     ),
-    
+
     'other' => array(
         //connecting to MongoDD
         'driver'   => 'mongo',
         'database' => 'phpixie',
         'user'     => 'pixie',
-        'password' => 'password'
+        'password' => 'password',
+        // additional options
+        'uriOptions' => array(),
+        'driverOptions' => array(),
     )
 );
 ```
@@ -84,7 +99,7 @@ $posts = $query
     ->limit(5)
     ->offset(1)
     ->execute();
-    
+
 // Specifying fields
 $query->fields(array('id'));
 
@@ -101,7 +116,7 @@ $query
     ->where('status', 'published')
     ->orWhereNot('status', 'deleted')
     ->xorWhere('id', 5);
-    
+
 //Shorthand functions
 $query
     ->and('status', 'published')
@@ -125,7 +140,7 @@ $query
             ->where('id', 4)
             ->and('views', 4);
     });
-    
+
 // More verbose syntax
 // Useful for programmatic filters
 $query
@@ -199,7 +214,7 @@ $query->join('categories', 'c', 'left')
 
 $query
     ->on('p.categoryId', 'c.categoryId');
-    
+
 // The on() conditions can be used in
 // the same way as where(), and apply
 // to the last join() statement
@@ -209,7 +224,7 @@ $query
         ->or('p.parentCategoryId', 'c.id')
     ->join('authors')
         ->on('p.authorId', 'authors.id');
-        
+
 // You can use subqueries as tables,
 // but you must supply the alias parameter
 
@@ -353,7 +368,7 @@ $connection->updateQuery()
     ->set('done', true)
     ->unset(array('started', 'inProgress'))
     ->execute();
-    
+
 $connection->insertQuery()
     ->collection('posts')
     ->batchData(array(
@@ -375,7 +390,7 @@ $query
     ->startOrNotSubdocumentGroup('author')
         ->where('name', 'Dracony')
     ->endGroup();
-    
+
 //setting conditions for subarray items
 $query
     ->startOrNotSubarrayItemGroup('authors')

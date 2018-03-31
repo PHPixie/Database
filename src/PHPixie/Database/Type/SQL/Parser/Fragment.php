@@ -5,6 +5,27 @@ namespace PHPixie\Database\Type\SQL\Parser;
 abstract class Fragment
 {
     protected $quote;
+    protected $prefix='';
+    protected $realtables=array();
+
+    public function setPrefix($prefix)
+    {
+        $this->prefix=$prefix;
+    }
+
+    public function setTables($tables)
+    {
+        $this->realtables=array_map(function($data){
+            return is_string($data)?strtolower($data):'';
+        }, $tables);
+    }
+
+    protected function addPrefix($tableOrAlias)
+    {
+        return in_array(strtolower($tableOrAlias),$this->realtables)?
+            $this->prefix.$tableOrAlias:
+            $tableOrAlias;
+    }
 
     public function quote($str)
     {
@@ -18,7 +39,7 @@ abstract class Fragment
 
         if (strpos($column, '.')) {
             $column = explode('.', $column);
-            $expr->sql.= $this->quote($column[0]).'.';
+            $expr->sql.= $this->quote($this->addPrefix($column[0])).'.';
             $column = $column[1];
         }
 
@@ -36,13 +57,15 @@ abstract class Fragment
             $table = explode('.', $table);
             foreach($table as $key => $part) {
                 if($key !== 0) {
-                    $expr->sql.= '.';    
+                    $expr->sql.= '.';
+                }else{
+                    $part=$this->addPrefix($part);
                 }
                 $expr->sql.= $this->quote($part);
             }
-        
-        } elseif ( 
-            ($isQuery = $table instanceof \PHPixie\Database\Type\SQL\Query) || 
+
+        } elseif (
+            ($isQuery = $table instanceof \PHPixie\Database\Type\SQL\Query) ||
             $table instanceof \PHPixie\Database\Type\SQL\Expression
         ) {
 
