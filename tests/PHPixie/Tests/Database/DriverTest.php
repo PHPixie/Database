@@ -33,7 +33,7 @@ abstract class DriverTest extends \PHPixie\Tests\AbstractDatabaseTest
      */
     public function testLogger()
     {
-        $logger = $this->quickMock('\Psr\Log\LoggerInterface');
+        $logger = new \Psr\Log\NullLogger();
         $this->method($this->database, 'logger', $logger);
         $this->assertSame($logger, $this->database->logger());
     }

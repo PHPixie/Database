@@ -68,7 +68,7 @@ class ConnectionTest extends \PHPixie\Tests\Database\Type\SQL\ConnectionTest
      */
     public function testExecuteLogger()
     {
-        $logger = $this->quickMock('\Psr\Log\LoggerInterface');
+        $logger = new \Psr\Log\NullLogger();
         $this->method($this->driver, 'logger', $logger);
         
         $query = "INSERT INTO fairies(id,name) VALUES (1,'Tinkerbell')";
