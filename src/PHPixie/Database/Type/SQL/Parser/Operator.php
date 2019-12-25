@@ -39,7 +39,7 @@ abstract class Operator extends \PHPixie\Database\Parser\Operator
 
     protected function singleValue($values, $operator)
     {
-        if(count($values) !== 1)
+        if($values === null || count($values) !== 1)
             throw new \PHPixie\Database\Exception\Parser(strtoupper($operator)." operator requires a single parameter");
 
         return $values[0];

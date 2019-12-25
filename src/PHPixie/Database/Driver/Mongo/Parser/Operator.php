@@ -124,7 +124,7 @@ class Operator extends \PHPixie\Database\Parser\Operator
 
     protected function parseBetween($field, $operator, $range, $negated, $convertMongoId = false)
     {
-        if (count($range) !== 2)
+        if ($range === null || count($range) !== 2)
             throw new \PHPixie\Database\Exception\Parser("The '$operator' operator requires two parameters to be passed");
         if($operator === 'not between')
             $negated = !$negated;
