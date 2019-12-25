@@ -216,7 +216,7 @@ class ConnectionTest extends \PHPixie\Tests\Database\Type\SQL\ConnectionTest
         $this->pdoProperty = $reflection->getProperty('pdo');
         $this->pdoProperty->setAccessible(true);
 
-        $this->driver = $this->getMock('\PHPixie\Database\Driver\PDO', array('query', 'logger'), array($this->database));
+        $this->driver = $this->quickMock('\PHPixie\Database\Driver\PDO', array('query', 'logger'));
         $this->connection = new PDOConnectionTestStub($this->driver, 'test', $this->config);
         $this->connection->execute("CREATE TABLE fairies(id INT PRIMARY_KEY,name VARCHAR(255))");
         $this->database

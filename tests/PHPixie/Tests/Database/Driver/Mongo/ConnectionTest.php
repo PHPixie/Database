@@ -58,7 +58,7 @@ class ConnectionTest extends \PHPixie\Tests\Database\ConnectionTest
      */
     public function testRunRaw()
     {
-        $runner = $this->getMock('\PHPixie\Database\Driver\Mongo\Query\Runner');
+        $runner = $this->quickMock('\PHPixie\Database\Driver\Mongo\Query\Runner');
         $runner
                 ->expects($this->once())
                 ->method('run')

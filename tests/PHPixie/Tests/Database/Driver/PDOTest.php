@@ -15,17 +15,12 @@ class PDOTest extends \PHPixie\Tests\Database\DriverTest
     public function setUp()
     {
         parent::setUp();
-        $this->connectionStub = $this->getMock('\PHPixie\Database\Driver\PDO\Connection', array('config', 'adapterName'), array(), '', null, false);
+        $this->connectionStub = $this->quickMock('\PHPixie\Database\Driver\PDO\Connection', array('config', 'adapterName'));
         $this->database
                 ->expects($this->any())
                 ->method('get')
                 ->with()
                 ->will($this->returnValue($this->connectionStub));
-        $this->database
-                ->expects($this->any())
-                ->method('parser')
-                ->with ('connectionName')
-                ->will($this->returnValue('parser'));
 
         $this->connectionStub
                         ->expects($this->any())
@@ -53,7 +48,7 @@ class PDOTest extends \PHPixie\Tests\Database\DriverTest
 
     protected function singleAdapterTest($name)
     {
-        $connection = $this->getMock('\PHPixie\Database\Driver\PDO\Connection', array('execute'), array(), '', false);
+        $connection = $this->quickMock('\PHPixie\Database\Driver\PDO\Connection', array('execute'));
         $adapter = $this->driver->adapter($name, 'config', $connection);
         $this->assertInstanceOf('PHPixie\Database\Driver\PDO\Adapter\\'.ucfirst($name), $adapter);
         $this->assertAttributeEquals('config', 'config', $adapter);

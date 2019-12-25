@@ -85,7 +85,7 @@ abstract class OperatorTest extends \PHPixie\Tests\Database\Parser\OperatorTest
 
     protected function queryStub($sql, $params = array())
     {
-        $query = $this->getMock('\PHPixie\Database\Driver\PDO\Query\Type\Select', array('parse'), array(), '', false);
+        $query = $this->quickMock('\PHPixie\Database\Driver\PDO\Query\Type\Select', array('parse'), array(), '', false);
         $query
             ->expects($this->any())
             ->method('parse')

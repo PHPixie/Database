@@ -17,17 +17,12 @@ class MongoTest extends \PHPixie\Tests\Database\DriverTest
     public function setUp()
     {
         parent::setUp();
-        $this->connectionStub = $this->getMock('\PHPixie\Database\Driver\Mongo\Connection', array('config'), array(), '', null, false);
+        $this->connectionStub = $this->quickMock('\PHPixie\Database\Driver\Mongo\Connection', array('config'));
         $this->database
                 ->expects($this->any())
                 ->method('get')
                 ->with()
                 ->will($this->returnValue($this->connectionStub));
-        $this->database
-                ->expects($this->any())
-                ->method('parser')
-                ->with('connectionName')
-                ->will($this->returnValue('parser'));
 
         $this->connectionStub
                             ->expects($this->any())

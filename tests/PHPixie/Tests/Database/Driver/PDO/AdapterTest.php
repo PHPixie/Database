@@ -23,9 +23,9 @@ abstract class AdapterTest extends \PHPixie\Tests\AbstractDatabaseTest
 
     public function setUp()
     {
-        $this->connection = $this->getMock('\PHPixie\Database\Driver\PDO\Connection', array(), array(), '', false);
-        $this->result = $this->getMock('\PHPixie\Database\Driver\PDO\Result', array('getField', 'get'), array(), '', false);
-        $this->pdoStub = $this->getMock('Stub', array('lastInsertId'), array(), '', false );
+        $this->connection = $this->quickMock('\PHPixie\Database\Driver\PDO\Connection');
+        $this->result = $this->quickMock('\PHPixie\Database\Driver\PDO\Result', array('getField', 'get'));
+        $this->pdoStub = $this->quickMock('Stub', array('lastInsertId'));
     }
 
     /**

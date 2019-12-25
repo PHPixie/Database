@@ -16,7 +16,7 @@ abstract class QueryTest extends \PHPixie\Tests\Database\Type\SQL\Query\Implemen
 
     protected function getConnection()
     {
-        return $this->getMock('\PHPixie\Database\Driver\PDO\Connection', array('execute'), array(), '', null, false);
+        return $this->quickMock('\PHPixie\Database\Driver\PDO\Connection', array('execute'));
     }
     
     protected function getBuilder()

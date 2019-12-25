@@ -77,7 +77,7 @@ abstract class ConditionsTest extends \PHPixie\Tests\Database\Type\SQL\AbstractP
     protected function exceptionGroups()
     {
         $conditions = array(
-            array($this->getMock('\PHPixie\Database\Conditions\Condition'))
+            array($this->quickMock('\PHPixie\Database\Conditions\Condition'))
         );
 
         return $conditions;
