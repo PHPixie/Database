@@ -220,7 +220,7 @@ abstract class Builder
         $array = $args[0];
 
         if (!is_array($array)) {
-            $count = count($args);
+            $count = $args === null ? 0 : count($args);
             if ($count === 1) {
                 $this->assert(!$requireKeys, "Either an array, a key value pair or a single value may be passed.");
                 $array = array($array);
