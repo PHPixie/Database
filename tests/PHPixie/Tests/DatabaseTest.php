@@ -14,7 +14,7 @@ class DatabaseTest extends \PHPixie\Tests\AbstractDatabaseTest
     public function setUp()
     {
         $this->config = $this->getSliceData();
-        $this->logger = $this->quickMock('\Psr\Log\LoggerInterface');
+        $this->logger = new \Psr\Log\NullLogger();
         $this->database = new \PHPixie\Database($this->config, $this->logger);
     }
     
