@@ -62,25 +62,7 @@ class ConnectionTest extends \PHPixie\Tests\Database\Type\SQL\ConnectionTest
         $result = $this->connection->execute("Select * from fairies where id = ?", array(1));
         $this->assertEquals(array((object) array('id'=>1, 'name'=>'Tinkerbell')), $result->asArray());
     }
-    
-    /**
-     * @covers ::execute
-     */
-    public function testExecuteLogger()
-    {
-        $logger = new \Psr\Log\NullLogger();
-        $this->method($this->driver, 'logger', $logger);
-        
-        $query = "INSERT INTO fairies(id,name) VALUES (1,'Tinkerbell')";
-        $this->method($logger, 'debug', null, array("[Query test]: ".$query, array()), 0);
-        $this->connection->execute($query);
-        
-        $query = "Select * from fairies where id = ?";
-        $this->method($logger, 'debug', null, array("[Query test]: ".$query, array(1)), 0);
-        $result = $this->connection->execute($query, array(1));
-        $this->assertEquals(array((object) array('id'=>1, 'name'=>'Tinkerbell')), $result->asArray());
-    }
-    
+       
     /**
      * @covers ::disconnect
      */
