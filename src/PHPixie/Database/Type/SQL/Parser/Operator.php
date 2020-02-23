@@ -16,7 +16,7 @@ abstract class Operator extends \PHPixie\Database\Parser\Operator
 
     protected $operators = array(
         'compare' => array('<', '<=', '=', '<>', '!=', '>=', '>', '<*', '<=*', '=*', '<>*', '!=*', '>=*', '>*'),
-        'pattern' => array('like', 'not like', 'regexp', 'not regexp'),
+        'pattern' => array('like', 'ilike', 'not like', 'regexp', 'not regexp'),
         'in'      => array('in', 'not in'),
         'between' => array('between', 'not between'),
     );
